@@ -1,4 +1,4 @@
-package com.hitec.renewsmartset
+package com.hitec.presentation.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,12 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.hitec.renewsmartset.ui.theme.RenewSmartSetTheme
+import com.hitec.presentation.theme.RenewSmartSetTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         setContent {
             RenewSmartSetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

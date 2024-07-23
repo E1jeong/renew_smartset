@@ -1,4 +1,4 @@
-package com.hitec.renewsmartset.ui.theme
+package com.hitec.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.hitec.renewsmartset.ui.theme
+package com.hitec.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
