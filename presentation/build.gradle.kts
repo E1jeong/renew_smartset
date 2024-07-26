@@ -32,10 +32,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures{
+    buildFeatures {
         compose = true
     }
-    composeOptions{
+    composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
 }
@@ -49,6 +49,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -68,6 +69,19 @@ dependencies {
     implementation(libs.androidx.navigation.compose.hilt)
     implementation(libs.google.gson)
     implementation(libs.coil)
+    implementation(libs.coil.compose)
+
+    implementation(libs.kotlinx.coroutines.core)
+
+    implementation(libs.orbit.core)
+    implementation(libs.orbit.compose)
+    implementation(libs.orbit.viewmodel)
+
+    implementation(libs.paging.compose)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.common)
+
+    implementation(libs.kotlinx.coroutines.core)
 
 }
 

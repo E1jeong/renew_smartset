@@ -55,9 +55,18 @@ dependencies {
     implementation(libs.google.gson)
 
     implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.scalars)
     implementation(libs.retrofit.converter.serialization)
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.tikxml.core)
+    implementation(libs.tikxml.annotation)
+    implementation(libs.tikxml.retrofit.converter)
+    kapt(libs.tikxml.processor)
+
+    implementation(libs.kotlinx.coroutines.core)
 }
 
 kapt {
