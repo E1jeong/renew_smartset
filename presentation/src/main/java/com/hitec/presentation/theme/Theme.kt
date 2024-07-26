@@ -3,34 +3,33 @@ package com.hitec.presentation.theme
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-//private val DarkColorScheme = darkColorScheme(
-//    primary = Purple80,
-//    secondary = PurpleGrey80,
-//    tertiary = Pink80
-//)
-
 private val ColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = primaryBlue3,
     onPrimary = Color.White,
+    primaryContainer = primaryBlue1,
+    onPrimaryContainer = primaryBlue5,
+    secondary = secondaryBlue3,
     onSecondary = Color.White,
+    secondaryContainer = secondaryBlue1,
+    onSecondaryContainer = secondaryBlue5,
+    tertiary = secondaryGreen3,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    tertiaryContainer = secondaryGreen1,
+    onTertiaryContainer = secondaryGreen5,
+    background = Color.White,
+    onBackground = Color.Black,
+    surface = Color.White,
+    onSurface = Color.Black,
+    error = Color.Red,
+    onError = Color.White
 )
 
 @Composable
