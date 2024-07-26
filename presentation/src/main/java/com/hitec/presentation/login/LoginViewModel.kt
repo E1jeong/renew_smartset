@@ -1,9 +1,9 @@
 package com.hitec.presentation.login
 
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import com.hitec.domain.usecase.GetLocalSiteUseCase
+import com.hitec.domain.usecase.LoginScreenInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
@@ -18,30 +18,29 @@ import javax.inject.Inject
 
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val getLocalSiteUseCase: GetLocalSiteUseCase,
-) : ViewModel(), ContainerHost<MainState, MainSideEffect> {
+    private val loginScreenInfoUseCase: LoginScreenInfoUseCase
+) : ViewModel(), ContainerHost<LoginState, LoginSideEffect> {
 
-    override val container: Container<MainState, MainSideEffect> =
+    override val container: Container<LoginState, LoginSideEffect> =
         container(
-            initialState = MainState(),
+            initialState = LoginState(),
             buildSettings = {
                 this.exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-                    intent { postSideEffect(MainSideEffect.Toast(throwable.message.toString())) }
+                    intent { postSideEffect(LoginSideEffect.Toast(throwable.message.toString())) }
                 }
             }
         )
 
     init {
-        load()
+        getLoginScreenInfo()
+        getLocalSite()
     }
 
-    fun load() = intent {
-        val localSite = getLocalSiteUseCase().getOrThrow()
-
-        Log.d("!!@@", localSite.toString())
+    private fun getLocalSite() = intent {
+        getLocalSiteUseCase().getOrThrow()
     }
-
 
     fun onIdChange(id: String) = blockingIntent {
         reduce {
@@ -61,23 +60,57 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onSwitchChange(isSwitchOn: Boolean) = intent {
+        reduce {
+            state.copy(isSwitchOn = isSwitchOn)
+        }
+        postSideEffect(LoginSideEffect.Toast(isSwitchOn.toString()))
+    }
+
     fun onLoginClick() = intent {
         val id = state.id
         val password = state.password
-        postSideEffect(MainSideEffect.NavigateToMainActivity)
+        val localSite = state.localSite
+        val isSwitchOn = state.isSwitchOn
+
+        if (isSwitchOn) {
+            loginScreenInfoUseCase.saveLoginScreenInfo(id, password, localSite, isSwitchOn)
+                .getOrThrow()
+        } else {
+            clearLoginScreenInfo()
+        }
+
+        postSideEffect(LoginSideEffect.Toast("로그인 성공"))
+        postSideEffect(LoginSideEffect.NavigateToMainActivity)
     }
 
+    private fun getLoginScreenInfo() = intent {
+        val loginScreenInfo = loginScreenInfoUseCase.getLoginScreenInfo().getOrThrow()
 
+        reduce {
+            state.copy(
+                id = loginScreenInfo.id,
+                password = loginScreenInfo.password,
+                localSite = loginScreenInfo.localSite,
+                isSwitchOn = loginScreenInfo.isSwitchOn
+            )
+        }
+    }
+
+    private fun clearLoginScreenInfo() = intent {
+        loginScreenInfoUseCase.clearLoginScreenInfo().getOrThrow()
+    }
 }
 
 @Immutable
-data class MainState(
+data class LoginState(
     val id: String = "",
     val password: String = "",
     val localSite: String = "",
+    var isSwitchOn: Boolean = false
 )
 
-sealed interface MainSideEffect {
-    class Toast(val message: String) : MainSideEffect
-    object NavigateToMainActivity : MainSideEffect
+sealed interface LoginSideEffect {
+    class Toast(val message: String) : LoginSideEffect
+    object NavigateToMainActivity : LoginSideEffect
 }

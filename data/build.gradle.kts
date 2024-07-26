@@ -67,6 +67,8 @@ dependencies {
     kapt(libs.tikxml.processor)
 
     implementation(libs.kotlinx.coroutines.core)
+
+    implementation(libs.datastore)
 }
 
 kapt {

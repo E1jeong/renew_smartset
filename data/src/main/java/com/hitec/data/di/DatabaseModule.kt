@@ -7,7 +7,6 @@ import com.hitec.data.db.room.dao.LocalSiteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -17,9 +16,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesDatabase(
-        @ApplicationContext context: Context
-    ): ApplicationDatabase {
+    fun providesDatabase(context: Context): ApplicationDatabase {
         return Room.databaseBuilder(
             context,
             ApplicationDatabase::class.java,

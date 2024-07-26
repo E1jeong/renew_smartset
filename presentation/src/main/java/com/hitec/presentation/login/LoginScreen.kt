@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -19,10 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,20 +34,20 @@ const val TAG = "LoginScreen"
 
 @Composable
 fun LoginScreen(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is MainSideEffect.Toast -> Toast.makeText(
+            is LoginSideEffect.Toast -> Toast.makeText(
                 context,
                 sideEffect.message,
                 Toast.LENGTH_SHORT
             ).show()
 
-            is MainSideEffect.NavigateToMainActivity -> {}
+            is LoginSideEffect.NavigateToMainActivity -> {}
         }
     }
 
@@ -61,9 +55,11 @@ fun LoginScreen(
         id = state.id,
         password = state.password,
         localSite = state.localSite,
+        isSwitchOn = state.isSwitchOn,
         onIdChange = viewModel::onIdChange,
         onPasswordChange = viewModel::onPasswordChange,
         onLocalSiteChange = viewModel::onLocalSiteChange,
+        onSwitchChange = viewModel::onSwitchChange,
         onLoginClick = viewModel::onLoginClick
     )
 }
@@ -73,12 +69,13 @@ private fun LoginScreen(
     id: String,
     password: String,
     localSite: String,
+    isSwitchOn: Boolean,
     onIdChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLocalSiteChange: (String) -> Unit,
+    onSwitchChange: (Boolean) -> Unit,
     onLoginClick: () -> Unit
 ) {
-    var isSwitchOn by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -112,7 +109,7 @@ private fun LoginScreen(
                 ) {
                     Switch(
                         checked = isSwitchOn,
-                        onCheckedChange = { isSwitchOn = it },
+                        onCheckedChange = { onSwitchChange(it) },
                     )
                     Text(
                         text = "Remember me",
@@ -180,7 +177,6 @@ private fun LoginScreen(
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
-
         }
     }
 }
@@ -193,9 +189,11 @@ private fun LoginScreenPreview() {
             id = "",
             password = "",
             localSite = "",
+            isSwitchOn = false,
             onIdChange = {},
             onPasswordChange = {},
             onLocalSiteChange = {},
+            onSwitchChange = {},
             onLoginClick = {}
         )
     }

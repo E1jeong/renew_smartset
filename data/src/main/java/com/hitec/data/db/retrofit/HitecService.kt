@@ -1,6 +1,6 @@
 package com.hitec.data.db.retrofit
 
-import com.hitec.data.model.LocalSiteListReponse
+import com.hitec.data.model.LocalSiteListResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -22,7 +22,7 @@ interface HitecService {
         @Query(MOBILE_ID) mobileId: String = "won9963",
         //encoded 옵션은 콜론(:)을 string 값에 그대로 적용 하기 위해 사용 (true)
         @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String = "92:10:65:17:25:C3:E4:DB",
-    ): LocalSiteListReponse
+    ): LocalSiteListResponse
 
 //    //해당 지역의 읍,면,동 이름 리스트 다운로드
 //    @GET(SMART_SERVER_COMMON)
