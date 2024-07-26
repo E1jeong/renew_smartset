@@ -6,13 +6,13 @@ data class LocalSite(
     val localSite: String,
     val returnCode: Int,
     val msgCode: Int,
-    val LocalSiteInfo: List<LocalSiteData>,
+    val localSiteInfo: List<LocalSiteModel>,
 )
 
-data class LocalSiteData(
+data class LocalSiteModel(
     val rowNumber: Int,
-    val SiteId: String,
-    val SiteName: String,
-    val ConnectionType: Int,
-    val VpnSecuwayVersion: Int,
+    val siteId: String,
+    val siteName: String,
+    val connectionType: Int,
+    val vpnSecuwayVersion: Int,
 )
