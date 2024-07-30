@@ -12,16 +12,18 @@ interface HitecService {
         const val PASSWORD = "password"
         const val MOBILE_ID = "mobileId"
         const val BLUETOOTH_ID = "bluetoothId"
+
+        const val DOWNLOAD_LOCAL_INFO = "downloadLocalInfo"
     }
 
     @GET(SMART_SERVER_COMMON)
     suspend fun getLocalSite(
-        @Query(METHOD) method: String = "downloadLocalInfo",
-        @Query(USER_ID) userId: String = "won9963",
-        @Query(PASSWORD) password: String = "01",
-        @Query(MOBILE_ID) mobileId: String = "won9963",
+        @Query(METHOD) method: String = DOWNLOAD_LOCAL_INFO,
+        @Query(USER_ID) userId: String,
+        @Query(PASSWORD) password: String,
+        @Query(MOBILE_ID) mobileId: String,
         //encoded 옵션은 콜론(:)을 string 값에 그대로 적용 하기 위해 사용 (true)
-        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String = "92:10:65:17:25:C3:E4:DB",
+        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
     ): LocalSiteListResponse
 
 //    //해당 지역의 읍,면,동 이름 리스트 다운로드

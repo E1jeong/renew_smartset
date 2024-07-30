@@ -13,9 +13,10 @@ class LoginScreenInfoUseCaseImpl @Inject constructor(
         id: String,
         password: String,
         localSite: String,
+        androidDeviceId: String,
         isSwitchOn: Boolean
     ): Result<Unit> = kotlin.runCatching {
-        loginPreference.saveLoginScreenInfo(id, password, localSite, isSwitchOn)
+        loginPreference.saveLoginScreenInfo(id, password, localSite, androidDeviceId, isSwitchOn)
     }
 
     override suspend fun getLoginScreenInfo(): Result<LoginScreenInfo> = kotlin.runCatching {

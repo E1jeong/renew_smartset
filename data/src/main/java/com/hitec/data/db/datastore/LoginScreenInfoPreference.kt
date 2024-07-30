@@ -16,12 +16,14 @@ class LoginScreenInfoPreference @Inject constructor(
         id: String,
         password: String,
         localSite: String,
+        androidDeviceId: String,
         isSwitchOn: Boolean
     ) {
         dataStore.edit { preferences ->
             preferences[ID] = id
             preferences[PASSWORD] = password
             preferences[LOCAL_SITE] = localSite
+            preferences[ANDROID_DEVICE_ID] = androidDeviceId
             preferences[IS_SWITCH_ON] = isSwitchOn
         }
     }
@@ -32,6 +34,7 @@ class LoginScreenInfoPreference @Inject constructor(
             id = preferences[ID] ?: "",
             password = preferences[PASSWORD] ?: "",
             localSite = preferences[LOCAL_SITE] ?: "",
+            androidDeviceId = preferences[ANDROID_DEVICE_ID] ?: "",
             isSwitchOn = preferences[IS_SWITCH_ON] ?: false
         )
     }
@@ -46,6 +49,7 @@ class LoginScreenInfoPreference @Inject constructor(
         val ID = stringPreferencesKey("id")
         val PASSWORD = stringPreferencesKey("password")
         val LOCAL_SITE = stringPreferencesKey("local_site")
+        val ANDROID_DEVICE_ID = stringPreferencesKey("android_device_id")
         val IS_SWITCH_ON = booleanPreferencesKey("is_switch_on")
     }
 }

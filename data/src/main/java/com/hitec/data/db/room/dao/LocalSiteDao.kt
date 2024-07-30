@@ -26,5 +26,5 @@ interface LocalSiteDao {
     fun update(localSite: List<LocalSiteEntity>)
 
     @Query("SELECT * FROM T_LocalSite WHERE siteNameKor LIKE :siteName OR siteNameEng LIKE :siteName")
-    fun findSiteName(siteName: String): List<LocalSiteEntity>
+    fun findLocalSiteName(siteName: String): List<LocalSiteEntity>
 }

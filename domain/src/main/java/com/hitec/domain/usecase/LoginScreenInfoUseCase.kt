@@ -8,6 +8,7 @@ interface LoginScreenInfoUseCase {
         id: String,
         password: String,
         localSite: String,
+        androidDeviceId: String,
         isSwitchOn: Boolean
     ): Result<Unit>
 

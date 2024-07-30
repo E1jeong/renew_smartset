@@ -1,6 +1,8 @@
 package com.hitec.data.di
 
+import com.hitec.data.usecase.FindLocalSiteNameUseCaseImpl
 import com.hitec.data.usecase.GetLocalSiteUseCaseImpl
+import com.hitec.domain.usecase.FindLocalSiteNameUseCase
 import com.hitec.domain.usecase.GetLocalSiteUseCase
 import dagger.Binds
 import dagger.Module
@@ -13,4 +15,7 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindGetLocalSiteUseCase(uc: GetLocalSiteUseCaseImpl): GetLocalSiteUseCase
+
+    @Binds
+    abstract fun bindFindLocalSiteNameUseCase(uc: FindLocalSiteNameUseCaseImpl): FindLocalSiteNameUseCase
 }

@@ -15,16 +15,21 @@ class GetLocalSiteUseCaseImpl @Inject constructor(
 ) : GetLocalSiteUseCase {
 
     override suspend fun invoke(
-//        method: String,
-//        userId: String,
-//        password: String,
-//        mobileId: String,
-//        bluetoothId: String,
+//        method: String, 해당 부분은 retrofit service에서 하드코딩 되어있음
+        userId: String,
+        password: String,
+        mobileId: String,
+        bluetoothId: String,
     ): Result<LocalSite> = kotlin.runCatching {
-        val response = hitecService.getLocalSite()
-        val entities: List<LocalSiteEntity> = hitecService.getLocalSite().toEntity()
+        val localSiteResponse = hitecService.getLocalSite(
+            userId = userId,
+            password = password,
+            mobileId = mobileId,
+            bluetoothId = bluetoothId
+        )
+        val entities: List<LocalSiteEntity> = localSiteResponse.toEntity()
         localSiteDao.insert(entities)
 
-        response.toDomainModel()
+        localSiteResponse.toDomainModel()
     }
 }
