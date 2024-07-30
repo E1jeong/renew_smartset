@@ -55,11 +55,7 @@ fun LoginScreen(
             ).show()
 
             is LoginSideEffect.NavigateToMainActivity -> {
-                context.startActivity(
-                    Intent(context, MainActivity::class.java).apply {
-                        putExtra(LOCAL_SITE_ENG, state.localSiteEngWrittenByUser)
-                    }
-                )
+                context.startActivity(Intent(context, MainActivity::class.java))
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.hitec.data.db.retrofit
 
 import com.hitec.data.model.LocalSiteListResponse
+import com.hitec.data.model.SubAreaListResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -12,8 +13,10 @@ interface HitecService {
         const val PASSWORD = "password"
         const val MOBILE_ID = "mobileId"
         const val BLUETOOTH_ID = "bluetoothId"
+        const val LOCAL_SITE = "localSite"
 
         const val DOWNLOAD_LOCAL_INFO = "downloadLocalInfo"
+        const val DOWNLOAD_SUB_AREA = "downloadSubArea"
     }
 
     @GET(SMART_SERVER_COMMON)
@@ -26,17 +29,17 @@ interface HitecService {
         @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
     ): LocalSiteListResponse
 
-//    //해당 지역의 읍,면,동 이름 리스트 다운로드
-//    @GET(SMART_SERVER_COMMON)
-//    fun downloadSubAreaName(
-//        @Query(METHOD) method: String = "downloadSubArea",
-//        @Query(USER_ID) userId: String = "won9964",
-//        @Query(PASSWORD) password: String = "01",
-//        @Query(MOBILE_ID) mobileId: String = "won9964",
-//        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String = "65:2D:84:1A:C9:38:88:09",
-//        @Query("localSite") localSite: String, //파라미터의 네이밍이 downloadSiteName()와 다름 주의
-//    ): Call<SubAreaData>
-//
+    //해당 지역의 읍,면,동 이름 리스트 다운로드
+    @GET(SMART_SERVER_COMMON)
+    suspend fun getSubArea(
+        @Query(METHOD) method: String = DOWNLOAD_SUB_AREA,
+        @Query(USER_ID) userId: String,
+        @Query(PASSWORD) password: String,
+        @Query(MOBILE_ID) mobileId: String,
+        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
+        @Query(LOCAL_SITE) localSite: String,
+    ): SubAreaListResponse
+
 //    //설치한(+설치해야될) 단말기의 db url 다운로드
 //    @GET(SMART_SERVER_COMMON)
 //    fun downloadInstallDeviceListDB(

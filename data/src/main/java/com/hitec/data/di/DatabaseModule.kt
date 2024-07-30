@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.hitec.data.db.room.ApplicationDatabase
 import com.hitec.data.db.room.dao.LocalSiteDao
+import com.hitec.data.db.room.dao.SubAreaDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,5 +30,11 @@ object DatabaseModule {
     @Singleton
     fun provideLocalSiteDao(database: ApplicationDatabase): LocalSiteDao {
         return database.localSiteDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSubAreaDao(database: ApplicationDatabase): SubAreaDao {
+        return database.subAreaDao()
     }
 }

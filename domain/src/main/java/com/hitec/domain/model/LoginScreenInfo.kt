@@ -5,5 +5,6 @@ data class LoginScreenInfo(
     val password: String,
     val localSite: String,
     val androidDeviceId: String,
-    val isSwitchOn: Boolean
+    val isSwitchOn: Boolean,
+    val localSiteEngWrittenByUser: String,
 )

@@ -3,11 +3,16 @@ package com.hitec.data.db.room
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.hitec.data.db.room.dao.LocalSiteDao
+import com.hitec.data.db.room.dao.SubAreaDao
 import com.hitec.data.model.entity.LocalSiteEntity
+import com.hitec.data.model.entity.SubAreaEntity
 
 @Database(
-    entities = [LocalSiteEntity::class],
-    version = 1,
+    entities = [
+        LocalSiteEntity::class,
+        SubAreaEntity::class
+    ],
+    version = 2,
     exportSchema = false
 )
 abstract class ApplicationDatabase : RoomDatabase() {
@@ -16,4 +21,5 @@ abstract class ApplicationDatabase : RoomDatabase() {
     }
 
     abstract fun localSiteDao(): LocalSiteDao
+    abstract fun subAreaDao(): SubAreaDao
 }

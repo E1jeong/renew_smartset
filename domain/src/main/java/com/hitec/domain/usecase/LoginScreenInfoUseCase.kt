@@ -9,7 +9,8 @@ interface LoginScreenInfoUseCase {
         password: String,
         localSite: String,
         androidDeviceId: String,
-        isSwitchOn: Boolean
+        isSwitchOn: Boolean,
+        localSiteEngWrittenByUser: String,
     ): Result<Unit>
 
     suspend fun getLoginScreenInfo(): Result<LoginScreenInfo>

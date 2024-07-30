@@ -17,7 +17,8 @@ class LoginScreenInfoPreference @Inject constructor(
         password: String,
         localSite: String,
         androidDeviceId: String,
-        isSwitchOn: Boolean
+        isSwitchOn: Boolean,
+        localSiteEngWrittenByUser: String
     ) {
         dataStore.edit { preferences ->
             preferences[ID] = id
@@ -25,6 +26,7 @@ class LoginScreenInfoPreference @Inject constructor(
             preferences[LOCAL_SITE] = localSite
             preferences[ANDROID_DEVICE_ID] = androidDeviceId
             preferences[IS_SWITCH_ON] = isSwitchOn
+            preferences[LOCAL_SITE_ENG_WRITTEN_BY_USER] = localSiteEngWrittenByUser
         }
     }
 
@@ -35,7 +37,8 @@ class LoginScreenInfoPreference @Inject constructor(
             password = preferences[PASSWORD] ?: "",
             localSite = preferences[LOCAL_SITE] ?: "",
             androidDeviceId = preferences[ANDROID_DEVICE_ID] ?: "",
-            isSwitchOn = preferences[IS_SWITCH_ON] ?: false
+            isSwitchOn = preferences[IS_SWITCH_ON] ?: false,
+            localSiteEngWrittenByUser = preferences[LOCAL_SITE_ENG_WRITTEN_BY_USER] ?: "",
         )
     }
 
@@ -51,5 +54,6 @@ class LoginScreenInfoPreference @Inject constructor(
         val LOCAL_SITE = stringPreferencesKey("local_site")
         val ANDROID_DEVICE_ID = stringPreferencesKey("android_device_id")
         val IS_SWITCH_ON = booleanPreferencesKey("is_switch_on")
+        val LOCAL_SITE_ENG_WRITTEN_BY_USER = stringPreferencesKey("local_site_eng_written_by_user")
     }
 }

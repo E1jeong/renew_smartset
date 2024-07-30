@@ -81,12 +81,11 @@ class LoginViewModel @Inject constructor(
 
     fun onLoginClick() = intent {
         val foundLocalSiteName = findLocalSiteNameUseCase(state.localSite).getOrThrow()
-
+        setLocalSiteEngWrittenByUser(foundLocalSiteName.first().siteId)
         saveLoginScreenInfo()
 
         if (foundLocalSiteName.isNotEmpty()) {
             setIsLocalSiteWarningVisible(false)
-            setLocalSiteEngWrittenByUser(foundLocalSiteName.first().siteId)
 
             postSideEffect(LoginSideEffect.NavigateToMainActivity)
         } else {
@@ -101,6 +100,7 @@ class LoginViewModel @Inject constructor(
             state.localSite,
             state.androidDeviceId,
             state.isSwitchOn,
+            state.localSiteEngWrittenByUser
         ).getOrThrow()
     }
 
