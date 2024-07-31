@@ -29,7 +29,7 @@ fun MainBottomBar(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute: MainRoute = navBackStackEntry?.destination?.route?.let { currentRoute ->
-        MainRoute.entries.find { route -> route.name == currentRoute }
+        MainRoute.entries.find { route -> route.route == currentRoute }
     } ?: MainRoute.Main
 
     MainBottomBar(
