@@ -3,7 +3,9 @@ package com.hitec.data.di
 import android.content.Context
 import androidx.room.Room
 import com.hitec.data.db.room.ApplicationDatabase
+import com.hitec.data.db.room.dao.InstallDeviceDao
 import com.hitec.data.db.room.dao.LocalSiteDao
+import com.hitec.data.db.room.dao.ServerInfoDao
 import com.hitec.data.db.room.dao.SubAreaDao
 import dagger.Module
 import dagger.Provides
@@ -36,5 +38,17 @@ object DatabaseModule {
     @Singleton
     fun provideSubAreaDao(database: ApplicationDatabase): SubAreaDao {
         return database.subAreaDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideInstallDeviceDao(database: ApplicationDatabase): InstallDeviceDao {
+        return database.installDeviceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideServerInfoDao(database: ApplicationDatabase): ServerInfoDao {
+        return database.serverInfoDao()
     }
 }

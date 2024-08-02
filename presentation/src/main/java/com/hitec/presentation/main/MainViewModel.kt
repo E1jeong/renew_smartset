@@ -2,6 +2,8 @@ package com.hitec.presentation.main
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
+import com.hitec.domain.usecase.GetInstallDbUrlUseCase
+import com.hitec.domain.usecase.GetInstallDbUseCase
 import com.hitec.domain.usecase.GetSubAreaUseCase
 import com.hitec.domain.usecase.LoginScreenInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +22,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getSubAreaUseCase: GetSubAreaUseCase,
-    private val loginScreenInfoUseCase: LoginScreenInfoUseCase
+    private val loginScreenInfoUseCase: LoginScreenInfoUseCase,
+    private val getInstallDbUrlUseCase: GetInstallDbUrlUseCase,
+    private val getInstallDbUseCase: GetInstallDbUseCase,
 ) : ViewModel(), ContainerHost<MainState, MainSideEffect> {
 
     override val container: Container<MainState, MainSideEffect> = container(
@@ -35,6 +39,7 @@ class MainViewModel @Inject constructor(
     init {
         getLoginScreenInfo()
         getSubArea()
+        getInstallDevice()
     }
 
     private fun getSubArea() = intent {
@@ -59,6 +64,18 @@ class MainViewModel @Inject constructor(
                 localSiteEngWrittenByUser = loginScreenInfo.localSiteEngWrittenByUser
             )
         }
+    }
+
+    private fun getInstallDevice() = intent {
+        val url = getInstallDbUrlUseCase(
+            userId = state.id,
+            password = state.password,
+            mobileId = state.id,
+            bluetoothId = state.androidDeviceId,
+            localSite = state.localSiteEngWrittenByUser
+        ).getOrThrow()
+
+        getInstallDbUseCase(url).getOrThrow()
     }
 }
 

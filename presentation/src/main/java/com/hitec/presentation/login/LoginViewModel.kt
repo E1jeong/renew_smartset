@@ -44,6 +44,7 @@ class LoginViewModel @Inject constructor(
     init {
         getAndroidDeviceId()
         getLoginScreenInfo()
+        getLocalSite()
     }
 
     fun getLocalSite() = intent {
@@ -104,7 +105,7 @@ class LoginViewModel @Inject constructor(
         ).getOrThrow()
     }
 
-    private fun getLoginScreenInfo() = intent {
+    private fun getLoginScreenInfo() = blockingIntent {
         val loginScreenInfo = loginScreenInfoUseCase.getLoginScreenInfo().getOrThrow()
 
         if (loginScreenInfo.isSwitchOn) {
@@ -125,7 +126,7 @@ class LoginViewModel @Inject constructor(
     }
 
     @SuppressLint("HardwareIds")
-    private fun getAndroidDeviceId() = intent {
+    private fun getAndroidDeviceId() = blockingIntent {
         val rawId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         val macAddress = rawId?.uppercase()?.chunked(2)?.joinToString(":") ?: ""
 
