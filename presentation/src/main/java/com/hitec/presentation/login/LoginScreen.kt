@@ -30,14 +30,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hitec.presentation.R
-import com.hitec.presentation.component.DefaultTextField
+import com.hitec.presentation.component.button.PrimaryButton
+import com.hitec.presentation.component.textfield.DefaultTextField
 import com.hitec.presentation.main.MainActivity
 import com.hitec.presentation.theme.RenewSmartSetTheme
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-
-const val TAG = "LoginScreen"
-const val LOCAL_SITE_ENG = "localSiteEng"
 
 @Composable
 fun LoginScreen(
@@ -269,12 +267,7 @@ private fun LoginFooter(onLoginClick: () -> Unit) {
             .padding(bottom = 16.dp, start = 12.dp, end = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onLoginClick
-        ) {
-            Text(text = stringResource(R.string.login))
-        }
+        PrimaryButton(text = "Login", onClick = onLoginClick)
         Spacer(modifier = Modifier.size(8.dp))
         Text(
             text = stringResource(id = R.string.login_bottom_copyright),

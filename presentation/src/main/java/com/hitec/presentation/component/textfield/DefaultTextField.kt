@@ -1,4 +1,4 @@
-package com.hitec.presentation.component
+package com.hitec.presentation.component.textfield
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.TextField
