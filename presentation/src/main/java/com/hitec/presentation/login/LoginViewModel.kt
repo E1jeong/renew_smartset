@@ -82,12 +82,11 @@ class LoginViewModel @Inject constructor(
 
     fun onLoginClick() = intent {
         val foundLocalSiteName = findLocalSiteNameUseCase(state.localSite).getOrThrow()
-        setLocalSiteEngWrittenByUser(foundLocalSiteName.first().siteId)
         saveLoginScreenInfo()
 
         if (foundLocalSiteName.isNotEmpty()) {
             setIsLocalSiteWarningVisible(false)
-
+            setLocalSiteEngWrittenByUser(foundLocalSiteName.first().siteId)
             postSideEffect(LoginSideEffect.NavigateToMainActivity)
         } else {
             setIsLocalSiteWarningVisible(true)
@@ -118,11 +117,6 @@ class LoginViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    //해당 함수는 사용할 일이 없을 수 있음.
-    private fun clearLoginScreenInfo() = intent {
-        loginScreenInfoUseCase.clearLoginScreenInfo().getOrThrow()
     }
 
     @SuppressLint("HardwareIds")
