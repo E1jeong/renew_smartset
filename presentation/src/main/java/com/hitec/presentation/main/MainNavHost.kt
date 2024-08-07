@@ -15,10 +15,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hitec.presentation.R
+import com.hitec.presentation.main.asdevice.AsDeviceScreen
+import com.hitec.presentation.main.camera.CameraScreen
+import com.hitec.presentation.main.mypage.MyPageScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainNavHost(mainViewModel: MainViewModel) {
+fun MainNavHost(sharedViewModel: MainViewModel) {
     val navController = rememberNavController()
 
     Surface {
@@ -38,9 +41,12 @@ fun MainNavHost(mainViewModel: MainViewModel) {
                 NavHost(
                     modifier = Modifier.padding(paddingValues),
                     navController = navController,
-                    startDestination = MainRoute.Main.route
+                    startDestination = MainRoute.MAIN.route
                 ) {
-                    composable(MainRoute.Main.route) { MainScreen(mainViewModel) }
+                    composable(route = MainRoute.MAIN.route) { MainScreen(sharedViewModel) }
+                    composable(route = MainRoute.CAMERA.route) { CameraScreen(sharedViewModel) }
+                    composable(route = MainRoute.AS_DEVICE.route) { AsDeviceScreen() }
+                    composable(route = MainRoute.MY_PAGE.route) { MyPageScreen() }
                 }
             },
             bottomBar = { MainBottomBar(navController = navController) }
