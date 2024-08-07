@@ -42,11 +42,7 @@ fun BaseDialog(
                 modifier = Modifier
                     .background(Color.Transparent)
                     .fillMaxWidth()
-                    .padding(
-                        start = Paddings.xlarge,
-                        end = Paddings.xlarge,
-                        bottom = Paddings.xlarge
-                    )
+                    .padding(Paddings.xlarge)
             ) {
                 dialogContent?.let { DialogContentWrapper(it) }
                 buttons?.let { DialogButtonsColumn(it) }
