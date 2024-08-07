@@ -1,5 +1,6 @@
 package com.hitec.presentation.main
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import com.hitec.domain.usecase.GetInstallDbUrlUseCase
@@ -31,7 +32,10 @@ class MainViewModel @Inject constructor(
         initialState = MainState(),
         buildSettings = {
             this.exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-                intent { postSideEffect(MainSideEffect.Toast(throwable.message.toString())) }
+                intent {
+                    postSideEffect(MainSideEffect.Toast(throwable.message.toString()))
+                    Log.e(TAG, "error handler: ${throwable.message}")
+                }
             }
         }
     )
@@ -80,6 +84,10 @@ class MainViewModel @Inject constructor(
 
     fun onQrCodeValueChange(qrCodeValue: String) = intent {
         reduce { state.copy(qrCodeValue = qrCodeValue) }
+    }
+
+    companion object {
+        const val TAG = "MainViewModel"
     }
 }
 

@@ -3,6 +3,7 @@ package com.hitec.presentation.login
 import android.annotation.SuppressLint
 import android.content.Context
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import com.hitec.domain.usecase.FindLocalSiteNameUseCase
@@ -36,7 +37,10 @@ class LoginViewModel @Inject constructor(
             initialState = LoginState(),
             buildSettings = {
                 this.exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-                    intent { postSideEffect(LoginSideEffect.Toast(throwable.message.toString())) }
+                    intent {
+                        postSideEffect(LoginSideEffect.Toast(throwable.message.toString()))
+                        Log.e(TAG, "error handler: ${throwable.message}")
+                    }
                 }
             }
         )
@@ -125,6 +129,10 @@ class LoginViewModel @Inject constructor(
         val macAddress = rawId?.uppercase()?.chunked(2)?.joinToString(":") ?: ""
 
         reduce { state.copy(androidDeviceId = macAddress) }
+    }
+
+    companion object {
+        const val TAG = "LoginViewModel"
     }
 }
 
