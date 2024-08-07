@@ -68,6 +68,7 @@ class SqliteToRoomImporter @Inject constructor(
                 }
             }
 
+        serverInfoDao.delete()
         serverInfoDao.insert(mergedEntities)
     }
 
@@ -82,7 +83,7 @@ class SqliteToRoomImporter @Inject constructor(
         val entities = tempDb.rawQuery(query, null).use { cursor ->
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .map { mapToInstallDeviceEntity(it) }
-                .onEach { Log.d("DatabaseImport", "Mapped entity: $it") }
+//                .onEach { Log.d("DatabaseImport", "Mapped entity: $it") }
                 .toList()
         }
         Log.d("DatabaseImport", "Total mapped entities: ${entities.size}")
