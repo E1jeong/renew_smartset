@@ -1,5 +1,6 @@
 package com.hitec.data.db.retrofit
 
+import com.hitec.data.model.DeleteInstallDBResponse
 import com.hitec.data.model.DownloadInstallDbResponse
 import com.hitec.data.model.LocalSiteListResponse
 import com.hitec.data.model.SubAreaListResponse
@@ -24,10 +25,12 @@ interface HitecService {
         const val INSTALL_GROUP_CODE = "installGroupCd"
         const val COMPANY_CODE = "companyCd"
         const val CONNECTION_TYPE = "ConnectionType"
+        const val FILE_NAME = "fileName"
 
         const val DOWNLOAD_LOCAL_INFO = "downloadLocalInfo"
         const val DOWNLOAD_SUB_AREA = "downloadSubArea"
         const val DOWNLOAD_INSTALL_DB = "downloadInstallDB"
+        const val DELETE_INSTALL_DB = "deleteInstallDB"
     }
 
     @GET(SMART_SERVER_COMMON)
@@ -73,14 +76,14 @@ interface HitecService {
         @Url url: String
     ): Response<ResponseBody>
 
-//    //downloadInstallDeviceListDB를 통해 받아온 URL(서버)에 생성된 DB 삭제
-//    @GET(SMART_SERVER_COMMON)
-//    fun deleteDBFile(
-//        @Query(METHOD) method: String = "deleteInstallDB",
-//        @Query(USER_ID) userId: String = "won9964",
-//        @Query(PASSWORD) password: String = "01",
-//        @Query(MOBILE_ID) mobileId: String = "won9964",
-//        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String = "65:2D:84:1A:C9:38:88:09",
-//        @Query("fileName") fileName: String,
-//    ): Call<ResponseBody>
+    //downloadInstallDeviceListDB를 통해 받아온 URL(서버)에 생성된 DB 삭제
+    @GET(SMART_SERVER_COMMON)
+    suspend fun deleteInstallDb(
+        @Query(METHOD) method: String = DELETE_INSTALL_DB,
+        @Query(USER_ID) userId: String,
+        @Query(PASSWORD) password: String,
+        @Query(MOBILE_ID) mobileId: String,
+        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
+        @Query(FILE_NAME) fileName: String,
+    ): DeleteInstallDBResponse
 }
