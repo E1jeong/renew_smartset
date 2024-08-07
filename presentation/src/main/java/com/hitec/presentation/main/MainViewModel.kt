@@ -3,8 +3,11 @@ package com.hitec.presentation.main
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
+import com.hitec.domain.model.InstallDevice
+import com.hitec.domain.usecase.DeleteInstallDbUseCase
 import com.hitec.domain.usecase.GetInstallDbUrlUseCase
 import com.hitec.domain.usecase.GetInstallDbUseCase
+import com.hitec.domain.usecase.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.GetSubAreaUseCase
 import com.hitec.domain.usecase.LoginScreenInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +29,8 @@ class MainViewModel @Inject constructor(
     private val loginScreenInfoUseCase: LoginScreenInfoUseCase,
     private val getInstallDbUrlUseCase: GetInstallDbUrlUseCase,
     private val getInstallDbUseCase: GetInstallDbUseCase,
+    private val getInstallDeviceUseCase: GetInstallDeviceUseCase,
+    private val deleteInstallDbUseCase: DeleteInstallDbUseCase
 ) : ViewModel(), ContainerHost<MainState, MainSideEffect> {
 
     override val container: Container<MainState, MainSideEffect> = container(
@@ -43,17 +48,10 @@ class MainViewModel @Inject constructor(
     init {
         getLoginScreenInfo()
         getSubArea()
+        getInstallDbUrl()
+        getInstallDb()
         getInstallDevice()
-    }
-
-    private fun getSubArea() = intent {
-        getSubAreaUseCase(
-            userId = state.id,
-            password = state.password,
-            mobileId = state.id,
-            bluetoothId = state.androidDeviceId,
-            localSite = state.localSiteEngWrittenByUser
-        ).getOrThrow()
+        deleteInstallDb()
     }
 
     private fun getLoginScreenInfo() = blockingIntent {
@@ -70,7 +68,17 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getInstallDevice() = intent {
+    private fun getSubArea() = intent {
+        getSubAreaUseCase(
+            userId = state.id,
+            password = state.password,
+            mobileId = state.id,
+            bluetoothId = state.androidDeviceId,
+            localSite = state.localSiteEngWrittenByUser
+        ).getOrThrow()
+    }
+
+    private fun getInstallDbUrl() = blockingIntent {
         val url = getInstallDbUrlUseCase(
             userId = state.id,
             password = state.password,
@@ -79,7 +87,36 @@ class MainViewModel @Inject constructor(
             localSite = state.localSiteEngWrittenByUser
         ).getOrThrow()
 
-        getInstallDbUseCase(url).getOrThrow()
+        val fileName = url.substringAfterLast("/")
+
+        reduce {
+            state.copy(
+                installDbUrl = url,
+                installDbFileName = fileName
+            )
+        }
+    }
+
+    private fun getInstallDb() = intent {
+        getInstallDbUseCase(state.installDbUrl).getOrThrow()
+    }
+
+    private fun getInstallDevice() = intent {
+        val installDevice = getInstallDeviceUseCase().getOrThrow()
+
+        reduce {
+            state.copy(installDevice = installDevice)
+        }
+    }
+
+    private fun deleteInstallDb() = intent {
+        deleteInstallDbUseCase(
+            userId = state.id,
+            password = state.password,
+            mobileId = state.id,
+            bluetoothId = state.androidDeviceId,
+            fileName = state.installDbFileName
+        ).getOrThrow()
     }
 
     fun onQrCodeValueChange(qrCodeValue: String) = intent {
@@ -99,6 +136,9 @@ data class MainState(
     val androidDeviceId: String = "",
     val localSiteEngWrittenByUser: String = "",
     val qrCodeValue: String = "No QR Code detected",
+    val installDbUrl: String = "",
+    val installDbFileName: String = "",
+    val installDevice: List<InstallDevice> = emptyList()
 )
 
 sealed interface MainSideEffect {
