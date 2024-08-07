@@ -22,6 +22,7 @@ tikxml = "0.8.13"
 orbit = "6.1.0"
 paging = "3.3.0"
 datastore = "1.1.1"
+camera = "1.2.0-beta02"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -79,6 +80,11 @@ paging-common = { group = "androidx.paging", name = "paging-common", version.ref
 paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 
 datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+camera = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
+mlkit = { group = "com.google.mlkit", name = "barcode-scanning", version = "17.0.2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
