@@ -77,6 +77,10 @@ class MainViewModel @Inject constructor(
 
         getInstallDbUseCase(url).getOrThrow()
     }
+
+    fun onQrCodeValueChange(qrCodeValue: String) = intent {
+        reduce { state.copy(qrCodeValue = qrCodeValue) }
+    }
 }
 
 @Immutable
@@ -86,6 +90,7 @@ data class MainState(
     val localSite: String = "",
     val androidDeviceId: String = "",
     val localSiteEngWrittenByUser: String = "",
+    val qrCodeValue: String = "No QR Code detected",
 )
 
 sealed interface MainSideEffect {

@@ -17,4 +17,10 @@
     <!--PermissionHelper -->
     <string name="move_to_settings">Move to settings</string>
 
+    <!--CameraScreen -->
+    <string name="camera_dialog_rationale_title">Camera Permission Require</string>
+    <string name="camera_dialog_rationale_text">Camera permission is required to scan QR codes. Please allow the permission in your settings</string>
+
+    <!--QrCodeValueDialog-->
+    <string name="qrcode_value_dialog_title">QR code result</string>
 </resources>
