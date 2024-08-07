@@ -15,7 +15,7 @@ data class DownloadInstallDbResponse(
     @PropertyElement(name = "returnCode")
     val returnCode: Int,
     @PropertyElement(name = "msgCode")
-    val msgCode: String,
+    val msgCode: Int,
     @Element(name = "InstallDBInfo")
     val installDBInfo: List<InstallDbInfo>,
 )
