@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -30,13 +29,13 @@ fun MainBottomBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute: MainRoute = navBackStackEntry?.destination?.route?.let { currentRoute ->
         MainRoute.entries.find { route -> route.route == currentRoute }
-    } ?: MainRoute.Main
+    } ?: MainRoute.MAIN
 
     MainBottomBar(
         currentRoute = currentRoute,
         onItemClick = { newRoute ->
             if (currentRoute != newRoute) {
-                navController.navigate(route = newRoute.name) {
+                navController.navigate(route = newRoute.route) {
                     navController.graph.startDestinationRoute?.let {
                         popUpTo(it) {
                             saveState = true
@@ -61,18 +60,17 @@ private fun MainBottomBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
-
             MainRoute.entries.forEach { route ->
                 IconButton(onClick = { onItemClick(route) }) {
                     Icon(
                         imageVector = route.icon,
                         contentDescription = route.contentDescription,
                         tint = if (currentRoute == route) {
-                            MaterialTheme.colorScheme.primary
+                            MaterialTheme.colorScheme.onPrimaryContainer
                         } else {
-                            Color.White
+                            MaterialTheme.colorScheme.primaryContainer
                         }
                     )
                 }
@@ -86,7 +84,7 @@ private fun MainBottomBar(
 private fun MainBottomBarPreview() {
     RenewSmartSetTheme {
         Surface {
-            var currentRoute by remember { mutableStateOf(MainRoute.Main) }
+            var currentRoute by remember { mutableStateOf(MainRoute.MAIN) }
             MainBottomBar(
                 currentRoute = currentRoute,
                 onItemClick = { newRoute -> currentRoute = newRoute }
