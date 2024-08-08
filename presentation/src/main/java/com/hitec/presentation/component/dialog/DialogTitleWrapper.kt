@@ -41,7 +41,7 @@ fun DefaultDialogTitle(title: DialogTitle.Default) {
                 .align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.displayMedium.copy(
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.primary
             )
         )
     }
