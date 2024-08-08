@@ -102,10 +102,10 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getInstallDevice() = intent {
-        val installDevice = getInstallDeviceUseCase().getOrThrow()
+        val installDeviceList = getInstallDeviceUseCase().getOrThrow()
 
         reduce {
-            state.copy(installDevice = installDevice)
+            state.copy(installDeviceList = installDeviceList)
         }
     }
 
@@ -138,7 +138,7 @@ data class MainState(
     val qrCodeValue: String = "No QR Code detected",
     val installDbUrl: String = "",
     val installDbFileName: String = "",
-    val installDevice: List<InstallDevice> = emptyList()
+    val installDeviceList: List<InstallDevice> = emptyList()
 )
 
 sealed interface MainSideEffect {
