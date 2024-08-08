@@ -1,94 +1,49 @@
 package com.hitec.presentation.main
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.hitec.presentation.theme.RenewSmartSetTheme
+import androidx.navigation.NavHostController
+import com.hitec.presentation.util.NavigationUtils
 
 @Composable
 fun MainBottomBar(
-    navController: NavController
+    navController: NavHostController,
+    currentRoute: String?
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute: MainRoute = navBackStackEntry?.destination?.route?.let { currentRoute ->
-        MainRoute.entries.find { route -> route.route == currentRoute }
-    } ?: MainRoute.MAIN
-
-    MainBottomBar(
-        currentRoute = currentRoute,
-        onItemClick = { newRoute ->
-            if (currentRoute != newRoute) {
-                navController.navigate(route = newRoute.route) {
-                    navController.graph.startDestinationRoute?.let {
-                        popUpTo(it) {
-                            saveState = true
-                        }
-                    }
-                    this.launchSingleTop = true
-                    this.restoreState = true
-                }
-            }
-        }
+    val mainBottomNavigationItems = listOf(
+        MainRoute.Camera,
+        MainRoute.InstallDevice,
+        MainRoute.AsDevice,
+        MainRoute.MyPage
     )
-}
 
-@Composable
-private fun MainBottomBar(
-    currentRoute: MainRoute,
-    onItemClick: (MainRoute) -> Unit
-) {
     Column {
-        Divider()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            MainRoute.entries.forEach { route ->
-                IconButton(onClick = { onItemClick(route) }) {
-                    Icon(
-                        imageVector = route.icon,
-                        contentDescription = route.contentDescription,
-                        tint = if (currentRoute == route) {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.primaryContainer
-                        }
-                    )
-                }
+        Divider(thickness = 2.dp)
+        NavigationBar {
+            mainBottomNavigationItems.forEach { item ->
+                NavigationBarItem(
+                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                    selected = currentRoute == item.route,
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                    onClick = {
+                        NavigationUtils.navigate(
+                            navController,
+                            item.route,
+                            navController.graph.startDestinationRoute
+                        )
+                    }
+                )
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun MainBottomBarPreview() {
-    RenewSmartSetTheme {
-        Surface {
-            var currentRoute by remember { mutableStateOf(MainRoute.MAIN) }
-            MainBottomBar(
-                currentRoute = currentRoute,
-                onItemClick = { newRoute -> currentRoute = newRoute }
-            )
         }
     }
 }
