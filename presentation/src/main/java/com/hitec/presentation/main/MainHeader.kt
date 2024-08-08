@@ -28,7 +28,11 @@ fun MainHeader(
         navigationIcon = {
             if (!MainRoute.isMainRoute(currentRoute)) {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Filled.ArrowBack, "BackIcon")
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "BackIcon",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 }
             }
         },
@@ -40,7 +44,7 @@ fun MainHeader(
         actions = {
             if (currentRoute == MainRoute.InstallDevice.route || currentRoute == MainRoute.AsDevice.route) {
                 IconButton(
-                    onClick = { }
+                    onClick = { viewModel.openSearchScreen(navController) }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Search,

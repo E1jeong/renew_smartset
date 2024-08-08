@@ -19,6 +19,7 @@ import com.hitec.presentation.main.asdevice.AsDeviceScreen
 import com.hitec.presentation.main.camera.CameraScreen
 import com.hitec.presentation.main.installdevice.InstallDeviceScreen
 import com.hitec.presentation.main.mypage.MyPageScreen
+import com.hitec.presentation.main.search.SearchScreen
 
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
@@ -66,6 +67,12 @@ fun MainNavHost(sharedViewModel: MainViewModel) {
                         deepLinks = MainRoute.MyPage.deepLinks
                     ) {
                         MyPageScreen()
+                    }
+                    composable(
+                        route = SearchRoute.route,
+                        deepLinks = SearchRoute.deepLinks
+                    ) {
+                        SearchScreen()
                     }
                 }
             },

@@ -4,6 +4,7 @@ import androidx.navigation.NavHostController
 import com.hitec.presentation.main.Destination
 import com.hitec.presentation.main.MainRoute
 import com.hitec.presentation.main.RouteName
+import com.hitec.presentation.main.SearchRoute
 
 object NavigationUtils {
     fun navigate(
@@ -30,6 +31,7 @@ object NavigationUtils {
             RouteName.INSTALL_DEVICE -> MainRoute.InstallDevice
             RouteName.AS_DEVICE -> MainRoute.AsDevice
             RouteName.MY_PAGE -> MainRoute.MyPage
+            RouteName.SEARCH -> SearchRoute
             else -> MainRoute.InstallDevice
         }
     }

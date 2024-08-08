@@ -3,6 +3,7 @@ package com.hitec.presentation.main
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import com.hitec.domain.model.InstallDevice
 import com.hitec.domain.usecase.DeleteInstallDbUseCase
 import com.hitec.domain.usecase.GetInstallDbUrlUseCase
@@ -10,6 +11,7 @@ import com.hitec.domain.usecase.GetInstallDbUseCase
 import com.hitec.domain.usecase.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.GetSubAreaUseCase
 import com.hitec.domain.usecase.LoginScreenInfoUseCase
+import com.hitec.presentation.util.NavigationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
@@ -121,6 +123,10 @@ class MainViewModel @Inject constructor(
 
     fun onQrCodeValueChange(qrCodeValue: String) = intent {
         reduce { state.copy(qrCodeValue = qrCodeValue) }
+    }
+
+    fun openSearchScreen(navHostController: NavHostController) {
+        NavigationUtils.navigate(navHostController, SearchRoute.route)
     }
 
     companion object {

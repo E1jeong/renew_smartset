@@ -13,6 +13,7 @@ import com.hitec.presentation.main.RouteName.CAMERA
 import com.hitec.presentation.main.RouteName.DEEP_LINK_SCHEME
 import com.hitec.presentation.main.RouteName.INSTALL_DEVICE
 import com.hitec.presentation.main.RouteName.MY_PAGE
+import com.hitec.presentation.main.RouteName.SEARCH
 
 sealed class MainRoute(
     override val route: String,
@@ -38,6 +39,14 @@ sealed class MainRoute(
     }
 }
 
+object SearchRoute : Destination {
+    override val route: String = SEARCH
+    override val title: String = "Search"
+    override val deepLinks: List<NavDeepLink> = listOf(
+        navDeepLink { uriPattern = "$DEEP_LINK_SCHEME$route" }
+    )
+}
+
 interface Destination {
     val route: String
     val title: String
@@ -50,4 +59,5 @@ object RouteName {
     const val INSTALL_DEVICE = "InstallDeviceScreen"
     const val AS_DEVICE = "AsDeviceScreen"
     const val MY_PAGE = "MyPageScreen"
+    const val SEARCH = "SearchScreen"
 }
