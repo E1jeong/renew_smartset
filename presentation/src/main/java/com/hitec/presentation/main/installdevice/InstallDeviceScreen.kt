@@ -1,14 +1,17 @@
-package com.hitec.presentation.main
+package com.hitec.presentation.main.installdevice
 
 import android.widget.Toast
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.main.MainSideEffect
+import com.hitec.presentation.main.MainViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun MainScreen(
+fun InstallDeviceScreen(
     viewModel: MainViewModel
 ) {
     val state = viewModel.collectAsState().value
@@ -26,10 +29,14 @@ fun MainScreen(
         }
     }
 
-    MainScreen(state.localSiteEngWrittenByUser)
+    InstallDeviceScreen(state.installDeviceList)
 }
 
 @Composable
-private fun MainScreen(test: String) {
-    Text(text = test)
+private fun InstallDeviceScreen(installDeviceList: List<InstallDevice>) {
+    LazyColumn {
+        items(installDeviceList.size) { index ->
+            InstallDeviceCard(installDevice = installDeviceList[index])
+        }
+    }
 }
