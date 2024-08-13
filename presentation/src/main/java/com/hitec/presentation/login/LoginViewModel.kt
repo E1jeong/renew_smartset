@@ -48,7 +48,6 @@ class LoginViewModel @Inject constructor(
     init {
         getAndroidDeviceId()
         getLoginScreenInfo()
-        getLocalSite()
     }
 
     fun getLocalSite() = intent {
@@ -85,13 +84,14 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onLoginClick() = intent {
-        val foundLocalSiteName = findLocalSiteNameUseCase(state.localSite).getOrThrow()
-        setLocalSiteEngWrittenByUser(foundLocalSiteName.first().siteId)
+        val foundLocalSiteName = findLocalSiteNameUseCase(state.localSite).getOrDefault(emptyList())
 
         if (foundLocalSiteName.isNotEmpty()) {
             setIsLocalSiteWarningVisible(false)
+            setLocalSiteEngWrittenByUser(foundLocalSiteName.first().siteId)
             saveLoginScreenInfo()
             postSideEffect(LoginSideEffect.NavigateToMainActivity)
+
         } else {
             setIsLocalSiteWarningVisible(true)
         }
@@ -149,5 +149,5 @@ data class LoginState(
 
 sealed interface LoginSideEffect {
     class Toast(val message: String) : LoginSideEffect
-    object NavigateToMainActivity : LoginSideEffect
+    data object NavigateToMainActivity : LoginSideEffect
 }
