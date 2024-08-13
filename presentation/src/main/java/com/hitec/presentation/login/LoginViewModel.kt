@@ -50,7 +50,7 @@ class LoginViewModel @Inject constructor(
         getLoginScreenInfo()
     }
 
-    fun getLocalSite() = intent {
+    private fun getLocalSite() = intent {
         getLocalSiteUseCase(
             userId = state.id,
             password = state.password,
@@ -95,6 +95,11 @@ class LoginViewModel @Inject constructor(
         } else {
             setIsLocalSiteWarningVisible(true)
         }
+    }
+
+    fun onDownloadSiteButtonClick() = intent {
+        getLocalSite()
+        setIsLocalSiteWarningVisible(false)
     }
 
     private fun saveLoginScreenInfo() = intent {

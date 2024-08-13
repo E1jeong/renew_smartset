@@ -75,7 +75,7 @@ fun LoginScreen(
         onLocalSiteChange = viewModel::onLocalSiteChange,
         onSwitchChange = viewModel::onSwitchChange,
         onLoginClick = viewModel::onLoginClick,
-        onDownloadLocalSiteClick = viewModel::getLocalSite,
+        onDownloadLocalSiteClick = viewModel::onDownloadSiteButtonClick,
         isLocalSiteWarningVisible = state.isLocalSiteWarningVisible,
         onHeaderClick = { onHeaderClick() }
     )
