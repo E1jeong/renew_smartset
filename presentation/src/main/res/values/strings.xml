@@ -13,6 +13,7 @@
     <string name="login_switch_text">Remember me</string>
     <string name="login_button_download_local_site">Download Local Site</string>
     <string name="login_text_local_site_warning">Can\'t find local site. Please retry Download Button</string>
+    <string name="android_device_id">Android Device ID</string>
 
     <!--PermissionHelper -->
     <string name="move_to_settings">Move to settings</string>
