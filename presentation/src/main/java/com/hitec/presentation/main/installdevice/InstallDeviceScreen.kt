@@ -1,20 +1,25 @@
 package com.hitec.presentation.main.installdevice
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.main.MainSideEffect
 import com.hitec.presentation.main.MainViewModel
-import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun InstallDeviceScreen(
     viewModel: MainViewModel
 ) {
-    val state = viewModel.collectAsState().value
+    val state by viewModel.container.stateFlow.collectAsState()
     val context = LocalContext.current
 
     viewModel.collectSideEffect { sideEffect ->
@@ -29,7 +34,13 @@ fun InstallDeviceScreen(
         }
     }
 
-    InstallDeviceScreen(state.installDeviceList)
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (state.isNetworkLoading) {
+            Text("로딩 중...")
+        } else {
+            InstallDeviceScreen(state.installDeviceList)
+        }
+    }
 }
 
 @Composable

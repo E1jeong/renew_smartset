@@ -11,6 +11,7 @@ import com.hitec.domain.usecase.GetInstallDbUseCase
 import com.hitec.domain.usecase.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.GetSubAreaUseCase
 import com.hitec.domain.usecase.LoginScreenInfoUseCase
+import com.hitec.presentation.util.EventBus
 import com.hitec.presentation.util.NavigationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -50,10 +51,7 @@ class MainViewModel @Inject constructor(
     init {
         getLoginScreenInfo()
         getSubArea()
-        getInstallDbUrl()
-        getInstallDb()
         getInstallDevice()
-        deleteInstallDb()
     }
 
     private fun getLoginScreenInfo() = blockingIntent {
@@ -65,23 +63,14 @@ class MainViewModel @Inject constructor(
                 password = loginScreenInfo.password,
                 localSite = loginScreenInfo.localSite,
                 androidDeviceId = loginScreenInfo.androidDeviceId,
-                localSiteEngWrittenByUser = loginScreenInfo.localSiteEngWrittenByUser
+                localSiteEngWrittenByUser = loginScreenInfo.localSiteEngWrittenByUser,
+                isNetworkLoading = true,
             )
         }
     }
 
     private fun getSubArea() = intent {
-        getSubAreaUseCase(
-            userId = state.id,
-            password = state.password,
-            mobileId = state.id,
-            bluetoothId = state.androidDeviceId,
-            localSite = state.localSiteEngWrittenByUser
-        ).getOrThrow()
-    }
-
-    private fun getInstallDbUrl() = blockingIntent {
-        val url = getInstallDbUrlUseCase(
+        val subAreaResponse = getSubAreaUseCase(
             userId = state.id,
             password = state.password,
             mobileId = state.id,
@@ -89,36 +78,9 @@ class MainViewModel @Inject constructor(
             localSite = state.localSiteEngWrittenByUser
         ).getOrThrow()
 
-        val fileName = url.substringAfterLast("/")
-
-        reduce {
-            state.copy(
-                installDbUrl = url,
-                installDbFileName = fileName
-            )
-        }
-    }
-
-    private fun getInstallDb() = intent {
-        getInstallDbUseCase(state.installDbUrl).getOrThrow()
-    }
-
-    private fun getInstallDevice() = intent {
-        val installDeviceList = getInstallDeviceUseCase().getOrThrow()
-
-        reduce {
-            state.copy(installDeviceList = installDeviceList)
-        }
-    }
-
-    private fun deleteInstallDb() = intent {
-        deleteInstallDbUseCase(
-            userId = state.id,
-            password = state.password,
-            mobileId = state.id,
-            bluetoothId = state.androidDeviceId,
-            fileName = state.installDbFileName
-        ).getOrThrow()
+        val subAreaList = subAreaResponse.subAreaInfo.map { it.areaName }
+        reduce { state.copy(subAreaList = subAreaList) }
+        EventBus.subAreaListState.value = subAreaList // using eventbus to pass data SearchScreen
     }
 
     fun onQrCodeValueChange(qrCodeValue: String) = intent {
@@ -127,6 +89,42 @@ class MainViewModel @Inject constructor(
 
     fun openSearchScreen(navHostController: NavHostController) {
         NavigationUtils.navigate(navHostController, SearchRoute.route)
+    }
+
+    private fun getInstallDevice() = intent {
+        //get sqlite db url
+        val url = getInstallDbUrlUseCase(
+            userId = state.id,
+            password = state.password,
+            mobileId = state.id,
+            bluetoothId = state.androidDeviceId,
+            localSite = state.localSiteEngWrittenByUser
+        ).getOrThrow()
+
+        //get sqlite db to use url
+        getInstallDbUseCase(url).getOrThrow()
+
+        //get install device list from sqlite db to room api
+        val installDeviceList = getInstallDeviceUseCase().getOrThrow()
+
+        //extract db file name from url
+        val dbFileName = url.substringAfterLast("/")
+
+        //delete sqlite db file in server
+        deleteInstallDbUseCase(
+            userId = state.id,
+            password = state.password,
+            mobileId = state.id,
+            bluetoothId = state.androidDeviceId,
+            fileName = dbFileName
+        ).getOrThrow()
+
+        reduce {
+            state.copy(
+                installDeviceList = installDeviceList,
+                isNetworkLoading = false,
+            )
+        }
     }
 
     companion object {
@@ -142,9 +140,9 @@ data class MainState(
     val androidDeviceId: String = "",
     val localSiteEngWrittenByUser: String = "",
     val qrCodeValue: String = "No QR Code detected",
-    val installDbUrl: String = "",
-    val installDbFileName: String = "",
-    val installDeviceList: List<InstallDevice> = emptyList()
+    val installDeviceList: List<InstallDevice> = emptyList(),
+    val subAreaList: List<String> = emptyList(),
+    val isNetworkLoading: Boolean = false,
 )
 
 sealed interface MainSideEffect {
