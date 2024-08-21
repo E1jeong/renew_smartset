@@ -39,7 +39,7 @@ fun InstallDeviceScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (state.isNetworkLoading) {
-            Text("로딩 중...")
+            Text(stringResource(id = R.string.loading))
         } else {
             InstallDeviceScreen(state.installDeviceList)
         }
