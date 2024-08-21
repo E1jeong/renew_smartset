@@ -10,9 +10,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.R
 import com.hitec.presentation.main.MainSideEffect
 import com.hitec.presentation.main.MainViewModel
+import com.hitec.presentation.main.component.InstallDeviceCard
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable

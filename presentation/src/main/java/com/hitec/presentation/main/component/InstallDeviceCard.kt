@@ -1,4 +1,4 @@
-package com.hitec.presentation.main.installdevice
+package com.hitec.presentation.main.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
