@@ -5,6 +5,7 @@
     <string name="login">Login</string>
     <string name="local_site">LocalSite</string>
     <string name="cancel">Cancel</string>
+    <string name="loading">Now loading</string>
 
     <!--Login Screen-->
     <string name="login_title">Hitec Install App</string>
@@ -24,4 +25,7 @@
 
     <!--QrCodeValueDialog-->
     <string name="qrcode_value_dialog_title">QR code result</string>
+
+    <!--SearchScreen-->
+    <string name="search_placeholder_imei">Please enter IMEI</string>
 </resources>

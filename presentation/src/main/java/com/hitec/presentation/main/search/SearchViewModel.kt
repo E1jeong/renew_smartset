@@ -3,6 +3,9 @@ package com.hitec.presentation.main.search
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
+import com.hitec.domain.model.InstallDevice
+import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCase
+import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
 import com.hitec.presentation.util.EventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -17,6 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
+    private val getInstallDeviceListFromSubAreaUseCase: GetInstallDeviceListFromSubAreaUseCase,
+    private val getInstallDeviceListFromImeiAndSubAreaUseCase: GetInstallDeviceListFromImeiAndSubAreaUseCase,
 ) : ViewModel(), ContainerHost<SearchState, SearchSideEffect> {
 
     override val container: Container<SearchState, SearchSideEffect> = container(
@@ -38,31 +43,55 @@ class SearchViewModel @Inject constructor(
 
     private fun getSubAreaListFromMainViewModel() = intent {
         EventBus.subAreaListState.collectLatest { subAreaList ->
-            reduce {
-                state.copy(subAreaList = subAreaList)
-            }
-            Log.e(TAG, "getSubAreaListFromMainViewModel: $subAreaList")
+            reduce { state.copy(subAreaList = subAreaList) }
+            Log.i(TAG, "getSubAreaListFromMainViewModel: $subAreaList")
         }
     }
 
     fun onChipSelected(selectedChip: String) = intent {
         reduce {
-            if (state.selectedChip == selectedChip) {
-                // 이미 선택된 칩을 다시 클릭하면 선택 해제
-                state.copy(selectedChip = "")
-            } else {
-                // 새로운 칩 선택
+            if (state.selectedChip == selectedChip) { // 이미 선택된 칩을 다시 클릭하면 선택 해제
+                state.copy(selectedChip = "", searchedInstallDeviceList = emptyList())
+            } else { // 새로운 칩 선택
                 state.copy(selectedChip = selectedChip)
             }
         }
-        Log.d(TAG, "Chip selection changed: ${state.selectedChip}")
+
+        if (state.selectedChip.isNotEmpty()) {
+            searchInstallDeviceFromSubArea()
+        }
     }
 
     fun search(query: String) = intent {
-        // 검색 로직 구현
-        Log.d(TAG, "Searching for: $query")
-        // TODO: 실제 검색 기능 구현
+
         postSideEffect(SearchSideEffect.Toast("Searching for: $query"))
+
+        reduce { state.copy(isNetworkLoading = true) }
+        val searchedInstallDeviceList =
+            getInstallDeviceListFromImeiAndSubAreaUseCase(
+                subArea = state.selectedChip,
+                imei = query
+            ).getOrThrow()
+
+        reduce {
+            state.copy(
+                searchedInstallDeviceList = searchedInstallDeviceList,
+                isNetworkLoading = false
+            )
+        }
+    }
+
+    private fun searchInstallDeviceFromSubArea() = intent {
+        reduce { state.copy(isNetworkLoading = true) }
+        val searchedInstallDeviceList =
+            getInstallDeviceListFromSubAreaUseCase(state.selectedChip).getOrThrow()
+
+        reduce {
+            state.copy(
+                searchedInstallDeviceList = searchedInstallDeviceList,
+                isNetworkLoading = false
+            )
+        }
     }
 
     companion object {
@@ -74,7 +103,9 @@ class SearchViewModel @Inject constructor(
 data class SearchState(
     val subAreaList: List<String> = emptyList(),
     val selectedChip: String = "",
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val searchedInstallDeviceList: List<InstallDevice> = emptyList(),
+    val isNetworkLoading: Boolean = false,
 )
 
 sealed interface SearchSideEffect {

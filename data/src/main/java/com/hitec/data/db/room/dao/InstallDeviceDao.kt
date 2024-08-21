@@ -17,6 +17,16 @@ interface InstallDeviceDao {
     @Query("DELETE FROM T_InstallDevice")
     suspend fun delete()
 
-    @Query("SELECT * FROM T_InstallDevice WHERE meterDeviceSn = :serial")
-    fun getDeviceWithSerial(serial: String): InstallDeviceEntity
+    @Query("SELECT * FROM T_InstallDevice WHERE AreaBig = :subArea")
+    suspend fun getDeviceListWithSubArea(subArea: String): List<InstallDeviceEntity>
+
+    @Query(
+        "SELECT * FROM T_InstallDevice " +
+                "WHERE (:subArea != '' AND AreaBig = :subArea AND (REPLACE(nwk, '-', '') LIKE '%' || REPLACE(:imei, '-', '') || '%')) " +
+                "OR (:subArea = '' AND REPLACE(nwk, '-', '') LIKE '%' || REPLACE(:imei, '-', '') || '%')"
+    )
+    suspend fun getDeviceListWithImeiAndSubArea(
+        subArea: String,
+        imei: String
+    ): List<InstallDeviceEntity>
 }

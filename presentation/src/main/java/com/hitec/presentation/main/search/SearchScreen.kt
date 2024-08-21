@@ -3,10 +3,13 @@ package com.hitec.presentation.main.search
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -31,11 +34,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.R
+import com.hitec.presentation.main.component.InstallDeviceCard
 import com.hitec.presentation.theme.Paddings
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -90,6 +97,14 @@ private fun SearchContent(
             selectedChip = state.selectedChip,
             onChipSelected = onChipSelected
         )
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (state.isNetworkLoading) {
+                Text(stringResource(R.string.loading))
+            } else {
+                SearchResult(state.searchedInstallDeviceList)
+            }
+        }
     }
 }
 
@@ -108,7 +123,7 @@ private fun SearchBox(
                 .padding(Paddings.medium),
             value = keyword,
             onValueChange = onValueChange,
-            placeholder = { Text(text = "검색어를 입력해주세요.") },
+            placeholder = { Text(text = stringResource(R.string.search_placeholder_imei)) },
             shape = RoundedCornerShape(size = 8.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -176,6 +191,15 @@ private fun SubAreaChipGroup(
             }
         } else {
             Text("No options available")
+        }
+    }
+}
+
+@Composable
+private fun SearchResult(installDeviceList: List<InstallDevice>) {
+    LazyColumn {
+        items(installDeviceList.size) { index ->
+            InstallDeviceCard(installDevice = installDeviceList[index])
         }
     }
 }
