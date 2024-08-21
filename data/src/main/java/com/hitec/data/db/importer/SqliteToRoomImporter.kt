@@ -82,6 +82,10 @@ class SqliteToRoomImporter @Inject constructor(
 
         val entities = tempDb.rawQuery(query, null).use { cursor ->
             generateSequence { if (cursor.moveToNext()) cursor else null }
+                .filter {
+                    it.getStringOrNull("communicationTypeCd") == COMMUNICATION_TYPE_NBIOT
+                            || it.getStringOrNull("communicationTypeCd") == COMMUNICATION_TYPE_GSM
+                }
                 .map { mapToInstallDeviceEntity(it) }
 //                .onEach { Log.d("DatabaseImport", "Mapped entity: $it") }
                 .toList()
@@ -247,6 +251,8 @@ class SqliteToRoomImporter @Inject constructor(
         const val SQLITE_TABLE_INSTALL = "INSTALL"
         const val SQLITE_TABLE_SERVER = "SERVER"
         const val SQLITE_TABLE_SYSINFO = "SYSINFO"
+        const val COMMUNICATION_TYPE_NBIOT = "4"
+        const val COMMUNICATION_TYPE_GSM = "6"
     }
 }
 
