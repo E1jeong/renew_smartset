@@ -60,15 +60,15 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onIdChange(id: String) = blockingIntent {
-        reduce { state.copy(id = id) }
+        reduce { state.copy(id = id.replace(" ", "")) }
     }
 
     fun onPasswordChange(password: String) = blockingIntent {
-        reduce { state.copy(password = password) }
+        reduce { state.copy(password = password.replace(" ", "")) }
     }
 
     fun onLocalSiteChange(localSite: String) = blockingIntent {
-        reduce { state.copy(localSite = localSite) }
+        reduce { state.copy(localSite = localSite.replace(" ", "")) }
     }
 
     fun onSwitchChange(isSwitchOn: Boolean) = intent {
