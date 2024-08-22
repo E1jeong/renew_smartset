@@ -11,8 +11,9 @@ import com.hitec.domain.usecase.GetInstallDbUseCase
 import com.hitec.domain.usecase.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.GetSubAreaUseCase
 import com.hitec.domain.usecase.LoginScreenInfoUseCase
+import com.hitec.presentation.navigation.NavigationUtils
+import com.hitec.presentation.navigation.SearchNav
 import com.hitec.presentation.util.EventBus
-import com.hitec.presentation.util.NavigationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
@@ -88,7 +89,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun openSearchScreen(navHostController: NavHostController) {
-        NavigationUtils.navigate(navHostController, SearchRoute.route)
+        NavigationUtils.navigate(navHostController, SearchNav.route)
     }
 
     private fun getInstallDevice() = intent {

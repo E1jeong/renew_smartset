@@ -10,7 +10,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hitec.presentation.util.NavigationUtils
+import com.hitec.presentation.navigation.MainNav
+import com.hitec.presentation.navigation.NavigationUtils
 
 @Composable
 fun MainBottomBar(
@@ -18,10 +19,10 @@ fun MainBottomBar(
     currentRoute: String?
 ) {
     val mainBottomNavigationItems = listOf(
-        MainRoute.Camera,
-        MainRoute.InstallDevice,
-        MainRoute.AsDevice,
-        MainRoute.MyPage
+        MainNav.Camera,
+        MainNav.InstallDevice,
+        MainNav.AsDevice,
+        MainNav.MyPage
     )
 
     Column {

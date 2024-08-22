@@ -1,0 +1,52 @@
+package com.hitec.presentation.navigation
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Recycling
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.hitec.presentation.navigation.RouteName.AS_DEVICE
+import com.hitec.presentation.navigation.RouteName.CAMERA
+import com.hitec.presentation.navigation.RouteName.INSTALL_DEVICE
+import com.hitec.presentation.navigation.RouteName.MY_PAGE
+import com.hitec.presentation.navigation.RouteName.SEARCH
+
+sealed class MainNav(
+    override val route: String,
+    override val title: String,
+    val icon: ImageVector
+) : Destination {
+
+    data object Camera : MainNav(CAMERA, "Camera", Icons.Filled.CameraAlt)
+    data object InstallDevice : MainNav(INSTALL_DEVICE, "Install Device", Icons.Filled.List)
+    data object AsDevice : MainNav(AS_DEVICE, "AS Device", Icons.Filled.Recycling)
+    data object MyPage : MainNav(MY_PAGE, "My page", Icons.Filled.AccountCircle)
+
+    companion object {
+        fun isMainRoute(route: String?): Boolean {
+            return when (route) {
+                CAMERA, INSTALL_DEVICE, AS_DEVICE, MY_PAGE -> true
+                else -> false
+            }
+        }
+    }
+}
+
+object SearchNav : Destination {
+    override val route: String = SEARCH
+    override val title: String = "Search"
+}
+
+interface Destination {
+    val route: String
+    val title: String
+}
+
+object RouteName {
+    const val CAMERA = "CameraScreen"
+    const val INSTALL_DEVICE = "InstallDeviceScreen"
+    const val AS_DEVICE = "AsDeviceScreen"
+    const val MY_PAGE = "MyPageScreen"
+    const val SEARCH = "SearchScreen"
+}

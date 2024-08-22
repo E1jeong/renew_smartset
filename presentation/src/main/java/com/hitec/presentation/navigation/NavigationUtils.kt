@@ -1,10 +1,6 @@
-package com.hitec.presentation.util
+package com.hitec.presentation.navigation
 
 import androidx.navigation.NavHostController
-import com.hitec.presentation.main.Destination
-import com.hitec.presentation.main.MainRoute
-import com.hitec.presentation.main.RouteName
-import com.hitec.presentation.main.SearchRoute
 
 object NavigationUtils {
     fun navigate(
@@ -27,12 +23,12 @@ object NavigationUtils {
 
     fun findDestination(route: String?): Destination {
         return when (route) {
-            RouteName.CAMERA -> MainRoute.Camera
-            RouteName.INSTALL_DEVICE -> MainRoute.InstallDevice
-            RouteName.AS_DEVICE -> MainRoute.AsDevice
-            RouteName.MY_PAGE -> MainRoute.MyPage
-            RouteName.SEARCH -> SearchRoute
-            else -> MainRoute.InstallDevice
+            RouteName.CAMERA -> MainNav.Camera
+            RouteName.INSTALL_DEVICE -> MainNav.InstallDevice
+            RouteName.AS_DEVICE -> MainNav.AsDevice
+            RouteName.MY_PAGE -> MainNav.MyPage
+            RouteName.SEARCH -> SearchNav
+            else -> MainNav.InstallDevice
         }
     }
 }

@@ -12,7 +12,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.hitec.presentation.util.NavigationUtils
+import com.hitec.presentation.navigation.MainNav
+import com.hitec.presentation.navigation.NavigationUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,7 +27,7 @@ fun MainHeader(
             Text(text = NavigationUtils.findDestination(currentRoute).title)
         },
         navigationIcon = {
-            if (!MainRoute.isMainRoute(currentRoute)) {
+            if (!MainNav.isMainRoute(currentRoute)) {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
@@ -42,7 +43,7 @@ fun MainHeader(
             actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         ),
         actions = {
-            if (currentRoute == MainRoute.InstallDevice.route || currentRoute == MainRoute.AsDevice.route) {
+            if (currentRoute == MainNav.InstallDevice.route || currentRoute == MainNav.AsDevice.route) {
                 IconButton(
                     onClick = { viewModel.openSearchScreen(navController) }
                 ) {

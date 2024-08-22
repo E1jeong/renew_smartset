@@ -20,6 +20,8 @@ import com.hitec.presentation.main.camera.CameraScreen
 import com.hitec.presentation.main.installdevice.InstallDeviceScreen
 import com.hitec.presentation.main.mypage.MyPageScreen
 import com.hitec.presentation.main.search.SearchScreen
+import com.hitec.presentation.navigation.MainNav
+import com.hitec.presentation.navigation.SearchNav
 
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
@@ -42,42 +44,27 @@ fun MainNavHost(sharedViewModel: MainViewModel) {
                 NavHost(
                     modifier = Modifier.padding(paddingValues),
                     navController = navController,
-                    startDestination = MainRoute.InstallDevice.route
+                    startDestination = MainNav.InstallDevice.route
                 ) {
-                    composable(
-                        route = MainRoute.InstallDevice.route,
-                        deepLinks = MainRoute.InstallDevice.deepLinks
-                    ) {
+                    composable(route = MainNav.InstallDevice.route) {
                         InstallDeviceScreen(sharedViewModel)
                     }
-                    composable(
-                        route = MainRoute.Camera.route,
-                        deepLinks = MainRoute.Camera.deepLinks
-                    ) {
+                    composable(route = MainNav.Camera.route) {
                         CameraScreen(sharedViewModel)
                     }
-                    composable(
-                        route = MainRoute.AsDevice.route,
-                        deepLinks = MainRoute.AsDevice.deepLinks
-                    ) {
+                    composable(route = MainNav.AsDevice.route) {
                         AsDeviceScreen()
                     }
-                    composable(
-                        route = MainRoute.MyPage.route,
-                        deepLinks = MainRoute.MyPage.deepLinks
-                    ) {
+                    composable(route = MainNav.MyPage.route) {
                         MyPageScreen()
                     }
-                    composable(
-                        route = SearchRoute.route,
-                        deepLinks = SearchRoute.deepLinks
-                    ) {
+                    composable(route = SearchNav.route) {
                         SearchScreen()
                     }
                 }
             },
             bottomBar = {
-                if (MainRoute.isMainRoute(currentRoute)) {
+                if (MainNav.isMainRoute(currentRoute)) {
                     MainBottomBar(
                         navController = navController,
                         currentRoute = currentRoute
