@@ -1,9 +1,11 @@
 package com.hitec.presentation.main
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.domain.usecase.DeleteInstallDbUseCase
 import com.hitec.domain.usecase.GetInstallDbUrlUseCase
@@ -11,7 +13,10 @@ import com.hitec.domain.usecase.GetInstallDbUseCase
 import com.hitec.domain.usecase.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.GetSubAreaUseCase
 import com.hitec.domain.usecase.LoginScreenInfoUseCase
+import com.hitec.presentation.navigation.ArgumentName
+import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.NavigationUtils
+import com.hitec.presentation.navigation.RouteName
 import com.hitec.presentation.navigation.SearchNav
 import com.hitec.presentation.util.EventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +39,7 @@ class MainViewModel @Inject constructor(
     private val getInstallDbUrlUseCase: GetInstallDbUrlUseCase,
     private val getInstallDbUseCase: GetInstallDbUseCase,
     private val getInstallDeviceUseCase: GetInstallDeviceUseCase,
-    private val deleteInstallDbUseCase: DeleteInstallDbUseCase
+    private val deleteInstallDbUseCase: DeleteInstallDbUseCase,
 ) : ViewModel(), ContainerHost<MainState, MainSideEffect> {
 
     override val container: Container<MainState, MainSideEffect> = container(
@@ -90,6 +95,20 @@ class MainViewModel @Inject constructor(
 
     fun openSearchScreen(navHostController: NavHostController) {
         NavigationUtils.navigate(navHostController, SearchNav.route)
+    }
+
+    fun openDeviceDetailScreen(navHostController: NavHostController, installDevice: InstallDevice) {
+        val gson = Gson()
+        val installDeviceJson = gson.toJson(installDevice)
+        val encodedJson = Uri.encode(installDeviceJson)
+        val route =
+            DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", encodedJson)
+
+        NavigationUtils.navigate(
+            controller = navHostController,
+            routeName = route,
+            backStackRouteName = RouteName.INSTALL_DEVICE
+        )
     }
 
     private fun getInstallDevice() = intent {

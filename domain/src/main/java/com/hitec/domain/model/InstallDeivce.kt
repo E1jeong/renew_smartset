@@ -1,5 +1,8 @@
 package com.hitec.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class InstallDevice(
     val modTypeCd: String? = null,
     val meterDeviceId: String,

@@ -18,14 +18,17 @@ import com.hitec.presentation.theme.RenewSmartSetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InstallDeviceCard(installDevice: InstallDevice) {
+fun InstallDeviceCard(
+    installDevice: InstallDevice,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(Paddings.medium)
             .shadow(elevation = 10.dp),
         shape = RoundedCornerShape(8.dp),
-        onClick = {}
+        onClick = onClick
     ) {
         Column(modifier = Modifier.padding(Paddings.large)) {
             Text(text = "User house number: ${installDevice.consumeHouseNo}")
@@ -156,7 +159,8 @@ fun InstallDeviceCardPreview() {
                 "",
                 "",
                 "",
-            )
+            ),
+            {}
         )
     }
 }

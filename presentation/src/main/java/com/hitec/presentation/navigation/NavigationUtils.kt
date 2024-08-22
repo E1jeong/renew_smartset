@@ -28,6 +28,7 @@ object NavigationUtils {
             RouteName.AS_DEVICE -> MainNav.AsDevice
             RouteName.MY_PAGE -> MainNav.MyPage
             RouteName.SEARCH -> SearchNav
+            RouteName.DEVICE_DETAIL -> DeviceDetailNav
             else -> MainNav.InstallDevice
         }
     }

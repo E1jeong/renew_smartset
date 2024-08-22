@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
 import com.hitec.presentation.main.MainSideEffect
@@ -20,6 +21,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun InstallDeviceScreen(
+    navController: NavHostController,
     viewModel: MainViewModel
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
@@ -41,16 +43,26 @@ fun InstallDeviceScreen(
         if (state.isNetworkLoading) {
             Text(stringResource(id = R.string.loading))
         } else {
-            InstallDeviceScreen(state.installDeviceList)
+            InstallDeviceScreen(
+                installDeviceList = state.installDeviceList,
+                onItemClick = { installDevice ->
+                    viewModel.openDeviceDetailScreen(navController, installDevice)
+                }
+            )
         }
     }
 }
 
 @Composable
-private fun InstallDeviceScreen(installDeviceList: List<InstallDevice>) {
+private fun InstallDeviceScreen(
+    installDeviceList: List<InstallDevice>,
+    onItemClick: (InstallDevice) -> Unit
+) {
     LazyColumn {
         items(installDeviceList.size) { index ->
-            InstallDeviceCard(installDevice = installDeviceList[index])
+            InstallDeviceCard(
+                installDevice = installDeviceList[index],
+                onClick = { onItemClick(installDeviceList[index]) })
         }
     }
 }
