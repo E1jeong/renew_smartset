@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
 import com.hitec.presentation.main.component.InstallDeviceCard
@@ -49,6 +50,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SearchScreen(
+    navController: NavHostController,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -69,7 +71,10 @@ fun SearchScreen(
     SearchContent(
         state = state,
         onChipSelected = viewModel::onChipSelected,
-        onSearch = viewModel::search
+        onSearch = viewModel::search,
+        onItemClick = { installDevice ->
+            viewModel.openDeviceDetailScreen(navController, installDevice)
+        }
     )
 }
 
@@ -77,7 +82,8 @@ fun SearchScreen(
 private fun SearchContent(
     state: SearchState,
     onChipSelected: (String) -> Unit,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
+    onItemClick: (InstallDevice) -> Unit,
 ) {
     var userInput by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -102,7 +108,10 @@ private fun SearchContent(
             if (state.isNetworkLoading) {
                 Text(stringResource(R.string.loading))
             } else {
-                SearchResult(state.searchedInstallDeviceList)
+                SearchResult(
+                    installDeviceList = state.searchedInstallDeviceList,
+                    onItemClick = onItemClick
+                )
             }
         }
     }
@@ -196,10 +205,16 @@ private fun SubAreaChipGroup(
 }
 
 @Composable
-private fun SearchResult(installDeviceList: List<InstallDevice>) {
+private fun SearchResult(
+    installDeviceList: List<InstallDevice>,
+    onItemClick: (InstallDevice) -> Unit
+) {
     LazyColumn {
         items(installDeviceList.size) { index ->
-            InstallDeviceCard(installDevice = installDeviceList[index])
+            InstallDeviceCard(
+                installDevice = installDeviceList[index],
+                onClick = { onItemClick(installDeviceList[index]) }
+            )
         }
     }
 }

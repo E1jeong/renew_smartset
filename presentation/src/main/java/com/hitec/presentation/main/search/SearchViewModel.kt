@@ -1,11 +1,18 @@
 package com.hitec.presentation.main.search
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
+import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
+import com.hitec.presentation.navigation.ArgumentName
+import com.hitec.presentation.navigation.DeviceDetailNav
+import com.hitec.presentation.navigation.NavigationUtils
+import com.hitec.presentation.navigation.RouteName
 import com.hitec.presentation.util.EventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -40,6 +47,19 @@ class SearchViewModel @Inject constructor(
         getSubAreaListFromMainViewModel()
     }
 
+    fun openDeviceDetailScreen(navHostController: NavHostController, installDevice: InstallDevice) {
+        val gson = Gson()
+        val installDeviceJson = gson.toJson(installDevice)
+        val encodedJson = Uri.encode(installDeviceJson)
+        val route =
+            DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", encodedJson)
+
+        NavigationUtils.navigate(
+            controller = navHostController,
+            routeName = route,
+            backStackRouteName = RouteName.SEARCH
+        )
+    }
 
     private fun getSubAreaListFromMainViewModel() = intent {
         EventBus.subAreaListState.collectLatest { subAreaList ->

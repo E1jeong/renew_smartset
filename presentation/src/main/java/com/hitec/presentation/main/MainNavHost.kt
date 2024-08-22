@@ -70,7 +70,7 @@ fun MainNavHost(sharedViewModel: MainViewModel) {
                         MyPageScreen()
                     }
                     composable(route = SearchNav.route) {
-                        SearchScreen()
+                        SearchScreen(navController = navController)
                     }
                     composable(
                         route = DeviceDetailNav.route,
