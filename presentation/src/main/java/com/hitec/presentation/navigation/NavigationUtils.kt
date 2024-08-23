@@ -22,13 +22,14 @@ object NavigationUtils {
     }
 
     fun findDestination(route: String?): Destination {
-        return when (route) {
-            RouteName.CAMERA -> MainNav.Camera
-            RouteName.INSTALL_DEVICE -> MainNav.InstallDevice
-            RouteName.AS_DEVICE -> MainNav.AsDevice
-            RouteName.MY_PAGE -> MainNav.MyPage
-            RouteName.SEARCH -> SearchNav
-            RouteName.DEVICE_DETAIL -> DeviceDetailNav
+        return when {
+            route == null -> MainNav.InstallDevice
+            route.contains(RouteName.CAMERA) -> MainNav.Camera
+            route.contains(RouteName.INSTALL_DEVICE) -> MainNav.InstallDevice
+            route.contains(RouteName.AS_DEVICE) -> MainNav.AsDevice
+            route.contains(RouteName.MY_PAGE) -> MainNav.MyPage
+            route.contains(RouteName.SEARCH) -> SearchNav
+            route.contains(RouteName.DEVICE_DETAIL) -> DeviceDetailNav
             else -> MainNav.InstallDevice
         }
     }
