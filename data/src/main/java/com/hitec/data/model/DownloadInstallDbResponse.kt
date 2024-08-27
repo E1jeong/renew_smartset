@@ -7,7 +7,7 @@ import com.tickaroo.tikxml.annotation.Xml
 @Xml(name = "DownloadInstallDBReponse") //오타 주의
 data class DownloadInstallDbResponse(
     @PropertyElement(name = "userId") val userId: String,
-    @PropertyElement(name = "userLevel") val userLevel: String,
+    @PropertyElement(name = "userLevel") val userLevel: Int,
     @PropertyElement(name = "localSite") val localSite: String,
     @PropertyElement(name = "returnCode") val returnCode: Int,
     @PropertyElement(name = "msgCode") val msgCode: Int,
