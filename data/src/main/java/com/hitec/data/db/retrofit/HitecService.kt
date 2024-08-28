@@ -1,12 +1,16 @@
 package com.hitec.data.db.retrofit
 
 import com.hitec.data.model.DeleteInstallDBResponse
+import com.hitec.data.model.DownloadImageListResponse
 import com.hitec.data.model.DownloadInstallDbResponse
 import com.hitec.data.model.LocalSiteListResponse
 import com.hitec.data.model.SubAreaListResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Streaming
 import retrofit2.http.Url
@@ -26,11 +30,13 @@ interface HitecService {
         const val COMPANY_CODE = "companyCd"
         const val CONNECTION_TYPE = "ConnectionType"
         const val FILE_NAME = "fileName"
+        const val DATA = "data"
 
         const val DOWNLOAD_LOCAL_INFO = "downloadLocalInfo"
         const val DOWNLOAD_SUB_AREA = "downloadSubArea"
         const val DOWNLOAD_INSTALL_DB = "downloadInstallDB"
         const val DELETE_INSTALL_DB = "deleteInstallDB"
+        const val DOWNLOAD_IMAGE_LIST = "DownloadImageList"
     }
 
     @GET(SMART_SERVER_COMMON)
@@ -86,4 +92,16 @@ interface HitecService {
         @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
         @Query(FILE_NAME) fileName: String,
     ): DeleteInstallDBResponse
+
+    @FormUrlEncoded
+    @POST(SMART_SERVER_COMMON)
+    suspend fun postDownloadableImageList(
+        @Query(METHOD) method: String = DOWNLOAD_IMAGE_LIST,
+        @Query(USER_ID) userId: String,
+        @Query(PASSWORD) password: String,
+        @Query(MOBILE_ID) mobileId: String,
+        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
+        @Query(LOCAL_SITE) localSite: String,
+        @Field(DATA) data: String,
+    ): DownloadImageListResponse
 }
