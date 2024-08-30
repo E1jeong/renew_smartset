@@ -1,6 +1,7 @@
 package com.hitec.data.db.retrofit
 
 import com.hitec.data.model.DeleteInstallDBResponse
+import com.hitec.data.model.DownloadImageDataResponse
 import com.hitec.data.model.DownloadImageListResponse
 import com.hitec.data.model.DownloadInstallDbResponse
 import com.hitec.data.model.LocalSiteListResponse
@@ -37,6 +38,7 @@ interface HitecService {
         const val DOWNLOAD_INSTALL_DB = "downloadInstallDB"
         const val DELETE_INSTALL_DB = "deleteInstallDB"
         const val DOWNLOAD_IMAGE_LIST = "DownloadImageList"
+        const val DOWNLOAD_IMAGE_DATA = "DownloadImageData"
     }
 
     @GET(SMART_SERVER_COMMON)
@@ -104,4 +106,16 @@ interface HitecService {
         @Query(LOCAL_SITE) localSite: String,
         @Field(DATA) data: String,
     ): DownloadImageListResponse
+
+    @FormUrlEncoded
+    @POST(SMART_SERVER_COMMON)
+    suspend fun postDownloadDeviceImage(
+        @Query(METHOD) method: String = DOWNLOAD_IMAGE_DATA,
+        @Query(USER_ID) userId: String,
+        @Query(PASSWORD) password: String,
+        @Query(MOBILE_ID) mobileId: String,
+        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
+        @Query(LOCAL_SITE) localSite: String,
+        @Field(DATA) data: String,
+    ): DownloadImageDataResponse
 }

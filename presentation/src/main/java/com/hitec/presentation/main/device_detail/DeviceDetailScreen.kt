@@ -1,6 +1,5 @@
 package com.hitec.presentation.main.device_detail
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -36,6 +35,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,6 +45,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.R
 import com.hitec.presentation.component.button.PrimaryButton
 import com.hitec.presentation.component.icon.LeadingIcon
 import com.hitec.presentation.navigation.ArgumentName
@@ -82,22 +84,32 @@ fun DeviceDetailScreen(
         }
     }
 
-    DeviceDetailScreen(state.installDevice)
+    DeviceDetailScreen(
+        installDevice = state.installDevice,
+        imageList = state.deviceImageList.sortedBy { it.first }
+    )
 }
 
 @Composable
-private fun DeviceDetailScreen(installDevice: InstallDevice?) {
-    val images = listOf(
-        "https://picsum.photos/200/300",
-        "https://via.placeholder.com/150",
-        "https://dummyimage.com/300x200/000/fff",
-        "https://loremflickr.com/320/240",
-        "https://source.unsplash.com/random/300x200"
-    )
+private fun DeviceDetailScreen(
+    installDevice: InstallDevice?,
+    imageList: List<Pair<Int, Any?>>,
+) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
-            ImageSliderWithIndicator(images)
+            if (imageList.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = Paddings.large),
+                    text = stringResource(id = R.string.no_image_available),
+                    textAlign = TextAlign.Center,
+                )
+            } else {
+                ImageSliderWithIndicator(imageList)
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
             HouseNumberInfo(text = "${installDevice?.consumeHouseNo}")
             AddressInfo(text = "${installDevice?.AreaBig} ${installDevice?.setAreaAddr}")
@@ -109,8 +121,10 @@ private fun DeviceDetailScreen(installDevice: InstallDevice?) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ImageSliderWithIndicator(images: List<String>) {
-    val pagerState = rememberPagerState(pageCount = { images.size })
+fun ImageSliderWithIndicator(imageList: List<Pair<Int, Any?>>) {
+    val pagerState = rememberPagerState(pageCount = { imageList.size })
+    val imagesType = imageList.map { it.first }
+    val images = imageList.map { it.second }
 
     Box(
         modifier = Modifier
@@ -132,16 +146,27 @@ fun ImageSliderWithIndicator(images: List<String>) {
             )
         }
 
+        //Image type
+        if (pagerState.currentPage in imageList.indices) {
+            Text(
+                modifier = Modifier
+                    .padding(top = Paddings.small)
+                    .align(Alignment.TopCenter),
+                text = ImageManager.parsePhotoTypeCd(imagesType[pagerState.currentPage]),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+            )
+        }
+
         // Indicator
         Row(
-            Modifier
+            modifier = Modifier
                 .height(20.dp)
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            repeat(images.size) { iteration ->
+            repeat(imageList.size) { iteration ->
                 val color =
                     if (pagerState.currentPage == iteration) Color.White else Color.White.copy(alpha = 0.5f)
                 Box(
@@ -211,14 +236,14 @@ fun BoxScope.DeviceDetailFooter() {
             modifier = Modifier
                 .weight(1f)
                 .padding(Paddings.xsmall),
-            text = "Update",
+            text = stringResource(id = R.string.update),
             leadingIcon = LeadingIcon(Icons.Filled.Refresh),
             onClick = {})
         PrimaryButton(
             modifier = Modifier
                 .weight(1f)
                 .padding(Paddings.xsmall),
-            text = "Upload",
+            text = stringResource(id = R.string.upload),
             leadingIcon = LeadingIcon(Icons.Filled.Upload),
             onClick = {})
     }
@@ -230,7 +255,7 @@ fun BoxScope.DeviceDetailFooter() {
 fun DeviceDetailScreenPreview() {
     RenewSmartSetTheme {
         Surface {
-            DeviceDetailScreen(installDevice = null)
+            DeviceDetailScreen(installDevice = null, imageList = emptyList())
         }
     }
 }

@@ -1,11 +1,13 @@
 <resources>
-    <string name="app_name">renewSmartSet</string>
+    <string name="app_name">SmartSetRenew</string>
     <string name="id">ID</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="local_site">LocalSite</string>
     <string name="cancel">Cancel</string>
     <string name="loading">Now loading</string>
+    <string name="update">Update</string>
+    <string name="upload">Upload</string>
 
     <!--Login Screen-->
     <string name="login_title">Hitec Install App</string>
@@ -28,4 +30,8 @@
 
     <!--SearchScreen-->
     <string name="search_placeholder_imei">Please enter IMEI</string>
+
+    <!--DeviceDetailScreen-->
+    <string name="no_image_available">No image available</string>
+
 </resources>

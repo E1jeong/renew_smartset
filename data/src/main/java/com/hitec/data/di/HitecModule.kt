@@ -9,6 +9,7 @@ import com.hitec.data.usecase.GetInstallDeviceListFromSubAreaUseCaseImpl
 import com.hitec.data.usecase.GetInstallDeviceUseCaseImpl
 import com.hitec.data.usecase.GetLocalSiteUseCaseImpl
 import com.hitec.data.usecase.GetSubAreaUseCaseImpl
+import com.hitec.data.usecase.main.device_detail.PostDownloadDeviceImageUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadableImageListUseCaseImpl
 import com.hitec.domain.usecase.DeleteInstallDbUseCase
 import com.hitec.domain.usecase.FindLocalSiteNameUseCase
@@ -17,6 +18,7 @@ import com.hitec.domain.usecase.GetInstallDbUseCase
 import com.hitec.domain.usecase.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.GetLocalSiteUseCase
 import com.hitec.domain.usecase.GetSubAreaUseCase
+import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
@@ -52,6 +54,9 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindPostDownloadableImageListUseCase(uc: PostDownloadableImageListUseCaseImpl): PostDownloadableImageListUseCase
+
+    @Binds
+    abstract fun bindPostDownloadDeviceImageUseCase(uc: PostDownloadDeviceImageUseCaseImpl): PostDownloadDeviceImageUseCase
 
     //======================================
     //Room module
