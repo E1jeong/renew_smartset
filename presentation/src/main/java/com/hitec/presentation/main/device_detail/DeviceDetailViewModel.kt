@@ -76,7 +76,7 @@ class DeviceDetailViewModel @Inject constructor(
             state.copy(
                 id = loginScreenInfo.id,
                 password = loginScreenInfo.password,
-                localSite = loginScreenInfo.localSite,
+                localSite = loginScreenInfo.localSiteEngWrittenByUser, // if loginScreenInfo.localSite == Korean, error
                 androidDeviceId = loginScreenInfo.androidDeviceId
             )
         }
