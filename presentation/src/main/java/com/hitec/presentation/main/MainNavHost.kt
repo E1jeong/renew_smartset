@@ -1,6 +1,5 @@
 package com.hitec.presentation.main
 
-import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
@@ -18,8 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.gson.Gson
-import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.main.asdevice.AsDeviceScreen
 import com.hitec.presentation.main.camera.CameraScreen
 import com.hitec.presentation.main.device_detail.DeviceDetailScreen
@@ -79,17 +76,8 @@ fun MainNavHost(sharedViewModel: MainViewModel) {
                                 type = NavType.StringType
                             }
                         )
-                    ) { navBackStackEntry ->
-                        val gson = Gson()
-                        val installDevice = remember(navBackStackEntry) {
-                            val installDeviceJson =
-                                navBackStackEntry.arguments?.getString(ArgumentName.ARGU_INSTALL_DEVICE)
-                            installDeviceJson.let { json ->
-                                val decodeJson = Uri.decode(json)
-                                gson.fromJson(decodeJson, InstallDevice::class.java)
-                            }
-                        }
-                        DeviceDetailScreen(installDevice = installDevice)
+                    ) {
+                        DeviceDetailScreen(navController = navController)
                     }
                 }
             },

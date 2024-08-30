@@ -39,27 +39,35 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
+import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.component.button.PrimaryButton
 import com.hitec.presentation.component.icon.LeadingIcon
+import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun DeviceDetailScreen(
-    installDevice: InstallDevice,
+    navController: NavHostController,
     viewModel: DeviceDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
     val context = LocalContext.current
 
-    Log.d("DeviceDetailScreen", "DeviceDetailScreen installDevice: $installDevice")
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val installDeviceJson =
+        navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_INSTALL_DEVICE)
 
-    // installDevice를 ViewModel로 전달
-    LaunchedEffect(installDevice) {
-        viewModel.setInstallDevice(installDevice)
+    LaunchedEffect(installDeviceJson) {
+        if (installDeviceJson != null) {
+            val installDevice = Gson().fromJson(installDeviceJson, InstallDevice::class.java)
+            viewModel.initialize(installDevice)
+        }
     }
 
     viewModel.collectSideEffect { sideEffect ->
