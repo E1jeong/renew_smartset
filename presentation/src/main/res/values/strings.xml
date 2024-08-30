@@ -9,6 +9,9 @@
     <string name="update">Update</string>
     <string name="upload">Upload</string>
 
+    <!--Directory Name-->
+    <string name="directory_photo">photo</string>
+
     <!--Login Screen-->
     <string name="login_title">Hitec Install App</string>
     <string name="login_sub_title">Install and Check our devices with this app</string>

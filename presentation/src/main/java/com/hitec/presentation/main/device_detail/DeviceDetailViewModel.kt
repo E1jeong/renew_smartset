@@ -62,7 +62,8 @@ class DeviceDetailViewModel @Inject constructor(
 
     private fun setImageSaveDir(context: Context) = intent {
         val appName = context.getString(R.string.app_name)
-        val path = "$appName/${state.localSite}/${state.installDevice?.consumeHouseNo}"
+        val photoDirName = context.getString(R.string.directory_photo)
+        val path = "$appName/$photoDirName/${state.localSite}/${state.installDevice?.consumeHouseNo}"
         PathHelper.deleteDir(path) // delete old image files
         PathHelper.isExistDir(path)
 
