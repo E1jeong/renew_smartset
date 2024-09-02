@@ -12,7 +12,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -103,9 +104,9 @@ private fun CameraScreen(
     onQrCodeValueChange: (String) -> Unit,
     onQrCodeValueDetect: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxSize(),
             factory = { context ->
                 val previewView = PreviewView(context)
                 val preview = Preview.Builder()
@@ -166,14 +167,16 @@ private fun processImageProxy(
 }
 
 @Composable
-private fun QrCodeValueText(qrCodeValue: String) {
+private fun BoxScope.QrCodeValueText(qrCodeValue: String) {
     Text(
         modifier = Modifier
             .padding(16.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter),
         text = qrCodeValue,
         textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.labelLarge
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onPrimaryContainer
     )
 }
 
