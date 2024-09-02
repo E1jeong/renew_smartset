@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,8 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Upload
@@ -39,6 +40,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -51,6 +54,7 @@ import com.hitec.presentation.component.icon.LeadingIcon
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
+import com.hitec.presentation.theme.backgroundGray0
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
@@ -95,9 +99,20 @@ private fun DeviceDetailScreen(
     installDevice: InstallDevice?,
     imageList: List<Pair<Int, Any?>>,
 ) {
+    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        val (content, footer) = createRefs()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column {
+        Column(
+            modifier = Modifier
+                .constrainAs(content) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(footer.top)
+                    height = Dimension.fillToConstraints // 상하 제약에 맞춰 높이를 설정
+                }
+                .verticalScroll(rememberScrollState())
+        ) {
             if (imageList.isEmpty()) {
                 Text(
                     modifier = Modifier
@@ -111,11 +126,21 @@ private fun DeviceDetailScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            HouseNumberInfo(text = "${installDevice?.consumeHouseNo}")
-            AddressInfo(text = "${installDevice?.AreaBig} ${installDevice?.setAreaAddr}")
-            HouseOwnerInfo(text = "${installDevice?.consumeHouseNm}")
+            UserInfo(installDevice = installDevice)
+            Spacer(modifier = Modifier.height(8.dp))
+            TerminalInfo(installDevice = installDevice)
+            Spacer(modifier = Modifier.height(8.dp))
+            MeterInfo(installDevice = installDevice)
         }
-        DeviceDetailFooter()
+
+        DeviceDetailFooter(
+            modifier = Modifier
+                .constrainAs(footer) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
     }
 }
 
@@ -182,9 +207,34 @@ fun ImageSliderWithIndicator(imageList: List<Pair<Int, Any?>>) {
 }
 
 @Composable
+fun UserInfo(installDevice: InstallDevice?) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Paddings.medium)
+            .clip(RoundedCornerShape(8.dp))
+            .background(backgroundGray0)
+    ) {
+        Column(modifier = Modifier.padding(horizontal = Paddings.medium)) {
+            Text(
+                text = "UserInfo",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            SetDateInfo(text = "${installDevice?.setDt} / ${installDevice?.setInitDate}")
+            HouseOwnerInfo(text = "${installDevice?.consumeHouseNm}")
+            HouseNumberInfo(text = "${installDevice?.consumeHouseNo}")
+            AddressInfo(text = "${installDevice?.AreaBig} ${installDevice?.setAreaAddr}")
+            HouseCheckListInfo(text = "${installDevice?.setPlaceDesc} ${installDevice?.accountCheckNote}")
+            LatitudeInfo(text = "${installDevice?.gpsLatitude}")
+            LongitudeInfo(text = "${installDevice?.gpsLongitude}")
+        }
+    }
+}
+
+@Composable
 fun HouseNumberInfo(text: String) {
     Row(
-        modifier = Modifier.padding(start = Paddings.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -198,7 +248,6 @@ fun HouseNumberInfo(text: String) {
 @Composable
 fun AddressInfo(text: String) {
     Row(
-        modifier = Modifier.padding(start = Paddings.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -212,7 +261,6 @@ fun AddressInfo(text: String) {
 @Composable
 fun HouseOwnerInfo(text: String) {
     Row(
-        modifier = Modifier.padding(start = Paddings.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -224,10 +272,217 @@ fun HouseOwnerInfo(text: String) {
 }
 
 @Composable
-fun BoxScope.DeviceDetailFooter() {
+fun HouseCheckListInfo(text: String) {
     Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun SetDateInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun TerminalInfo(installDevice: InstallDevice?) {
+    Box(
         modifier = Modifier
-            .align(Alignment.BottomCenter)
+            .fillMaxWidth()
+            .padding(horizontal = Paddings.medium)
+            .clip(RoundedCornerShape(8.dp))
+            .background(backgroundGray0)
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = Paddings.medium)
+        ) {
+            Text(
+                text = "TerminalInfo",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            SerialNumberInfo(text = "${installDevice?.meterDeviceSn}")
+            ImeiInfo(text = "${installDevice?.nwk}")
+            CtnInfo(text = "${installDevice?.cdmaNo}")
+            FirmwareVersionInfo(text = "${installDevice?.firmware}")
+            ServerIpPortInfo(text = "${installDevice?.serverAddr1}:${installDevice?.serverPort1}")
+        }
+    }
+
+}
+
+@Composable
+fun SerialNumberInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun ImeiInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun CtnInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun FirmwareVersionInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun ServerIpPortInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun LatitudeInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun LongitudeInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun MeterInfo(installDevice: InstallDevice?) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Paddings.medium)
+            .clip(RoundedCornerShape(8.dp))
+            .background(backgroundGray0)
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = Paddings.medium)
+        ) {
+            Text(
+                text = "MeterInfo",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            MeterSerialNumberInfo(text = "${installDevice?.meterSn1}")
+            MeterCaliberInfo(text = "${installDevice?.metercaliberCd1}mm")
+            MeterCompanyInfo(text = "${installDevice?.meterCompany1}")
+        }
+    }
+
+}
+
+@Composable
+fun MeterSerialNumberInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun MeterCaliberInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun MeterCompanyInfo(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun DeviceDetailFooter(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
             .fillMaxWidth()
             .padding(Paddings.medium),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -250,7 +505,7 @@ fun BoxScope.DeviceDetailFooter() {
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun DeviceDetailScreenPreview() {
     RenewSmartSetTheme {
