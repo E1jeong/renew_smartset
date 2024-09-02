@@ -61,6 +61,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.material3)
     implementation(libs.material.icon.extended)
+    implementation(libs.androidx.constraintlayout)
 
     implementation(project(":domain"))
 
