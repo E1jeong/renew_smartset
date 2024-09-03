@@ -36,6 +36,10 @@ android {
 }
 
 dependencies {
+    //implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
+    // ndeftools-1.2.3.jar 파일 추가
+    implementation(files("libs/ndeftools-1.2.3.jar"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
