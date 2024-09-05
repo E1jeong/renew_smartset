@@ -1,6 +1,6 @@
 package com.hitec.presentation.nfc_lib.model;
 
-public class N_MeterConfigT {
+public class NfcMeterConfig {
     public String meterUtiltyNum;
     public String meterUtiltyName;
     public String meterTypeNum;

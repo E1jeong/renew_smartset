@@ -1,6 +1,6 @@
 package com.hitec.presentation.nfc_lib.model;
 
-public class N_AmiBufferData {
+public class NfcBufferData {
 
     public int nDeviceCode;
     public int nMsgVersion;
@@ -70,10 +70,10 @@ public class N_AmiBufferData {
     public String subNwkID;
     public int gsmlteMode;
     public String meterCount;
-    public N_MeterConfigT stMeterConfig0;
-    public N_MeterValueT stMeterValue0;
-    public N_MeterConfigT stMeterConfig1;
-    public N_MeterValueT stMeterValue1;
-    public N_MeterConfigT stMeterConfig2;
-    public N_MeterValueT stMeterValue2;
+    public NfcMeterConfig stMeterConfig0;
+    public NfcMeterValue stMeterValue0;
+    public NfcMeterConfig stMeterConfig1;
+    public NfcMeterValue stMeterValue1;
+    public NfcMeterConfig stMeterConfig2;
+    public NfcMeterValue stMeterValue2;
 }

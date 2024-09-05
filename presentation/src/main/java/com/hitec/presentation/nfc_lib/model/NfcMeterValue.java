@@ -1,6 +1,6 @@
 package com.hitec.presentation.nfc_lib.model;
 
-public class N_MeterValueT {
+public class NfcMeterValue {
     public String meterDtm;
     public String meterUtilty;
     public String meterType;
