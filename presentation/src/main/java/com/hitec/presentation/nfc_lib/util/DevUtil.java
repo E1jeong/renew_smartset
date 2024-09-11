@@ -5,12 +5,14 @@
  */
 package com.hitec.presentation.nfc_lib.util;
 
+import android.util.Log;
+
 import java.math.BigInteger;
 import java.util.Calendar;
 
 public class DevUtil {
 
-    private static String tag = "util";
+    private static final String TAG = "DevUtil";
 
     /**
      * <pre>
@@ -21,7 +23,7 @@ public class DevUtil {
         String binaryStr = "";
         try {
             binaryStr = new BigInteger(s, 16).toString(2);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return getLPad(binaryStr, 8, "0");
@@ -36,7 +38,7 @@ public class DevUtil {
      */
     public static String pad(int c) {
         if (c >= 10) return String.valueOf(c);
-        else return "0" + String.valueOf(c);
+        else return "0" + c;
     }
 
     /**
@@ -46,10 +48,12 @@ public class DevUtil {
      */
     public static String getRPad(String str, int size, String strFillText) {
         try {
-            for (int i = (str.getBytes()).length; i < size; i++) {
-                str += strFillText;
+            StringBuilder strBuilder = new StringBuilder(str);
+            for (int i = (strBuilder.toString().getBytes()).length; i < size; i++) {
+                strBuilder.append(strFillText);
             }
-        } catch (Exception e) {
+            str = strBuilder.toString();
+        } catch (Exception ignored) {
         }
         return str;
     }
@@ -61,10 +65,12 @@ public class DevUtil {
      */
     public static String getLPad(String str, int size, String strFillText) {
         try {
-            for (int i = (str.getBytes()).length; i < size; i++) {
-                str = strFillText + str;
+            StringBuilder strBuilder = new StringBuilder(str);
+            for (int i = (strBuilder.toString().getBytes()).length; i < size; i++) {
+                strBuilder.insert(0, strFillText);
             }
-        } catch (Exception e) {
+            str = strBuilder.toString();
+        } catch (Exception ignored) {
         }
         return str;
     }
@@ -79,12 +85,12 @@ public class DevUtil {
             int nSize,
             String strFillText
     ) {
-        String strConv = Integer.toHexString((char) num).toUpperCase();
+        StringBuilder strConv = new StringBuilder(Integer.toHexString((char) num).toUpperCase());
 
-        for (int i = (strConv.getBytes()).length; i < nSize; i++) {
-            strConv = strFillText + strConv;
+        for (int i = (strConv.toString().getBytes()).length; i < nSize; i++) {
+            strConv.insert(0, strFillText);
         }
-        return strConv;
+        return strConv.toString();
     }
 
     /**
@@ -106,7 +112,7 @@ public class DevUtil {
 
         try {
             nNum = Integer.parseInt(strNum, 10);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return nNum;
@@ -122,7 +128,7 @@ public class DevUtil {
 
         try {
             nNum = Long.parseLong(strNum, 10);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return nNum;
@@ -138,7 +144,7 @@ public class DevUtil {
 
         try {
             nNum = Long.parseLong(strNum, 16);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return nNum;
@@ -154,7 +160,7 @@ public class DevUtil {
 
         try {
             nNum = Integer.parseInt(hex, 16);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return nNum;
@@ -170,9 +176,8 @@ public class DevUtil {
 
         try {
             int nNum = Integer.parseInt(strNum, 10);
-            String strHex = Integer.toHexString((char) nNum).toUpperCase();
-            strRet = String.valueOf(strHex);
-        } catch (Exception e) {
+            strRet = Integer.toHexString((char) nNum).toUpperCase();
+        } catch (Exception ignored) {
         }
 
         return strRet;
@@ -190,7 +195,7 @@ public class DevUtil {
             //int nNum = Integer.parseInt(strNum, 10);
             long nNum = Long.parseLong(strNum, 10);
             strRet = String.format("%d", nNum);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return strRet;
@@ -202,7 +207,7 @@ public class DevUtil {
         try {
             long nNum = Long.parseLong(strNum, 10);
             strRet = String.format("%d", nNum);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return strRet;
@@ -218,7 +223,7 @@ public class DevUtil {
         try {
             int nNum = Integer.parseInt(strHex, 16);
             strRet = String.valueOf(nNum);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return strRet;
     }
@@ -233,12 +238,12 @@ public class DevUtil {
             int nOffSet,
             int nLen
     ) {
-        String strRet = "";
+        StringBuilder strRet = new StringBuilder();
         for (int nIdx = 0; nIdx < nLen; nIdx++) {
-            strRet += String.format("%02X", pBuff[nOffSet + nIdx] & 0xff);
+            strRet.append(String.format("%02X", pBuff[nOffSet + nIdx] & 0xff));
         }
 
-        return strRet;
+        return strRet.toString();
     }
 
     /**
@@ -293,13 +298,12 @@ public class DevUtil {
         int minute = cal.get(Calendar.MINUTE);
         int second = cal.get(Calendar.SECOND);
 
-        return (
-                String.valueOf(year).substring(2, 4) +
-                        pad(month) +
-                        pad(date) +
-                        pad(hour) +
-                        pad(minute) +
-                        pad(second)
+        return (String.valueOf(year).substring(2, 4) +
+                pad(month) +
+                pad(date) +
+                pad(hour) +
+                pad(minute) +
+                pad(second)
         );
     }
 
@@ -321,14 +325,13 @@ public class DevUtil {
         int minute = cal.get(Calendar.MINUTE);
         int second = cal.get(Calendar.SECOND);
 
-        return (
-                String.valueOf(year).substring(2, 4) +
-                        pad(month) +
-                        pad(date) +
-                        pad(week - 1) +
-                        pad(hour) +
-                        pad(minute) +
-                        pad(second)
+        return (String.valueOf(year).substring(2, 4) +
+                pad(month) +
+                pad(date) +
+                pad(week - 1) +
+                pad(hour) +
+                pad(minute) +
+                pad(second)
         );
     }
 
@@ -350,14 +353,13 @@ public class DevUtil {
 
         int week = cal.get(Calendar.DAY_OF_WEEK);
 
-        return (
-                String.valueOf(year).substring(2, 4) +
-                        pad(month) +
-                        pad(date) +
-                        pad(hour) +
-                        pad(minute) +
-                        pad(second) +
-                        pad(week - 1)
+        return (String.valueOf(year).substring(2, 4) +
+                pad(month) +
+                pad(date) +
+                pad(hour) +
+                pad(minute) +
+                pad(second) +
+                pad(week - 1)
         );
     }
 
@@ -368,38 +370,24 @@ public class DevUtil {
      */
     public static String convDateToFormatStr(
             String readMessage,
-            int nOffset,
-            int nLen
+            int nOffset
     ) {
-        String strDateTime = "";
+        String strDateTime;
 
         String year = readMessage.substring(nOffset, nOffset + 4);
         year = convByteToStrInt16(year);
         nOffset += 4;
 
-        String month = convDateTimeLPad(
-                readMessage.substring(nOffset, nOffset + 2),
-                2
-        );
+        String month = convDateTimeLPad(readMessage.substring(nOffset, nOffset + 2), 2);
         nOffset += 2;
 
-        String date = convDateTimeLPad(
-                readMessage.substring(nOffset, nOffset + 2),
-                2
-        );
+        String date = convDateTimeLPad(readMessage.substring(nOffset, nOffset + 2), 2);
         nOffset += 2;
 
-        String hour = convDateTimeLPad(
-                readMessage.substring(nOffset, nOffset + 2),
-                2
-        );
+        String hour = convDateTimeLPad(readMessage.substring(nOffset, nOffset + 2), 2);
         nOffset += 2;
 
-        String minute = convDateTimeLPad(
-                readMessage.substring(nOffset, nOffset + 2),
-                2
-        );
-        nOffset += 2;
+        String minute = convDateTimeLPad(readMessage.substring(nOffset, nOffset + 2), 2);
 
         strDateTime = year + "-" + month + "-" + date + " " + hour + ":" + minute;
         return strDateTime;
@@ -418,7 +406,7 @@ public class DevUtil {
             String strHex = high + low;
             int nSrc = Integer.parseInt(strHex, 16);
             strConv = String.valueOf(nSrc);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return strConv;
@@ -435,7 +423,7 @@ public class DevUtil {
         try {
             int nSrc = Integer.parseInt(strSrc, 16);
             strConv = getLPad(String.valueOf(nSrc), nLen, "0");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return strConv;
@@ -443,38 +431,28 @@ public class DevUtil {
 
     //시간 증가
     public static String SetDateHour(String strSrcDate, int nSetHour) {
-        //2011-01-01 01:00  형식
-        String strDateTime = strSrcDate;
 
+        //2011-01-01 01:00  형식
         String strYear = strSrcDate.substring(0, 4);
         String strMonth = strSrcDate.substring(5, 7);
         String strDay = strSrcDate.substring(8, 10);
-        //String strHour = strSrcDate.substring(11, 13);
-        //String strMinute = strSrcDate.substring(14, 16);
 
         try {
             int nYear = convertStringIntegerToInteger(strYear);
             int nMon = convertStringIntegerToInteger(strMonth);
             int nDay = convertStringIntegerToInteger(strDay);
-            int nHour = nSetHour;
             int nMin = 0;
-            //int nSec = 0;
-
-            //Calendar cal = Calendar.getInstance();
-
-            //cal.set(nYear, nMon, nDay, nHour, nMin, nSec);
-            //cal.add(Calendar.HOUR_OF_DAY, nSetHour);
 
             return String.format(
                     "%04d-%02d-%02d %02d:%02d",
                     nYear,
                     nMon,
                     nDay,
-                    nHour,
+                    nSetHour,
                     nMin
             );
         } catch (Exception e) {
-            return strDateTime;
+            return strSrcDate;
         }
     }
 
@@ -487,9 +465,9 @@ public class DevUtil {
         String hexStr = "0123456789ABCDEF";
         char[] strChar = str.toCharArray();
 
-        for (int i = 0; i < strChar.length; i++) {
+        for (char c : strChar) {
             // log.e("log", "checkStr: " + strChar[i]);
-            if (hexStr.indexOf(strChar[i]) == -1) return false;
+            if (hexStr.indexOf(c) == -1) return false;
         }
 
         return true;
@@ -501,10 +479,10 @@ public class DevUtil {
      * </pre>
      */
     public static String convertASCIIStringsToHex(String ascii) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         char[] temp = ascii.toCharArray();
         for (int i = 0; i < ascii.length(); i++) {
-            sb.append(Integer.toHexString((int) temp[i]));
+            sb.append(Integer.toHexString(temp[i]));
         }
         return sb.toString();
     }
@@ -521,7 +499,7 @@ public class DevUtil {
             String str = hex.substring(i, i + 2);
             try {
                 output.append((char) Integer.parseInt(str, 16));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -534,13 +512,13 @@ public class DevUtil {
      * </pre>
      */
     public static String convertHexBytesToString(byte[] bytes) {
-        StringBuffer sb = new StringBuffer(bytes.length * 2);
-        for (int i = 0; i < bytes.length; i++) {
-            if (((int) bytes[i] & 0xff) < 0x10) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (byte aByte : bytes) {
+            if (((int) aByte & 0xff) < 0x10) {
                 sb.append('0');
             }
 
-            sb.append(Integer.toString(bytes[i] & 0xff, 16));
+            sb.append(Integer.toString(aByte & 0xff, 16));
         }
 
         return sb.toString();
@@ -557,9 +535,8 @@ public class DevUtil {
             result = new byte[hex.length() / 2];
             for (int i = 0; i < result.length; i++) {
                 try {
-                    result[i] =
-                            (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
-                } catch (Exception e) {
+                    result[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -575,9 +552,9 @@ public class DevUtil {
     public static String convertStringToHex(String str) {
         char[] chars = str.toCharArray();
 
-        StringBuffer hex = new StringBuffer();
-        for (int i = 0; i < chars.length; i++) {
-            hex.append(Integer.toHexString((int) chars[i]));
+        StringBuilder hex = new StringBuilder();
+        for (char aChar : chars) {
+            hex.append(Integer.toHexString(aChar));
         }
 
         return hex.toString();
@@ -589,7 +566,7 @@ public class DevUtil {
      * </pre>
      */
     public static String debugAsciiToString(byte[] bytes, int nLen) {
-        StringBuffer sb = new StringBuffer(nLen * 3);
+        StringBuilder sb = new StringBuilder(nLen * 3);
         char cTemp;
         for (int i = 0; i < nLen; i++) {
             cTemp = (char) (bytes[i]);
@@ -632,7 +609,7 @@ public class DevUtil {
         } catch (Exception e) {
             e.printStackTrace();
 
-            bLog.e(tag, "Exception ==> getConvertMeterValue");
+            Log.e(TAG, "Exception ==> getConvertMeterValue");
 
             return "";
         }
@@ -656,13 +633,13 @@ public class DevUtil {
         } catch (Exception e) {
             e.printStackTrace();
 
-            bLog.e(tag, "Exception ==> getMeterDoubleToInteger");
+            Log.e(TAG, "Exception ==> getMeterDoubleToInteger");
             return "";
         }
     }
 
     public static int multi(int a, int b) {
-        bLog.v("TEST", "nulti in DevComm");
+        Log.v("TEST", "nulti in DevComm");
         return (a * b);
     }
 
@@ -672,9 +649,8 @@ public class DevUtil {
      * </pre>
      */
     public static String ConvByteToBCDString(byte pBuff) {
-        String strBcd = String.format("%X", pBuff);
 
-        return strBcd;
+        return String.format("%X", pBuff);
     }
 
     public static byte ConvByteToBCD(byte bySrc) {
@@ -688,7 +664,7 @@ public class DevUtil {
     }
 
     public static byte ConvBCDToByte(byte bySrc) {
-        byte byDst = 0;
+        byte byDst;
 
         byDst = (byte) (((bySrc >> 4) & 0x0f) * 10 + (bySrc & 0x0f));
 
@@ -696,7 +672,7 @@ public class DevUtil {
     }
 
     public static int Conv2ByteToInt(byte[] pBuff, int nOffSet) {
-        int nNum = 0;
+        int nNum;
         int nHi, nLow;
         String strHi, strLow;
         strHi = String.format("%d", pBuff[nOffSet + 1] & 0xff);
@@ -714,7 +690,7 @@ public class DevUtil {
 
         try {
             byDst = Byte.parseByte(strSrc, 16);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return byDst;
@@ -725,9 +701,7 @@ public class DevUtil {
 
         byDst = (byte) (((bySrc >> 4) & 0x0f) * 10 + (bySrc & 0x0f));
 
-        String strBcd = String.format("%d", byDst);
-
-        return strBcd;
+        return String.format("%d", byDst);
     }
 
     public static void convStringToBCD(
@@ -755,7 +729,7 @@ public class DevUtil {
     public static String convertIntegerToStrInteger(int i) {
         String strNum = "";
         try {
-            strNum = String.valueOf(Integer.toString(i));
+            strNum = Integer.toString(i);
         } catch (Exception e) {
         }
         return strNum;
@@ -951,12 +925,12 @@ public class DevUtil {
      * </pre>
      */
     public static String ParserQnUnionVal(byte[] pBuff, int nOffset) {
-        String strTmpVal = "";
+        String strTmpVal;
 
         strTmpVal = String.format("%02X", pBuff[nOffset + 1]);
-        strTmpVal += String.format("%02X", pBuff[nOffset + 0]);
+        strTmpVal += String.format("%02X", pBuff[nOffset]);
 
-        String strQnVal = "";
+        String strQnVal;
 
         int nConvInt;
         int nIntPart;
@@ -978,12 +952,12 @@ public class DevUtil {
      * </pre>
      */
     public static String ParserCertiCalibrationFlow(byte[] pBuff, int nOffset) {
-        String strTmpVal = "";
+        String strTmpVal;
 
         strTmpVal = String.format("%02X", pBuff[nOffset + 1]);
-        strTmpVal += String.format("%02X", pBuff[nOffset + 0]);
+        strTmpVal += String.format("%02X", pBuff[nOffset]);
 
-        String strCompVal = "";
+        String strCompVal;
         int nConvInt;
 
         nConvInt = convertStringHexToInteger(strTmpVal);
@@ -996,7 +970,7 @@ public class DevUtil {
         int nUp = nData / 0x100;
         int nDn = nData % 0x100;
 
-        pBuff[nOffSet + 0] = (byte) nDn;
+        pBuff[nOffSet] = (byte) nDn;
         pBuff[nOffSet + 1] = (byte) nUp;
     }
 

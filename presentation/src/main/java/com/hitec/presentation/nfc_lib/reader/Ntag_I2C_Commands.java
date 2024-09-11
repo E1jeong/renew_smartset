@@ -39,7 +39,7 @@ import com.hitec.presentation.nfc_lib.exceptions.DynamicLockBitsException;
 import com.hitec.presentation.nfc_lib.exceptions.NotPlusTagException;
 import com.hitec.presentation.nfc_lib.exceptions.StaticLockBitsException;
 import com.hitec.presentation.nfc_lib.reader.Ntag_Get_Version.Prod;
-import com.hitec.presentation.nfc_lib.NfcActivity;
+import com.hitec.presentation.nfc_lib.NfcManager;
 import com.hitec.presentation.nfc_lib.util.bLog;
 
 import java.io.IOException;
@@ -548,7 +548,7 @@ public class Ntag_I2C_Commands extends I2C_Enabled_Commands {
                         getProduct() == Prod.NTAG_I2C_1k_Plus ||
                                 getProduct() == Prod.NTAG_I2C_2k_Plus
                 ) &&
-                        NfcActivity.getAuthStatus() != Ntag_Auth.AuthStatus.Authenticated.getValue()
+                        NfcManager.getAuthStatus() != Ntag_Auth.AuthStatus.Authenticated.getValue()
         ) {
             reader.fast_write(
                     data,
@@ -577,10 +577,10 @@ public class Ntag_I2C_Commands extends I2C_Enabled_Commands {
                 reader.connect();
             } else {
                 if (
-                        NfcActivity.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()
+                        NfcManager.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()
                 ) {
                     try {
-                        authenticatePlus(NfcActivity.getPassword());
+                        authenticatePlus(NfcManager.getPassword());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -626,7 +626,7 @@ public class Ntag_I2C_Commands extends I2C_Enabled_Commands {
                         getProduct() == Prod.NTAG_I2C_1k_Plus ||
                                 getProduct() == Prod.NTAG_I2C_2k_Plus
                 ) &&
-                        NfcActivity.getAuthStatus() != Ntag_Auth.AuthStatus.Authenticated.getValue()
+                        NfcManager.getAuthStatus() != Ntag_Auth.AuthStatus.Authenticated.getValue()
         ) {
             reader.fast_write(
                     data,
@@ -655,10 +655,10 @@ public class Ntag_I2C_Commands extends I2C_Enabled_Commands {
                 reader.connect();
             } else {
                 if (
-                        NfcActivity.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()
+                        NfcManager.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()
                 ) {
                     try {
-                        authenticatePlus(NfcActivity.getPassword());
+                        authenticatePlus(NfcManager.getPassword());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -1044,9 +1044,9 @@ public class Ntag_I2C_Commands extends I2C_Enabled_Commands {
     public byte[] readSRAMBlock() throws IOException, FormatException {
         Log.v("NTAG_CMD", "readSRAMBlock - 01");
         answer = new byte[0];
-        if (NfcActivity.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()) {
+        if (NfcManager.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()) {
             try {
-                authenticatePlus(NfcActivity.getPassword());
+                authenticatePlus(NfcManager.getPassword());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1065,9 +1065,9 @@ public class Ntag_I2C_Commands extends I2C_Enabled_Commands {
     public byte[] fast_readSRAMBlock() throws IOException, FormatException {
         Log.v("NTAG_CMD", "readSRAMBlock - 01");
         answer = new byte[0];
-        if (NfcActivity.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()) {
+        if (NfcManager.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()) {
             try {
-                authenticatePlus(NfcActivity.getPassword());
+                authenticatePlus(NfcManager.getPassword());
             } catch (Exception e) {
                 e.printStackTrace();
             }

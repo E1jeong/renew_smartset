@@ -5,9 +5,10 @@
  */
 package com.hitec.presentation.nfc_lib.protocol.recv;
 
+import android.util.Log;
+
 import com.hitec.presentation.nfc_lib.util.DevUtil;
 import com.hitec.presentation.nfc_lib.util.Meter;
-import com.hitec.presentation.nfc_lib.util.bLog;
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant;
 
 public class MeterDataReport extends NfcRxMessage {
@@ -259,14 +260,8 @@ public class MeterDataReport extends NfcRxMessage {
         boolean fValueValid = true;
         byte[] pMeterVal = new byte[4];
 
-        bLog.i(
-                TAG,
-                " parserMeterStandardDigital ==>01 nOffSet:" + nOffSet + " nIdx:" + nIdx
-        );
-        bLog.i(
-                TAG,
-                " parserMeterStandardDigital ==>01 nMeterValuePoint:" + nMeterValuePoint
-        );
+        Log.i(TAG, " parserMeterStandardDigital ==>01 nOffSet:" + nOffSet + " nIdx:" + nIdx);
+        Log.i(TAG, " parserMeterStandardDigital ==>01 nMeterValuePoint:" + nMeterValuePoint);
 
         if (Meter.CheckDecValid(pBuff, nOffSet, 4) == false) {
             fValueValid = false;
@@ -297,11 +292,11 @@ public class MeterDataReport extends NfcRxMessage {
             m_strMeterVal[nIdx] =
                     Meter.ParserStandardMeterVal(pMeterVal, 0, 4, nValuePoint);
         }
-        bLog.i(
+        Log.i(
                 TAG,
                 " parserMeterStandardDigital ==>02 nOffSet:" + nOffSet + " nIdx:" + nIdx
         );
-        bLog.i(
+        Log.i(
                 TAG,
                 " parserMeterStandardDigital ==>02 m_strMeterVal[nIdx]:" +
                         m_strMeterVal[nIdx] +
@@ -314,7 +309,7 @@ public class MeterDataReport extends NfcRxMessage {
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_VALUE_ERROR;
             m_strMeterVal[nIdx] = "";
         }
-        bLog.i(
+        Log.i(
                 TAG,
                 " parserMeterStandardDigital ==>03 nOffSet:" + nOffSet + " nIdx:" + nIdx
         );
@@ -435,8 +430,8 @@ public class MeterDataReport extends NfcRxMessage {
         m_nMeterPort[nIdx] = getHexData(nOffSet++);
 
         m_nMeterDataFlag[nIdx] = getHexData(nOffSet++);
-        bLog.i(TAG, " registerMeter ==>01 nOffSet:" + nOffSet + " nIdx:" + nIdx);
-        bLog.i(
+        Log.i(TAG, " registerMeter ==>01 nOffSet:" + nOffSet + " nIdx:" + nIdx);
+        Log.i(
                 TAG,
                 " registerMeter ==>01 nUtility:" +
                         nUtility +
@@ -445,7 +440,7 @@ public class MeterDataReport extends NfcRxMessage {
                         " nMeterValuePoint:" +
                         nMeterValuePoint
         );
-        bLog.i(
+        Log.i(
                 TAG,
                 " registerMeter ==>01 m_nMeterDataFlag[nIdx]:" + m_nMeterDataFlag[nIdx]
         );
@@ -472,13 +467,13 @@ public class MeterDataReport extends NfcRxMessage {
             }
             return nOffSet - nStart;
         }
-        bLog.i(TAG, " registerMeter ==>02 nOffSet:" + nOffSet + " nIdx:" + nIdx);
+        Log.i(TAG, " registerMeter ==>02 nOffSet:" + nOffSet + " nIdx:" + nIdx);
 
         //계량기 일련번호
         m_strMeterSn[nIdx] = Meter.ParserMeterSerialBCD(pBuff, nOffSet, 4);
         nOffSet += 4;
-        bLog.i(TAG, " registerMeter ==>03 nOffSet:" + nOffSet + " nIdx:" + nIdx);
-        bLog.i(
+        Log.i(TAG, " registerMeter ==>03 nOffSet:" + nOffSet + " nIdx:" + nIdx);
+        Log.i(
                 TAG,
                 " registerMeter ==>01 m_nMeterDataFlag[nIdx]:" +
                         m_nMeterDataFlag[nIdx] +
@@ -538,12 +533,12 @@ public class MeterDataReport extends NfcRxMessage {
             int nMeterType,
             int nMeterValuePoint
     ) {
-        bLog.i(
+        Log.i(
                 TAG,
                 " registerWaterMeter ==>01 nIdx:" + nIdx + " nMeterType:" + nMeterType
         );
         if (nMeterType == Meter.g_emMeterWaterType.eStandardDigital) {
-            bLog.i(
+            Log.i(
                     TAG,
                     " registerWaterMeter ==>02 nOffSet:" +
                             nOffSet +

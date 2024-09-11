@@ -5,7 +5,7 @@
  */
 package com.hitec.presentation.nfc_lib.protocol.recv;
 
-import com.hitec.presentation.nfc_lib.util.bLog;
+import android.util.Log;
 
 public class FlashDateListReport extends NfcRxMessage {
 
@@ -41,38 +41,38 @@ public class FlashDateListReport extends NfcRxMessage {
 
     @Override
     public boolean parse(byte[] rxdata) {
-        if (super.parse(rxdata) == false) {
+        if (!super.parse(rxdata)) {
             return false;
         }
 
         m_nResultState = getHexData(m_nOffset++);
 
         m_nTotalBlock = 0;
-        bLog.i(TAG, " FlashDateListReport ==>01 m_nOffset:" + m_nOffset);
+        Log.i(TAG, " FlashDateListReport ==>01 m_nOffset:" + m_nOffset);
 
         int nMonthSize = getHexData(m_nOffset++);
-        bLog.i(TAG, " FlashDateListReport ==>01 nMonthSize:" + nMonthSize);
+        Log.i(TAG, " FlashDateListReport ==>01 nMonthSize:" + nMonthSize);
         for (int i = 0; i < nMonthSize; i++) {
             int nYear = getHexData(m_nOffset++) + 2000;
             int nMonth = getHexData(m_nOffset++);
-            bLog.i(TAG, " FlashDateListReport ==>01 nYear:" + nYear);
-            bLog.i(TAG, " FlashDateListReport ==>01 nMonth:" + nMonth);
+            Log.i(TAG, " FlashDateListReport ==>01 nYear:" + nYear);
+            Log.i(TAG, " FlashDateListReport ==>01 nMonth:" + nMonth);
 
             m_nTotalBlock += getDayFlagCount(nYear, nMonth, 1, m_nOffset); //1 ~ 8
             m_nOffset++;
-            bLog.i(TAG, " FlashDateListReport ==>02 m_nTotalBlock:" + m_nTotalBlock);
+            Log.i(TAG, " FlashDateListReport ==>02 m_nTotalBlock:" + m_nTotalBlock);
 
             m_nTotalBlock += getDayFlagCount(nYear, nMonth, 9, m_nOffset); //9 ~ 16
             m_nOffset++;
-            bLog.i(TAG, " FlashDateListReport ==>03 m_nTotalBlock:" + m_nTotalBlock);
+            Log.i(TAG, " FlashDateListReport ==>03 m_nTotalBlock:" + m_nTotalBlock);
 
             m_nTotalBlock += getDayFlagCount(nYear, nMonth, 17, m_nOffset); //17 ~ 24
             m_nOffset++;
-            bLog.i(TAG, " FlashDateListReport ==>04 m_nTotalBlock:" + m_nTotalBlock);
+            Log.i(TAG, " FlashDateListReport ==>04 m_nTotalBlock:" + m_nTotalBlock);
 
             m_nTotalBlock += getDayFlagCount(nYear, nMonth, 25, m_nOffset); //25 ~ 31
             m_nOffset++;
-            bLog.i(TAG, " FlashDateListReport ==>05 m_nTotalBlock:" + m_nTotalBlock);
+            Log.i(TAG, " FlashDateListReport ==>05 m_nTotalBlock:" + m_nTotalBlock);
         }
 
         return parseCompleted();

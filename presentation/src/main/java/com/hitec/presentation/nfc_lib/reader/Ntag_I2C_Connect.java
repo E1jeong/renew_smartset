@@ -88,8 +88,9 @@ public class Ntag_I2C_Connect implements ConstNfc {
      */
     public Ntag_I2C_Connect(Tag tag, final Activity main, final byte[] passwd, final int authStatus) {
         try {
-            Log.i("NTAG_DEMO", "Ntag_I2C_Demo - 00");
+            Log.i("NFC_TEST", "Ntag_I2C_Demo - 00");
             if (tag == null) {
+                Log.i("NFC_TEST", "Ntag_I2C_Demo - 01");
                 this.main = null;
                 this.tag = null;
                 return;
@@ -99,23 +100,13 @@ public class Ntag_I2C_Connect implements ConstNfc {
 
             reader = I2C_Enabled_Commands.get(tag);
 
-            if (reader == null) {
-                String message =
-                        "The Tag could not be identified or this NFC device does not " +
-                                "support the NFC Forum commands needed to access this tag";
-                String title = "Communication failed";
-                showAlert(message, title);
-            } else {
-                reader.connect();
-            }
+            reader.connect();
+            Log.i("NFC_TEST", "Ntag_I2C_Demo - 02");
 
             Ntag_Get_Version.Prod prod = reader.getProduct();
 
             if (!prod.equals(Ntag_Get_Version.Prod.Unknown)) {
-                if (
-                        prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_1k_Plus) ||
-                                prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_2k_Plus)
-                ) {
+                if (prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_1k_Plus) || prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_2k_Plus)) {
                     // Auth status gets lost after resetting the demo when we
                     // obtain the product we are dealing with
                     if (authStatus == Ntag_Auth.AuthStatus.Authenticated.getValue()) {
@@ -125,6 +116,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Log.i("NFC_TEST", "Ntag_I2C_Demo - 05");
         }
     }
 
@@ -240,10 +232,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
      * @return Boolean indicating demo readiness
      */
     public boolean isReady() {
-        if (tag != null && reader != null) {
-            return true;
-        }
-        return false;
+        return tag != null && reader != null;
     }
 
     /**
@@ -297,10 +286,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
             try {
                 Ntag_Get_Version.Prod prod = reader.getProduct();
 
-                if (
-                        prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_1k_Plus) ||
-                                prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_2k_Plus)
-                ) {
+                if (prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_1k_Plus) || prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_2k_Plus)) {
                     byte AUTH0 = (byte) 0xFF;
                     byte ACCESS = (byte) 0x00;
                     byte PT_I2C = (byte) 0x00;
@@ -314,58 +300,6 @@ public class Ntag_I2C_Connect implements ConstNfc {
         }
         return bytesWritten;
     }
-
-    /**
-     * Not implemented in the Firmware side.
-     * Code just in case for future releases.
-     */
-    //	public boolean resetTag() {
-    //		byte[] DataTx = new byte[reader.getSRAMSize()];
-    //		byte[] DataRx = new byte[reader.getSRAMSize()];
-    //		long RegTimeOutStart = System.currentTimeMillis();
-    //
-    //		try {
-    //			do {
-    //
-    //				if (reader.checkPTwritePossible()) {
-    //					break;
-    //				}
-    //
-    //				long RegTimeOut = System.currentTimeMillis();
-    //				RegTimeOut = RegTimeOut - RegTimeOutStart;
-    //				if (!(RegTimeOut < 5000))
-    //					return false;
-    //
-    //			} while (true);
-    //
-    //			DataTx[reader.getSRAMSize() - 4] = 'R';
-    //
-    //			// wait to prevent that a RF communication is
-    //			// at the same time as 쨉C I2C
-    //			Thread.sleep(10);
-    //
-    //			reader.waitforI2Cread(100);
-    //
-    //			reader.writeSRAMBlock(DataTx);
-    //
-    //			// wait to give the 쨉C time to reset the Tag
-    //			Thread.sleep(50);
-    //
-    //			reader.waitforI2Cwrite(100);
-    //
-    //			DataRx = reader.readSRAMBlock();
-    //
-    //			if (DataRx[reader.getSRAMSize() - 4] == 'A'
-    //					&& DataRx[reader.getSRAMSize() - 3] == 'C'
-    //					&& DataRx[reader.getSRAMSize() - 2] == 'K')
-    //				return true;
-    //			else
-    //				return false;
-    //		} catch (Exception e) {
-    //			e.printStackTrace();
-    //			return false;
-    //		}
-    //	}
 
     /**
      * Builds a String array for the NTAG I2C Plus Auth Register.
@@ -388,19 +322,12 @@ public class Ntag_I2C_Connect implements ConstNfc {
         answerPlus.auth0 = (0x00000FF & auth0register[3]);
 
         //Access Register
-        if (
-                (0x0000080 & accessRegister[0]) >> Access_Offset.NFC_PROT.getValue() == 1
-        ) {
+        if ((0x0000080 & accessRegister[0]) >> Access_Offset.NFC_PROT.getValue() == 1) {
             answerPlus.nfcProt = true;
         } else {
             answerPlus.nfcProt = false;
         }
-        if (
-                (
-                        0x0000020 & accessRegister[0]
-                ) >> Access_Offset.NFC_DIS_SEC1.getValue() ==
-                        1
-        ) {
+        if ((0x0000020 & accessRegister[0]) >> Access_Offset.NFC_DIS_SEC1.getValue() == 1) {
             answerPlus.nfcDisSec1 = true;
         } else {
             answerPlus.nfcDisSec1 = false;
@@ -408,16 +335,12 @@ public class Ntag_I2C_Connect implements ConstNfc {
         answerPlus.authlim = (0x0000007 & accessRegister[0]);
 
         //PT I2C Register
-        if (
-                (0x0000008 & pti2cRegister[0]) >> PT_I2C_Offset.K2_PROT.getValue() == 1
-        ) {
+        if ((0x0000008 & pti2cRegister[0]) >> PT_I2C_Offset.K2_PROT.getValue() == 1) {
             answerPlus.k2Prot = true;
         } else {
             answerPlus.k2Prot = false;
         }
-        if (
-                (0x0000004 & pti2cRegister[0]) >> PT_I2C_Offset.SRAM_PROT.getValue() == 1
-        ) {
+        if ((0x0000004 & pti2cRegister[0]) >> PT_I2C_Offset.SRAM_PROT.getValue() == 1) {
             answerPlus.sram_prot = true;
         } else {
             answerPlus.sram_prot = false;
@@ -529,10 +452,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
             }
             int bytes = msg.toByteArray().length;
 
-            Log.i(
-                    "NTAG_DEMO",
-                    "NfcReadNdef : message:" + message + " bytes:" + bytes
-            );
+            Log.i("NTAG_DEMO", "NfcReadNdef : message:" + message + " bytes:" + bytes);
 
             return message;
         } catch (CommandNotSupportedException e) {
@@ -566,10 +486,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
             reader.writeNDEF(msg);
 
             int bytes = msg.toByteArray().length;
-            Log.i(
-                    "NTAG_DEMO",
-                    "NfcWriteNdef : writeText:" + writeText + " bytes:" + bytes
-            );
+            Log.i("NTAG_DEMO", "NfcWriteNdef : writeText:" + writeText + " bytes:" + bytes);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -606,13 +523,12 @@ public class Ntag_I2C_Connect implements ConstNfc {
         boolean RTest = false;
         int i, j;
         try {
-            Log.i("NTAG_DEMO", "NfcDataTransive : respWaitTime:" +
-                    respWaitTime + " startWaitTime:" + startWaitTime);
+            Log.i("NTAG_DEMO", "NfcDataTransive : respWaitTime:" + respWaitTime + " startWaitTime:" + startWaitTime);
 
             // wait to prevent that a RF communication is
             // at the same time as 쨉C I2C
             //Thread.sleep(10);
-            if (fInitConnect == false) {
+            if (!fInitConnect) {
                 do {
                     if (reader.checkPTwritePossible()) {
                         break;
@@ -703,13 +619,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
         long RegTimeOutStart = System.currentTimeMillis();
         boolean RTest = false;
         try {
-            Log.i(
-                    "NTAG_DEMO",
-                    "NfcPeriodDataTransive : respWaitTime:" +
-                            respWaitTime +
-                            " startWaitTime:" +
-                            startWaitTime
-            );
+            Log.i("NTAG_DEMO", "NfcPeriodDataTransive : respWaitTime:" + respWaitTime + " startWaitTime:" + startWaitTime);
 
             // wait to prevent that a RF communication is
             // at the same time as 쨉C I2C
@@ -766,10 +676,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                     waitI2CTime(nfcType, defaultReadTime);
                     dataRx = reader.fast_readSRAMBlock();
                 } catch (Exception e) {
-                    Log.i(
-                            "NTAG_DEMO",
-                            "NfcPeriodDataTransive => Exception : readSRAMBlock"
-                    );
+                    Log.i("NTAG_DEMO", "NfcPeriodDataTransive => Exception : readSRAMBlock");
                     e.printStackTrace();
                     exceptionCnt++;
                     if (exceptionCnt > 10) {
@@ -777,32 +684,20 @@ public class Ntag_I2C_Connect implements ConstNfc {
                     }
                 }
 
-                //Log.i("NTAG_DEMO", "NfcPeriodDataTransive dataRx.length:" + dataRx.length);
-                Log.i(
-                        "NTAG_DEMO",
-                        "NfcPeriodDataTransive Wait:" + nTime + " = waitTime:" + waitTime
-                );
+                Log.i("NTAG_DEMO", "NfcPeriodDataTransive Wait:" + nTime + " = waitTime:" + waitTime);
 
                 if (dataRx.length > 10) {
-                    devCode = (int) (dataRx[0] & 0xFF);
-                    msgType = (int) (dataRx[10] & 0xFF);
+                    devCode = dataRx[0] & 0xFF;
+                    msgType = dataRx[10] & 0xFF;
                 }
 
-                if (
-                        devCode != DEVICE_CODE_SMART && devCode != 0x00 && dataRx.length > 10
-                ) {
+                if (devCode != DEVICE_CODE_SMART && devCode != 0x00 && dataRx.length > 10) {
                     Log.i("NTAG_DEMO", "NfcPeriodDataTransive msgType:" + msgType);
                     if (msgType == NfcConstant.NODE_RECV_PERIOD_METER_REPORT) {
                         //기간검침
                         totalBlock = (int) (dataRx[12] & 0xFF);
                         currBlock = (int) (dataRx[13] & 0xFF);
-                        Log.i(
-                                "NTAG_DEMO",
-                                "NfcPeriodDataTransive totalBlock:" +
-                                        totalBlock +
-                                        " currBlock:" +
-                                        currBlock
-                        );
+                        Log.i("NTAG_DEMO", "NfcPeriodDataTransive totalBlock:" + totalBlock + " currBlock:" + currBlock);
                         if (totalBlock == 0 && currBlock == 0) {
                             for (int j = 0; j < dataRx.length; j++) {
                                 recvData[j] = dataRx[j];
@@ -827,13 +722,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                         //Flash Data 검침
                         totalBlock = (int) (dataRx[13] & 0xFF);
                         currBlock = (int) (dataRx[14] & 0xFF);
-                        Log.i(
-                                "NTAG_DEMO",
-                                "NfcFlashDataTransive totalBlock:" +
-                                        totalBlock +
-                                        " currBlock:" +
-                                        currBlock
-                        );
+                        Log.i("NTAG_DEMO", "NfcFlashDataTransive totalBlock:" + totalBlock + " currBlock:" + currBlock);
                         if (totalBlock == 0 && currBlock == 0) {
                             for (int j = 0; j < dataRx.length; j++) {
                                 recvData[j] = dataRx[j];
@@ -866,12 +755,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                 return false;
             }
 
-            bLog.i_hex(
-                    "NTAG_DEMO",
-                    "NfcPeriodDataTransive rx_data:",
-                    dataRx,
-                    dataRx.length
-            );
+            bLog.i_hex("NTAG_DEMO", "NfcPeriodDataTransive rx_data:", dataRx, dataRx.length);
             return true;
         } catch (FormatException e) {
             Log.i("NTAG_DEMO", "NfcPeriodDataTransive => FormatException");
@@ -881,10 +765,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
             e.printStackTrace();
         } catch (CommandNotSupportedException e) {
             showDemoNotSupportedAlert();
-            Log.i(
-                    "NTAG_DEMO",
-                    "NfcPeriodDataTransive => CommandNotSupportedException"
-            );
+            Log.i("NTAG_DEMO", "NfcPeriodDataTransive => CommandNotSupportedException");
             e.printStackTrace();
         } catch (Exception e) {
             Log.i("NTAG_DEMO", "NfcPeriodDataTransive => Exception");
@@ -906,10 +787,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
             Ntag_Get_Version.Prod prod = reader.getProduct();
             Log.i("NTAG_I2C", "ObtainAuthStatus - prod:" + prod.getMemsize());
 
-            if (
-                    !prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_1k_Plus) &&
-                            !prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_2k_Plus)
-            ) {
+            if (!prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_1k_Plus) && !prod.equals(Ntag_Get_Version.Prod.NTAG_I2C_2k_Plus)) {
                 Log.i("NTAG_I2C", "ObtainAuthStatus - 03");
                 return Ntag_Auth.AuthStatus.Disabled.getValue();
             } else {
@@ -941,11 +819,10 @@ public class Ntag_I2C_Connect implements ConstNfc {
             } else if (authStatus == Ntag_Auth.AuthStatus.Authenticated.getValue()) {
                 Log.i("NTAG_I2C", "Auth - 03");
                 reader.unprotectPlus();
-            } else if (
-                    authStatus == Ntag_Auth.AuthStatus.Protected_W.getValue() ||
-                            authStatus == Ntag_Auth.AuthStatus.Protected_RW.getValue() ||
-                            authStatus == Ntag_Auth.AuthStatus.Protected_W_SRAM.getValue() ||
-                            authStatus == Ntag_Auth.AuthStatus.Protected_RW_SRAM.getValue()
+            } else if (authStatus == Ntag_Auth.AuthStatus.Protected_W.getValue() ||
+                    authStatus == Ntag_Auth.AuthStatus.Protected_RW.getValue() ||
+                    authStatus == Ntag_Auth.AuthStatus.Protected_W_SRAM.getValue() ||
+                    authStatus == Ntag_Auth.AuthStatus.Protected_RW_SRAM.getValue()
             ) {
                 byte[] pack = reader.authenticatePlus(pwd);
                 bLog.i_hex("NTAG_I2C", "Auth - pack:", pack, pack.length);
@@ -1060,9 +937,8 @@ public class Ntag_I2C_Connect implements ConstNfc {
      * @return NDEF Message
      * @throws UnsupportedEncodingException
      */
-    private NdefMessage createNdefTextMessage(String text)
-            throws UnsupportedEncodingException {
-        if (text.length() == 0) {
+    private NdefMessage createNdefTextMessage(String text) throws UnsupportedEncodingException {
+        if (text.isEmpty()) {
             return null;
         }
         String lang = "en";
@@ -1081,7 +957,6 @@ public class Ntag_I2C_Connect implements ConstNfc {
                 payload
         );
         NdefRecord[] records = {record};
-        NdefMessage message = new NdefMessage(records);
-        return message;
+        return new NdefMessage(records);
     }
 }

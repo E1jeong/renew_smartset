@@ -90,7 +90,8 @@ fun DeviceDetailScreen(
 
     DeviceDetailScreen(
         installDevice = state.installDevice,
-        imageList = state.deviceImageList.sortedBy { it.first }
+        imageList = state.deviceImageList.sortedBy { it.first },
+        onUpdateClick = viewModel::onUpdateClick
     )
 }
 
@@ -98,6 +99,7 @@ fun DeviceDetailScreen(
 private fun DeviceDetailScreen(
     installDevice: InstallDevice?,
     imageList: List<Pair<Int, Any?>>,
+    onUpdateClick: () -> Unit
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (content, footer) = createRefs()
@@ -139,7 +141,8 @@ private fun DeviceDetailScreen(
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                }
+                },
+            onUpdateClick = onUpdateClick
         )
     }
 }
@@ -480,7 +483,10 @@ fun MeterCompanyInfo(text: String) {
 }
 
 @Composable
-fun DeviceDetailFooter(modifier: Modifier = Modifier) {
+fun DeviceDetailFooter(
+    modifier: Modifier = Modifier,
+    onUpdateClick: () -> Unit,
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -493,7 +499,8 @@ fun DeviceDetailFooter(modifier: Modifier = Modifier) {
                 .padding(Paddings.xsmall),
             text = stringResource(id = R.string.update),
             leadingIcon = LeadingIcon(Icons.Filled.Refresh),
-            onClick = {})
+            onClick = onUpdateClick
+        )
         PrimaryButton(
             modifier = Modifier
                 .weight(1f)
@@ -510,7 +517,7 @@ fun DeviceDetailFooter(modifier: Modifier = Modifier) {
 fun DeviceDetailScreenPreview() {
     RenewSmartSetTheme {
         Surface {
-            DeviceDetailScreen(installDevice = null, imageList = emptyList())
+            DeviceDetailScreen(installDevice = null, imageList = emptyList(), onUpdateClick = {})
         }
     }
 }

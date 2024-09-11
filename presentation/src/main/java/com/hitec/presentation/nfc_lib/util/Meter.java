@@ -5,6 +5,8 @@
  */
 package com.hitec.presentation.nfc_lib.util;
 
+import android.util.Log;
+
 import java.util.Calendar;
 
 public class Meter {
@@ -761,7 +763,7 @@ public class Meter {
         String strMeterVal = "0.0";
         String strDecimalPart;
         String strIntPart;
-        bLog.i(
+        Log.i(
                 "Meter",
                 " PulseMeterValPoint ==>01 strPulseVal:" +
                         strPulseVal +
@@ -785,7 +787,7 @@ public class Meter {
             strIntPart = strPulseVal.substring(0, MAX_LEN - 3);
             strDecimalPart = strPulseVal.substring(MAX_LEN - 3, MAX_LEN);
         }
-        bLog.i(
+        Log.i(
                 "Meter",
                 " PulseMeterValPoint ==>02 strIntPart:" +
                         strIntPart +
@@ -795,7 +797,7 @@ public class Meter {
         strIntPart = DevUtil.convertStrIntegerToStrInteger(strIntPart);
 
         strMeterVal = strIntPart + "." + strDecimalPart;
-        bLog.i(
+        Log.i(
                 "Meter",
                 " PulseMeterValPoint ==>03 strMeterVal:" +
                         strMeterVal +
@@ -1325,7 +1327,7 @@ public class Meter {
         lnAddVal = lnMeterVal + lnDiffVal;
         strAddVal = String.valueOf(lnAddVal);
 
-        bLog.i(
+        Log.i(
                 "meter",
                 "ParserMeterAddVal ==> " +
                         " strMeterVal:" +
@@ -1333,7 +1335,7 @@ public class Meter {
                         " strMeterUseVal:" +
                         strMeterUseVal
         );
-        bLog.i(
+        Log.i(
                 "meter",
                 "ParserMeterAddVal ==> " +
                         " lnMeterVal:" +
@@ -1341,7 +1343,7 @@ public class Meter {
                         " lnDiffVal:" +
                         lnDiffVal
         );
-        bLog.i(
+        Log.i(
                 "meter",
                 "ParserMeterAddVal ==> " +
                         " nSubPoint:" +
@@ -1349,7 +1351,7 @@ public class Meter {
                         " nMeterValuePoint:" +
                         nMeterValuePoint
         );
-        bLog.i(
+        Log.i(
                 "meter",
                 "ParserMeterAddVal ==> " +
                         " lnAddVal:" +
@@ -1376,8 +1378,8 @@ public class Meter {
         }
 
         strMeterAddVal = strIntPart + "." + strDecimalPart;
-        //bLog.i("meter", "ParserMeterAddVal ==> " + " strIntPart:" + strIntPart + " strDecimalPart:" + strDecimalPart);
-        //bLog.i("meter", "ParserMeterAddVal ==> " + " strMeterAddVal:" + strMeterAddVal);
+        //Log.i("meter", "ParserMeterAddVal ==> " + " strIntPart:" + strIntPart + " strDecimalPart:" + strDecimalPart);
+        //Log.i("meter", "ParserMeterAddVal ==> " + " strMeterAddVal:" + strMeterAddVal);
 
         return strMeterAddVal;
     }
@@ -1644,8 +1646,8 @@ public class Meter {
                 nDiv *= 10;
             }
         }
-        //bLog.i("meter", "ParserWmuMeterVal ==> " + " nMeterVal:" + nMeterVal + " nPoint:" + nPoint);
-        //bLog.i("meter", "ParserWmuMeterVal ==> " + " nDiv:" + nDiv);
+        //Log.i("meter", "ParserWmuMeterVal ==> " + " nMeterVal:" + nMeterVal + " nPoint:" + nPoint);
+        //Log.i("meter", "ParserWmuMeterVal ==> " + " nDiv:" + nDiv);
 
         int nIntPart = nMeterVal / nDiv;
         int nDecimalPart = nMeterVal % nDiv;
@@ -1654,7 +1656,7 @@ public class Meter {
         String strDecimalPart = String.format("%d", nDecimalPart);
         String strZeroPart = "";
         int nDecimalLen;
-        //bLog.i("meter", "ParserWmuMeterVal ==> " + " strIntPart:" + strIntPart + " strDecimalPart:" + strDecimalPart);
+        //Log.i("meter", "ParserWmuMeterVal ==> " + " strIntPart:" + strIntPart + " strDecimalPart:" + strDecimalPart);
 
         nDecimalLen = strDecimalPart.length();
 
@@ -1664,7 +1666,7 @@ public class Meter {
 
         strMeterVal =
                 String.format("%s.%s%s", strIntPart, strZeroPart, strDecimalPart);
-        //bLog.i("meter", "ParserWmuMeterVal ==> " + " strMeterVal:" + strMeterVal);
+        //Log.i("meter", "ParserWmuMeterVal ==> " + " strMeterVal:" + strMeterVal);
         return strMeterVal;
     }
 

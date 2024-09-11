@@ -9,6 +9,7 @@ import com.hitec.domain.usecase.LoginScreenInfoUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.presentation.R
+import com.hitec.presentation.nfc_lib.NfcManager
 import com.hitec.presentation.util.PathHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DeviceDetailViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val nfcManager: NfcManager,
     private val loginScreenInfoUseCase: LoginScreenInfoUseCase,
     private val postDownloadableImageListUseCase: PostDownloadableImageListUseCase,
     private val postDownloadDeviceImageUseCase: PostDownloadDeviceImageUseCase,
@@ -125,6 +127,14 @@ class DeviceDetailViewModel @Inject constructor(
         )
 
         reduce { state.copy(deviceImageList = state.deviceImageList + Pair(photoTypeCd, image)) }
+    }
+
+    fun onUpdateClick() = intent {
+        nfcManager.nfclib_start()
+        nfcManager.nfcLib_SerialChangeReq(
+            state.installDevice?.meterDeviceSn ?: "NL1234567890",
+            state.installDevice?.meterDeviceSn?.length ?: 12
+        )
     }
 
     companion object {

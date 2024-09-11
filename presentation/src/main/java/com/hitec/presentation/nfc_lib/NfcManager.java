@@ -8,9 +8,7 @@
  */
 package com.hitec.presentation.nfc_lib;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -20,11 +18,10 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.MifareUltralight;
 import android.nfc.tech.NfcA;
-import android.os.Bundle;
-import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.hitec.presentation.main.MainActivity;
 import com.hitec.presentation.nfc_lib.model.NfcBufferData;
 import com.hitec.presentation.nfc_lib.model.NfcMeterConfig;
 import com.hitec.presentation.nfc_lib.model.NfcMeterValue;
@@ -35,14 +32,10 @@ import com.hitec.presentation.nfc_lib.protocol.send.BdControlReq;
 import com.hitec.presentation.nfc_lib.protocol.send.ChangeMinuteIntervalReq;
 import com.hitec.presentation.nfc_lib.protocol.send.CheckSubTerm;
 import com.hitec.presentation.nfc_lib.protocol.send.DeviceInfoReq;
-import com.hitec.presentation.nfc_lib.protocol.send.DisplayConfSet;
 import com.hitec.presentation.nfc_lib.protocol.send.FlashDataReq;
 import com.hitec.presentation.nfc_lib.protocol.send.FlashDateListReq;
 import com.hitec.presentation.nfc_lib.protocol.send.FwUpdateReq;
 import com.hitec.presentation.nfc_lib.protocol.send.GsmChangeDomainReq;
-import com.hitec.presentation.nfc_lib.protocol.send.LoraAppEuiKeyReq;
-import com.hitec.presentation.nfc_lib.protocol.send.LoraAppEuiKeySet;
-import com.hitec.presentation.nfc_lib.protocol.send.LoraConfSet;
 import com.hitec.presentation.nfc_lib.protocol.send.MeterReq;
 import com.hitec.presentation.nfc_lib.protocol.send.NbConfSet;
 import com.hitec.presentation.nfc_lib.protocol.send.NbIdReq;
@@ -69,119 +62,96 @@ import com.hitec.presentation.nfc_lib.protocol.send.TxHeader;
 import com.hitec.presentation.nfc_lib.reader.Ntag_Auth;
 import com.hitec.presentation.nfc_lib.reader.Ntag_I2C_Connect;
 import com.hitec.presentation.nfc_lib.util.ConstCommon;
-import com.hitec.presentation.nfc_lib.util.ConstDB;
-import com.hitec.presentation.nfc_lib.util.ConstMeter;
 import com.hitec.presentation.nfc_lib.util.ConstNfc;
-import com.hitec.presentation.nfc_lib.util.Constanse;
 import com.hitec.presentation.nfc_lib.util.bLog;
 
-public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMeter, ConstCommon, ConstNfc {
+public class NfcManager implements ConstCommon, ConstNfc, NfcConstant {
 
-    public static Ntag_I2C_Connect ntagI2CConnect = null;
-    // Current authentication state
-    private static int mAuthStatus;
+    public Ntag_I2C_Connect ntagI2CConnect = null;
+    private static int mAuthStatus; // Current authentication state
     private Activity mActivity;
     private Context mContext;
     private boolean isRunning = false;
     private static boolean isResponseConnected = false;
-    private static int m_nNfcType = NFC_TYPE_DEFAULT;
+    private static int m_nfcType = NFC_TYPE_DEFAULT;
     private static int requestMessageType = 0;
     private static String m_consumeHouseNo = "";
-    // Current used password
-    private static byte[] mPassword;
+    private static byte[] mPassword; // Current used password
     private static byte[] m_txBuffer;
     private static byte[] m_rxBuffer;
     private static byte[] m_rxPeriodBuffer; //기간검침
-    private static int m_nNfcRespWaitTime;
-    private static int m_nNfcStartWaitTime;
+    private static int nfcRespWaitTime;
+    private static int nfcStartWaitTime;
     public final int SRAM_SIZE = 64;
     private final int PERIOD_BUFFER_SIZE = SRAM_SIZE * 100 * 2; // 90일 * 2
-    private NfcAdapter nfcAdapter;
-    private Tag mNfcTag;
-    private NfcBufferData mAmiSendData = null; //ami lib 송신 Data
-    private NfcBufferData mAmiRecvData = null; //ami lib 수신 Data
-
-    private PendingIntent mPendingIntent;
+    public NfcAdapter nfcAdapter;
+    private NfcBufferData nfcSendData = null; //ami lib 송신 Data
+    private NfcBufferData nfcReceiveData = null; //ami lib 수신 Data
+    private PendingIntent pendingIntent;
 
     public static int getAuthStatus() {
         return mAuthStatus;
-    }
-
-    public static void setAuthStatus(int status) {
-        mAuthStatus = status;
     }
 
     public static byte[] getPassword() {
         return mPassword;
     }
 
-    public static void setPassword(byte[] pwd) {
-        mPassword = pwd;
+    public NfcManager() {
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void startNfcManager(Context context, Activity activity, int nfcType) {
+        Log.i("NFC_TEST", "startNfcManager ==> start 01");
+        mActivity = activity;
+        mContext = context;
+        m_nfcType = nfcType;
+        isRunning = false;
 
-        Log.i("NFC_TEST", "NfcActivity ==> onCreate 01");
+        nfcAdapter = NfcAdapter.getDefaultAdapter(mContext);
+        Log.i("NFC_TEST", "startNfcManager nfcAdapter: " + nfcAdapter.toString());
 
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        // When we open the application by default we set the status to disabled (we don't know the product yet)
-        mAuthStatus = Ntag_Auth.AuthStatus.Disabled.getValue();
+        mAuthStatus = Ntag_Auth.AuthStatus.Disabled.getValue(); // When we open the application by default we set the status to disabled (we don't know the product yet)
+        mPassword = Ntag_Auth.Pwds.PWD0.getValue();
+        ntagI2CConnect = new Ntag_I2C_Connect(null, mActivity, null, 0); // Initialize the demo in order to handle tab change events
 
         m_txBuffer = new byte[SRAM_SIZE];
         m_rxBuffer = new byte[SRAM_SIZE];
         m_rxPeriodBuffer = new byte[PERIOD_BUFFER_SIZE];
+        initBuffer();
 
-        mActivity = this;
-        mContext = this;
-    }
-
-    public void startNfcActivity(Context context, Activity activity, int nNfcType) {
-        Log.i("NFC_TEST", "startNfcActivity ==> start 01");
-        m_nNfcType = nNfcType;
-        isRunning = false;
-
-        mActivity = activity;
-        mContext = context;
-
-        // Initialize the demo in order to handle tab change events
-        ntagI2CConnect = new Ntag_I2C_Connect(null, mActivity, null, 0);
-        nfcAdapter = NfcAdapter.getDefaultAdapter(mContext);
-        NfcActivity.setPassword(Ntag_Auth.Pwds.PWD0.getValue());
-
-        setNfcForeground();
+        setNfcForeground(mContext);
 
         viewNfcStatusImage();
 
         mActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
-    public void initNfcActivity() {
-        Log.i("NFC_TEST", "initNfcActivity ==> start 01");
+    private void initBuffer() {
+        Log.i("NFC_TEST", "initBuffer ==> start 01");
 
-        if (mAmiSendData == null) {
-            mAmiSendData = new NfcBufferData();
-            mAmiSendData.stMeterConfig0 = new NfcMeterConfig();
-            mAmiSendData.stMeterValue0 = new NfcMeterValue();
-            init_AmiBufferData(mAmiSendData);
+        if (nfcSendData == null) {
+            nfcSendData = new NfcBufferData();
+            nfcSendData.stMeterConfig0 = new NfcMeterConfig();
+            nfcSendData.stMeterValue0 = new NfcMeterValue();
+            initNfcBuffer(nfcSendData);
         }
 
-        if (mAmiRecvData == null) {
-            mAmiRecvData = new NfcBufferData();
-            mAmiRecvData.stMeterConfig0 = new NfcMeterConfig();
-            mAmiRecvData.stMeterValue0 = new NfcMeterValue();
-            init_AmiBufferData(mAmiRecvData);
+        if (nfcReceiveData == null) {
+            nfcReceiveData = new NfcBufferData();
+            nfcReceiveData.stMeterConfig0 = new NfcMeterConfig();
+            nfcReceiveData.stMeterValue0 = new NfcMeterValue();
+            initNfcBuffer(nfcReceiveData);
         }
     }
 
-    public void closeNfcActivity() {
-        Log.i("NFC_TEST", "AmiActivity ==> close 01");
+    public void closeNfcManager() {
+        Log.i("NFC_TEST", "closeNfcManager ==> close 01");
+        mAuthStatus = 0;
+        mPassword = null;
         nfclib_close();
     }
 
-    public void init_AmiBufferData(NfcBufferData bufferData) {
+    private void initNfcBuffer(NfcBufferData bufferData) {
         bufferData.serialNo = "";
         bufferData.fwVersion = "";
         bufferData.nDeviceCode = 0;
@@ -194,16 +164,8 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
         bufferData.nbIccId = "";
     }
 
-    public void copyAmiRecvBufferData(NfcBufferData dstBuffer) {
-        mAmiRecvData = dstBuffer;
-    }
-
-    public void startSettingNfc() {
-        if (android.os.Build.VERSION.SDK_INT >= 16) {
-            startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
-        } else {
-            startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
-        }
+    public void setNfcReceiveData(NfcBufferData receiveData) {
+        nfcReceiveData = receiveData;
     }
 
     public void viewNfcStatusImage() {
@@ -218,131 +180,104 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
         view_NfcAdapterStatus(nStatus);
     }
 
-    @SuppressLint("InlinedApi")
-    public void checkNFC() {
-        if (m_nNfcType == NFC_TYPE_NO) {
-            return;
-        }
-
-        String strTitle;
-        String strMsg;
-        String strBtnOk = "확인";
-        String strBtnCancel = "취소";
-
-        if (nfcAdapter != null) {
-            if (!nfcAdapter.isEnabled()) {
-                strTitle = "nfc 미사용";
-                strMsg = "설정화면으로 이동하시겠습니까?";
-                new AlertDialog.Builder(mActivity)
-                        .setTitle(strTitle)
-                        .setMessage(strMsg)
-                        .setPositiveButton(
-                                strBtnOk,
-                                (dialog, which) -> {
-                                    if (android.os.Build.VERSION.SDK_INT >= 16) {
-                                        startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
-                                    } else {
-                                        startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
-                                    }
-                                }
-                        )
-                        .setNegativeButton(
-                                strBtnCancel,
-                                (dialog, which) -> {
-                                    //System.exit(0);
-                                }
-                        )
-                        .show();
-            }
-        } else {
-            //NFC를 사용할 수 없습니다.
-            strTitle = "nfc를 사용할수 없습니다.";
-            new AlertDialog.Builder(mActivity)
-                    .setTitle(strTitle)
-                    .setNeutralButton(
-                            strBtnOk,
-                            (dialog, which) -> {
-                                //System.exit(0);
-                            }
-                    )
-                    .show();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i("NFC_TEST", "onPause => 01");
-
-        if (nfcAdapter != null) {
-            nfcAdapter.disableForegroundDispatch(mActivity);
-        }
-    }
+//    @SuppressLint("InlinedApi")
+//    public void checkNFC() {
+//        if (m_nNfcType == NFC_TYPE_NO) {
+//            return;
+//        }
+//
+//        String strTitle;
+//        String strMsg;
+//        String strBtnOk = "확인";
+//        String strBtnCancel = "취소";
+//
+//        if (nfcAdapter != null) {
+//            if (!nfcAdapter.isEnabled()) {
+//                strTitle = "nfc 미사용";
+//                strMsg = "설정화면으로 이동하시겠습니까?";
+//                new AlertDialog.Builder(mActivity)
+//                        .setTitle(strTitle)
+//                        .setMessage(strMsg)
+//                        .setPositiveButton(
+//                                strBtnOk,
+//                                (dialog, which) -> {
+//                                    if (android.os.Build.VERSION.SDK_INT >= 16) {
+//                                        startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
+//                                    } else {
+//                                        startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+//                                    }
+//                                }
+//                        )
+//                        .setNegativeButton(
+//                                strBtnCancel,
+//                                (dialog, which) -> {
+//                                    //System.exit(0);
+//                                }
+//                        )
+//                        .show();
+//            }
+//        } else {
+//            //NFC를 사용할 수 없습니다.
+//            strTitle = "nfc를 사용할수 없습니다.";
+//            new AlertDialog.Builder(mActivity)
+//                    .setTitle(strTitle)
+//                    .setNeutralButton(
+//                            strBtnOk,
+//                            (dialog, which) -> {
+//                                //System.exit(0);
+//                            }
+//                    )
+//                    .show();
+//        }
+//    }
 
     public void NfcAdapterEnableForeground() {
-        Log.i("NFC_TEST", "NfcAdapterEnableForeground() => 01");
 
         if (nfcAdapter != null) {
+            Log.i("NFC_TEST", "NfcAdapterEnableForeground() => 01");
 
             IntentFilter tagDiscoverFilter = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
             IntentFilter techDiscoverFilter = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
-            IntentFilter[] intentFilters = new IntentFilter[]{tagDiscoverFilter, techDiscoverFilter};
+            IntentFilter ndefDiscoveredFilter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+            IntentFilter[] intentFilters = new IntentFilter[]{tagDiscoverFilter, techDiscoverFilter, ndefDiscoveredFilter};
 
             String[][] techLists = {new String[]{NfcA.class.getName()}, new String[]{MifareUltralight.class.getName()}};
-            nfcAdapter.enableForegroundDispatch(mActivity, mPendingIntent, intentFilters, techLists);
+            nfcAdapter.enableForegroundDispatch(mActivity, pendingIntent, intentFilters, techLists);
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mAuthStatus = 0;
-        mPassword = null;
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-
+    public void handleIntent(Intent intent) {
+        Log.i("NFC_TEST", "handleIntent isRunning: " + isRunning);
         if (!isRunning) return;
-
-        // Set the initial auth parameters
-        mAuthStatus = Ntag_Auth.AuthStatus.Disabled.getValue();
-
-        // Set the pattern for vibration
-        long[] pattern = {0, 100};
-        // Vibrate on new Intent
-        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(pattern, -1);
 
         doProcess(intent);
     }
 
-    public void doProcess(Intent nfc_intent) {
-        mNfcTag = nfc_intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+    private void doProcess(Intent intent) {
+        Log.i("NFC_TEST", "doProcess");
 
-        setPassword(Ntag_Auth.Pwds.PWD0.getValue());
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        mAuthStatus = Ntag_Auth.AuthStatus.Disabled.getValue(); // Set the initial auth parameters
+        mPassword = Ntag_Auth.Pwds.PWD0.getValue();
         isResponseConnected = false;
 
-        ntagI2CConnect = new Ntag_I2C_Connect(mNfcTag, mActivity, mPassword, mAuthStatus);
+        ntagI2CConnect = new Ntag_I2C_Connect(tag, mActivity, mPassword, mAuthStatus);
         if (ntagI2CConnect.isReady()) {
-            // Retrieve Auth Status before doing any operation
-            mAuthStatus = ntagI2CConnect.ObtainAuthStatus();
-            ntagI2CConnect = new Ntag_I2C_Connect(mNfcTag, mActivity, NfcActivity.getPassword(), NfcActivity.getAuthStatus());
+            mAuthStatus = ntagI2CConnect.ObtainAuthStatus(); // Retrieve Auth Status before doing any operation
+            ntagI2CConnect = new Ntag_I2C_Connect(tag, mActivity, mPassword, mAuthStatus);
             connectProcess();
         }
     }
 
-    public void setNfcForeground() {
+    private void setNfcForeground(Context context) {
         Log.i("NFC_TEST", "setNfcForeground - 01");
 
-        mPendingIntent = PendingIntent.getActivity(
-                mActivity,
+        pendingIntent = PendingIntent.getActivity(
+                context,
                 0,
-                new Intent(getApplicationContext(), getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
                 PendingIntent.FLAG_MUTABLE
         );
-
     }
 
     //****************************************************************************
@@ -351,52 +286,51 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
 
     private void connectNfc() {
         Log.i("NFC_TEST", "connectNfc - 01");
-        // This authentication is added in order to avoid authentication problems with old NFC Controllers
-        if (NfcActivity.getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()) {
+
+        if (getAuthStatus() == Ntag_Auth.AuthStatus.Authenticated.getValue()) { // This authentication is added in order to avoid authentication problems with old NFC Controllers
             Log.i("NFC_TEST", "connectNfc - 02");
-            ntagI2CConnect.Auth(NfcActivity.getPassword(), Ntag_Auth.AuthStatus.Protected_RW.getValue());
+            ntagI2CConnect.Auth(getPassword(), Ntag_Auth.AuthStatus.Protected_RW.getValue());
         }
 
         if (ntagI2CConnect != null && ntagI2CConnect.isReady()) {
             boolean authSuccess = true;
             if (!isResponseConnected) {
-                authSuccess = ntagI2CConnect.Auth(NfcActivity.getPassword(), NfcActivity.getAuthStatus());
+                authSuccess = ntagI2CConnect.Auth(getPassword(), getAuthStatus());
             }
 
-            Log.i("AUTH", "authTask = doInBackground => authSuccess:" + authSuccess);
+            Log.i("NFC_TEST", "authTask = doInBackground => authSuccess:" + authSuccess);
 
             if (authSuccess) {
-                boolean fSuccess = false;
+                boolean responseSuccess = false;
                 try {
                     Log.i("NFC_TEST", "connectNfc => NfcDataTransive m_nReqMsgType:" + requestMessageType);
 
                     //설정시 수용가번호 입력
-                    if (requestMessageType == NfcConstant.NODE_SEND_LORA_CONF_SET ||
-                            requestMessageType == NfcConstant.NODE_SEND_NB_CONF_SET ||
-                            requestMessageType == NfcConstant.NODE_SEND_DISPLAY_CONF_SET) {
+                    if (requestMessageType == NODE_SEND_LORA_CONF_SET ||
+                            requestMessageType == NODE_SEND_NB_CONF_SET ||
+                            requestMessageType == NODE_SEND_DISPLAY_CONF_SET) {
                         ntagI2CConnect.NfcWriteNdef(m_consumeHouseNo);
                     }
 
-                    if (requestMessageType == NfcConstant.NODE_SEND_PERIOD_METER_REQ ||
-                            requestMessageType == NfcConstant.NODE_SEND_FLASH_DATA_REQ) {
-                        fSuccess = ntagI2CConnect.NfcPeriodDataTransive(
-                                m_nNfcType,
+                    if (requestMessageType == NODE_SEND_PERIOD_METER_REQ || requestMessageType == NODE_SEND_FLASH_DATA_REQ) {
+                        responseSuccess = ntagI2CConnect.NfcPeriodDataTransive(
+                                m_nfcType,
                                 isResponseConnected,
                                 m_txBuffer,
                                 m_rxPeriodBuffer,
-                                m_nNfcRespWaitTime,
-                                m_nNfcStartWaitTime
+                                nfcRespWaitTime,
+                                nfcStartWaitTime
                         );
-                    } else if (requestMessageType == NfcConstant.NODE_SEND_ACCOUNT_NO_SET) {
-                        fSuccess = ntagI2CConnect.NfcWriteNdef(m_consumeHouseNo);
+                    } else if (requestMessageType == NODE_SEND_ACCOUNT_NO_SET) {
+                        responseSuccess = ntagI2CConnect.NfcWriteNdef(m_consumeHouseNo);
                     } else {
-                        fSuccess = ntagI2CConnect.NfcDataTransive(
-                                m_nNfcType,
+                        responseSuccess = ntagI2CConnect.NfcDataTransive(
+                                m_nfcType,
                                 isResponseConnected,
                                 m_txBuffer,
                                 m_rxBuffer,
-                                m_nNfcRespWaitTime,
-                                m_nNfcStartWaitTime
+                                nfcRespWaitTime,
+                                nfcStartWaitTime
                         );
                     }
 
@@ -405,18 +339,14 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
                     Log.i("NFC_TEST", "connectNfc => Tag_lost");
                 }
 
-                if (fSuccess) isResponseConnected = true;
+                if (responseSuccess) isResponseConnected = true;
 
-                if (requestMessageType == NfcConstant.NODE_SEND_PERIOD_METER_REQ ||
-                        requestMessageType == NfcConstant.NODE_SEND_FLASH_DATA_REQ) {
-                    NfcPeriodDataResp(fSuccess, m_rxPeriodBuffer);
-                } else if (requestMessageType == NfcConstant.NODE_SEND_ACCOUNT_NO_SET) {
-                    nfclib_EvtRecvDataEvent(
-                            NfcConstant.NODE_RECV_ACCOUNT_NO_REPORT,
-                            m_rxBuffer
-                    );
+                if (requestMessageType == NODE_SEND_PERIOD_METER_REQ || requestMessageType == NODE_SEND_FLASH_DATA_REQ) {
+                    NfcPeriodDataResp(responseSuccess, m_rxPeriodBuffer);
+                } else if (requestMessageType == NODE_SEND_ACCOUNT_NO_SET) {
+                    nfclib_EvtRecvDataEvent(NODE_RECV_ACCOUNT_NO_REPORT, m_rxBuffer);
                 } else {
-                    NfcDataResp(fSuccess, m_rxBuffer);
+                    NfcDataResp(responseSuccess, m_rxBuffer);
                 }
             }
         } else {
@@ -428,9 +358,9 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
     //******************* UI
     //****************************************************************************
 
-    private void NfcDataResp(boolean fSuccess, byte[] rxData) {
-        Log.i("NFC_TEST", "NfcDataResp => fSuccess:" + fSuccess);
-        if (!fSuccess) {
+    private void NfcDataResp(boolean responseSuccess, byte[] rxData) {
+        Log.i("NFC_TEST", "NfcDataResp => responseSuccess:" + responseSuccess);
+        if (!responseSuccess) {
             Toast.makeText(mActivity, "read tag failed", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -450,9 +380,9 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
     //******************** ViewActivity ==> AmiActivity
     //*****************************************************************************
 
-    private void NfcPeriodDataResp(boolean fSuccess, byte[] rxData) {
-        Log.i("NFC_TEST", "NfcPeriodDataResp => fSuccess:" + fSuccess);
-        if (!fSuccess) {
+    private void NfcPeriodDataResp(boolean responseSuccess, byte[] rxData) {
+        Log.i("NFC_TEST", "NfcPeriodDataResp => responseSuccess:" + responseSuccess);
+        if (!responseSuccess) {
             Toast.makeText(mActivity, "read tag failed", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -471,7 +401,7 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
         }
 
         int msgType = rxHeader.GetNodeMsgType();
-        if (msgType == NfcConstant.NODE_RECV_FLASH_DATE_LIST_REPORT) {
+        if (msgType == NODE_RECV_FLASH_DATE_LIST_REPORT) {
             nfclib_EvtRecvDataEvent(msgType, m_rxBuffer);
         } else {
             nfclib_EvtRecvDataEvent(msgType, rxData);
@@ -504,11 +434,11 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
             if (retry) {
                 nfcAdapter = NfcAdapter.getDefaultAdapter(mContext);
                 NfcAdapterEnableForeground();
+                Log.i("NFC_TEST", "nfclib_retry ==> 03");
                 if (nfcAdapter != null) {
-                    Log.i("NFC_TEST", "nfclib_start ==> 02");
+                    Log.i("NFC_TEST", "nfclib_retry ==> 04");
                     if (!nfcAdapter.isEnabled()) {
-                        Log.i("NFC_TEST", "nfclib_start ==> 03");
-                        retry = true;
+                        Log.i("NFC_TEST", "nfclib_retry ==> 05");
                         return false;
                     }
                 }
@@ -540,6 +470,7 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
     }
 
     protected void nfclib_EvtRecvDataEvent(int msgType, byte[] rxData) {
+        bLog.i_hex("NFC_TEST", "nfclib_EvtRecvDataEvent", m_rxBuffer, rxData.length);
     } //
 
     protected void nfclib_EvtTimeOutEvent(int nResult) {
@@ -586,7 +517,7 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
         Log.i("NFC_TEST", "UpdateSendData ==> msgType : " + msgType + " msgLen:" + msgLen);
         bLog.i_hex("NFC_TEST", "UpdateSendData => 1", m_txBuffer, m_txBuffer.length);
 
-        if (msgType == NfcConstant.NODE_SEND_METER_REQ) {
+        if (msgType == NODE_SEND_METER_REQ) {
             MeterReq req = new MeterReq();
             UpdateTxTime(msgLen, req.GetTimePosition(), txHeader.updateTime());
         }
@@ -595,7 +526,7 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
     /*
      * 무선 데이터 전송
      */
-    public void nfcLib_SendData(
+    private void nfcLib_SendData(
             NfcTxMessage req,
             int writeWaitTime,
             int startWaitTime
@@ -618,11 +549,11 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
             m_txBuffer[i] = 0;
         }
 
-        m_nNfcRespWaitTime = writeWaitTime;
-        m_nNfcStartWaitTime = startWaitTime;
+        nfcRespWaitTime = writeWaitTime;
+        nfcStartWaitTime = startWaitTime;
         bLog.i_hex("NFC_TEST", "SendData", msg, msg.length);
 
-        Log.e("NFC_TEST", "SendData ==> m_fNfcConnect:" + isResponseConnected + " m_nReqMsgType:" + requestMessageType);
+        Log.e("NFC_TEST", "SendData ==> isResponseConnected:" + isResponseConnected + " requestMessageType:" + requestMessageType);
 
         if (isResponseConnected && ntagI2CConnect != null) {
             connectNfc();
@@ -631,94 +562,12 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
 
     // 장비 설정 정보 요청
     public void nfcLib_ReqNodeConfig() {
-        Log.i("NFC_TEST", "nfcLib_ReqNodeConfig ");
+        Log.i("NFC_TEST", "nfcLib_ReqNodeConfig");
         NodeConfReq req = new NodeConfReq();
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * Lora Config 설정
-     * </pre>
-     *
-     * @param
-     */
-    public void nfcLib_SetLoraConfig(
-            String consumeHouseNo,
-            String serialNo,
-            int sleepMode,
-            int amiMeteringInterval,
-            int amiReportInterval,
-            int dataFormat,
-            int meterNum,
-            int meterType0,
-            int meterPort0,
-            int meterType1,
-            int meterPort1,
-            int meterType2,
-            int meterPort2
-    ) {
-        Log.i("NFC_TEST", "nfcLib_SetLoraConfig ");
-        LoraConfSet req = new LoraConfSet(
-                serialNo,
-                sleepMode,
-                amiMeteringInterval,
-                amiReportInterval,
-                dataFormat,
-                meterNum,
-                meterType0,
-                meterPort0,
-                meterType1,
-                meterPort1,
-                meterType2,
-                meterPort2
-        );
-
-        m_consumeHouseNo = consumeHouseNo;
-        nfcLib_SendData(req, NFC_RESP_WAIT_TIME_NODE_CONF_SET, 0);
-    }
-
-    /**
-     * <pre>
-     * Lora Config2 설정
-     * </pre>
-     *
-     * @param
-     */
-    public void nfcLib_SetLoraConfig2(
-            String consumeHouseNo,
-            String serialNo,
-            int sleepMode,
-            int amiMeteringInterval,
-            int amiReportInterval,
-            int dataFormat,
-            String pan,
-            String nwk,
-            String strSubId
-    ) {
-        Log.i("NFC_TEST", "nfcLib_SetLoraConfig2 ");
-        LoraConfSet req = new LoraConfSet(
-                serialNo,
-                sleepMode,
-                amiMeteringInterval,
-                amiReportInterval,
-                dataFormat,
-                pan,
-                nwk,
-                strSubId
-        );
-
-        m_consumeHouseNo = consumeHouseNo;
-        nfcLib_SendData(req, NFC_RESP_WAIT_TIME_NODE_CONF_SET, 0);
-    }
-
-    /**
-     * <pre>
-     * NB-IOT Config 설정(Version 1, 3, 5)
-     * </pre>
-     *
-     * @param
-     */
+    //NB-IOT Config 설정(Version 1, 3, 5)
     public void nfcLib_SetNbConfig(
             int msgVersion,
             String consumeHouseNo,
@@ -738,7 +587,7 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
             int meterType2,
             int meterPort2
     ) {
-        Log.i("NFC_TEST", "nfcLib_SetNodeConfig ");
+        Log.i("NFC_TEST", "nfcLib_SetNodeConfig");
         NbConfSet req = new NbConfSet(
                 msgVersion,
                 serialNo,
@@ -757,18 +606,11 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
                 meterType2,
                 meterPort2
         );
-
         m_consumeHouseNo = consumeHouseNo;
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_NODE_CONF_SET, 0);
     }
 
-    /**
-     * <pre>
-     * NB-IOT Config2 설정(Version 2, 4, 6)
-     * </pre>
-     *
-     * @param
-     */
+    //NB-IOT Config2 설정(Version 2, 4, 6)
     public void nfcLib_SetNbConfigMaster(
             int msgVersion,
             String consumeHouseNo,
@@ -784,7 +626,7 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
             String nwk,
             String strSubId
     ) {
-        Log.i("NFC_TEST", "nfcLib_SetNbConfigMaster ");
+        Log.i("NFC_TEST", "nfcLib_SetNbConfigMaster");
         NbConfSet req = new NbConfSet(
                 msgVersion,
                 serialNo,
@@ -799,70 +641,21 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
                 nwk,
                 strSubId
         );
-
         m_consumeHouseNo = consumeHouseNo;
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_NODE_CONF_SET, 0);
     }
 
-    /**
-     * <pre>
-     * 옥외표시 Config 설정
-     * </pre>
-     *
-     * @param
-     */
-    public void nfcLib_SetDisplayConfig(
-            String consumeHouseNo,
-            String serialNo,
-            int dataFormat,
-            int meterNum,
-            int meterType0,
-            int meterPort0,
-            int meterType1,
-            int meterPort1,
-            int meterType2,
-            int meterPort2
-    ) {
-        Log.i("NFC_TEST", "nfcLib_SetDisplayConfig ");
-        DisplayConfSet req = new DisplayConfSet(
-                serialNo,
-                dataFormat,
-                meterNum,
-                meterType0,
-                meterPort0,
-                meterType1,
-                meterPort1,
-                meterType2,
-                meterPort2
-        );
-
-        m_consumeHouseNo = consumeHouseNo;
-        nfcLib_SendData(req, NFC_RESP_WAIT_TIME_NODE_CONF_SET, 0);
-    }
-
-    /**
-     * <pre>
-     * 수용가번호 설정
-     * </pre>
-     *
-     * @param
-     */
+    //수용가번호 설정
     public void nfcLib_SetAccountNo(String consumeHouseNo) {
-        Log.i("NFC_TEST", "nfcLib_SetAccountNo ");
+        Log.i("NFC_TEST", "nfcLib_SetAccountNo");
         AccountNoSet req = new AccountNoSet(consumeHouseNo);
-
         m_consumeHouseNo = consumeHouseNo;
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_NODE_CONF_SET, 0);
     }
 
-    /**
-     * <pre>
-     * Meter 검침요청
-     * </pre>
-     *
-     * @param
-     */
+    //Meter 검침요청
     public void nfcLib_ReqMeterData(int meterPort) {
+        Log.i("NFC_TEST", "nfcLib_ReqMeterData");
         MeterReq req = new MeterReq(meterPort);
         int startWaitTime;
         if (isResponseConnected) {
@@ -870,156 +663,83 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
         } else {
             startWaitTime = 0;
         }
-        Log.i("NFC_TEST", "nfcLib_ReqMeterData ");
-        //yikim	2018.01.17		NFC_START_WAIT_TIME_READ_METER => NFC_RESP_WAIT_TIME_DEFAULT
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, startWaitTime);
     }
 
-    /**
-     * <pre>
-     * 기간 검침요청
-     * </pre>
-     *
-     * @param
-     */
+    //기간 검침요청
     public void nfcLib_ReqPeriodMeterData(
             int meterPort,
             String dateFrom,
             String dateTo
     ) {
-        Log.i("NFC_TEST", "nfcLib_ReqPeriodMeterData ");
+        Log.i("NFC_TEST", "nfcLib_ReqPeriodMeterData");
         PeriodMeterReq req = new PeriodMeterReq(meterPort, dateFrom, dateTo);
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * 기간 검침 응답 Ack
-     * </pre>
-     *
-     * @param
-     */
-    public void nfcLib_AckPeriodMeterData(int nTotalBlock, int nCurrentblock) {
-        Log.i("NFC_TEST", "nfcLib_AckPeriodMeterData ");
-
-        PeriodMeterAck req = new PeriodMeterAck(nTotalBlock, nCurrentblock);
-
+    //기간 검침 응답 Ack
+    public void nfcLib_AckPeriodMeterData(int totalBlock, int currentBlock) {
+        Log.i("NFC_TEST", "nfcLib_AckPeriodMeterData");
+        PeriodMeterAck req = new PeriodMeterAck(totalBlock, currentBlock);
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_PERIOD_ACK, 0);
     }
 
-    /**
-     * <pre>
-     * Flash Date List 요청
-     * </pre>
-     *
-     * @param
-     */
+    //Flash Date List 요청
     public void nfcLib_ReqFlashDateList() {
-        Log.i("NFC_TEST", "nfcLib_ReqFlashDataList ");
+        Log.i("NFC_TEST", "nfcLib_ReqFlashDateList");
         FlashDateListReq req = new FlashDateListReq();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * Flash Data 검침요청
-     * </pre>
-     *
-     * @param
-     */
+    //Flash Data 검침요청
     public void nfcLib_ReqFlashData(String dateFrom, String dateTo) {
-        Log.i("NFC_TEST", "nfcLib_ReqFlashData ");
+        Log.i("NFC_TEST", "nfcLib_ReqFlashData");
         FlashDataReq req = new FlashDataReq(dateFrom, dateTo);
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * 서버 접속요청
-     * </pre>
-     *
-     * @param
-     */
+    //서버 접속요청
     public void nfcLib_ReqServerConnect(int reqType) {
-        Log.i("NFC_TEST", "nfcLib_ReqServerConnect ");
+        Log.i("NFC_TEST", "nfcLib_ReqServerConnect");
         ServerConnectReq req = new ServerConnectReq(reqType);
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * 메인리셋요청
-     * </pre>
-     *
-     * @param
-     */
+    //메인리셋요청
     public void nfcLib_ReqMainReset() {
-        Log.i("NFC_TEST", "nfcLib_ReqMainReset ");
+        Log.i("NFC_TEST", "nfcLib_ReqMainReset");
         BdControlReq req = new BdControlReq(
-                NfcConstant.CONF_BD_RESET_NOW,
-                NfcConstant.CONF_SLEEP_STATE_NONE
+                CONF_BD_RESET_NOW,
+                CONF_SLEEP_STATE_NONE
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * 장비 정보 요청
-     * </pre>
-     *
-     * @param
-     */
+    //장비 정보 요청
     public void nfcLib_ReqDeviceInfo() {
-        Log.i("NFC_TEST", "nfcLib_ReqDeviceInfo ");
+        Log.i("NFC_TEST", "nfcLib_ReqDeviceInfo");
         DeviceInfoReq req = new DeviceInfoReq();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * 하위 단말기 상태 요청
-     * </pre>
-     *
-     * @param
-     */
+    //하위 단말기 상태 요청
     public void nfcLib_CheckSubTerm() {
-        Log.i("NFC_TEST", "nfcLib_CheckSubTerm ");
+        Log.i("NFC_TEST", "nfcLib_CheckSubTerm");
         CheckSubTerm req = new CheckSubTerm();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * NB-IoT ID 요청
-     * </pre>
-     *
-     * @param
-     */
+    //NB-IoT ID 요청
     public void nfcLib_ReqNbId() {
-        Log.i("NFC_TEST", "nfcLib_ReqNbId ");
+        Log.i("NFC_TEST", "nfcLib_ReqNbId");
         NbIdReq req = new NbIdReq();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * NB-IoT 서비스코드 설정
-     * </pre>
-     *
-     * @param
-     */
+    //NB-IoT 서비스코드 설정
     public void nfcLib_WriteNbId(String serviceCode) {
-        Log.i("NFC_TEST", "nfcLib_WriteNbIdSet ");
+        Log.i("NFC_TEST", "nfcLib_WriteNbIdSet");
         NbIdSet req = new NbIdSet(serviceCode);
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
@@ -1027,23 +747,20 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
     public void nfcLib_SerialChangeReq(String serialNumber, int length) {
         Log.i("NFC_TEST", "nfcLib_SerialChangeReq");
         SnChangeReq req = new SnChangeReq(serialNumber, length);
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
     //주기보고 분단위 변경
-    public void nfcLib_ChangeMinuteInterval(int Value) {
-        Log.i("NFC_TEST", "nfcLib_ChangeReportIntervalToMinute");
-        ChangeMinuteIntervalReq req = new ChangeMinuteIntervalReq(Value);
-
+    public void nfcLib_ChangeMinuteInterval(int value) {
+        Log.i("NFC_TEST", "nfcLib_ChangeMinuteInterval");
+        ChangeMinuteIntervalReq req = new ChangeMinuteIntervalReq(value);
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
     //gsm 단말기에서 gsm or lte 모드 변경
-    public void nfcLib_selectGsmOrLte(int Value) {
+    public void nfcLib_selectGsmOrLte(int value) {
         Log.i("NFC_TEST", "nfcLib_selectGsmOrLte");
-        SelectGsmOrLteReq req = new SelectGsmOrLteReq(Value);
-
+        SelectGsmOrLteReq req = new SelectGsmOrLteReq(value);
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
@@ -1054,125 +771,46 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * Fw Update 설정
-     * </pre>
-     *
-     * @param
-     */
+    //Fw Update 설정
     public void nfcLib_ReqFwUpdate(
             String serialNo,
             int reqMode,
             String fwVersion
     ) {
-        Log.i("NFC_TEST", "nfcLib_ReqFwUpdate ");
+        Log.i("NFC_TEST", "nfcLib_ReqFwUpdate");
         FwUpdateReq req = new FwUpdateReq(serialNo, reqMode, fwVersion);
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * Lora App Key 정보 요청
-     * </pre>
-     *
-     * @param
-     */
-    public void nfcLib_ReqLoraAppEuiKey() {
-        Log.i("NFC_TEST", "nfcLib_ReqLoraAppEuiKey ");
-        LoraAppEuiKeyReq req = new LoraAppEuiKeyReq();
-
-        nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
-    }
-
-    /**
-     * <pre>
-     * Lora App Eui 정보 설정
-     * </pre>
-     *
-     * @param
-     */
-    public void nfcLib_SetLoraAppEuiKey(
-            String strDeviceSn,
-            int nJoinMode,
-            String strAppEui,
-            String strAppKey
-    ) {
-        Log.i("NFC_TEST", "nfcLib_SetLoraAppEuiKey ");
-        LoraAppEuiKeySet req = new LoraAppEuiKeySet(
-                strDeviceSn,
-                nJoinMode,
-                strAppEui,
-                strAppKey
-        );
-
-        nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
-    }
-
-    /**
-     * <pre>
-     * SmartMeter 검침요청
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter 검침요청
     public void nfcLib_ReqSmartMeterData() {
-        Log.i("NFC_TEST", "nfcLib_ReqSmartMeterData ");
+        Log.i("NFC_TEST", "nfcLib_ReqSmartMeterData");
         SmartMeterReq req = new SmartMeterReq();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter 카운터 설정
-     * </pre>
-     *
-     * @param
-     */
-    public void nfcLib_SetSmartMeterCount(int nControl) {
-        Log.i("NFC_TEST", "nfcLib_ReqSmartMeterData ");
-        SmartMeterValveControl req = new SmartMeterValveControl(nControl);
-
+    //SmartMeter 카운터 설정
+    public void nfcLib_SetSmartMeterCount(int count) {
+        Log.i("NFC_TEST", "nfcLib_ReqSmartMeterData");
+        SmartMeterValveControl req = new SmartMeterValveControl(count);
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter Config 요청
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter Config 요청
     public void nfcLib_ReqSmartConfData() {
-        Log.i("NFC_TEST", "nfcLib_ReqSmartConfData ");
+        Log.i("NFC_TEST", "nfcLib_ReqSmartConfData");
         SmartConfReq req = new SmartConfReq();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter 검침 Config 요청
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter 검침 Config 요청
     public void nfcLib_ReqSmartConfMeterData() {
-        Log.i("NFC_TEST", "nfcLib_ReqSmartConfMeterData ");
+        Log.i("NFC_TEST", "nfcLib_ReqSmartConfMeterData");
         SmartConfMeterReq req = new SmartConfMeterReq();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter Config SN 설정
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter Config SN 설정
     public void nfcLib_SetSmartConfSnData(
             int nFlowType,
             String strDeviceSerial,
@@ -1180,12 +818,9 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
             String strMeterSerial,
             int nMaker
     ) {
-        Log.i(
-                "NFC_TEST",
-                "nfcLib_SetSmartConfSnData strMeterSerial:" + strMeterSerial
-        );
+        Log.i("NFC_TEST", "nfcLib_SetSmartConfSnData strMeterSerial:" + strMeterSerial);
         SmartConfSet req = new SmartConfSet(
-                NfcConstant.SMART_METER_CHANGE_MODE_WRITE_SN,
+                SMART_METER_CHANGE_MODE_WRITE_SN,
                 nFlowType,
                 strDeviceSerial,
                 nMeterCaliber,
@@ -1198,17 +833,10 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
                 0,
                 nMaker
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter Config Calibration 설정
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter Config Calibration 설정
     public void nfcLib_SetSmartConfCalibrationData(
             int nFlowType,
             String strDeviceSerial,
@@ -1222,9 +850,9 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
             int nTemperature,
             int nMaker
     ) {
-        Log.i("NFC_TEST", "nfcLib_SetSmartConfCalibrationData ");
+        Log.i("NFC_TEST", "nfcLib_SetSmartConfCalibrationData");
         SmartConfSet req = new SmartConfSet(
-                NfcConstant.SMART_METER_CHANGE_MODE_WRITE_METER,
+                SMART_METER_CHANGE_MODE_WRITE_METER,
                 nFlowType,
                 strDeviceSerial,
                 nMeterCaliber,
@@ -1237,113 +865,75 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
                 nTemperature,
                 nMaker
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter Config 초음파 보정 설정
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter Config 초음파 보정 설정
     public void nfcLib_SetSmartUltraCompData(
             String strDeviceSerial,
             int nCompSelect,
             int nCompOffset,
             int nCompValue
     ) {
-        Log.i("NFC_TEST", "nfcLib_SetSmartUltraCompData ");
+        Log.i("NFC_TEST", "nfcLib_SetSmartUltraCompData");
         SmartUltraCompSet req = new SmartUltraCompSet(
                 strDeviceSerial,
                 nCompSelect,
                 nCompOffset,
                 nCompValue
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter Config certification Calibration 설정
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter Config certification Calibration 설정
     public void nfcLib_SetSmartCertiCalibrationData(
             String strDeviceSerial,
             int nCompSelect,
             int nCompValue
     ) {
-        Log.i("NFC_TEST", "nfcLib_SetSmartCertiCompData ");
+        Log.i("NFC_TEST", "nfcLib_SetSmartCertiCalibrationData");
         SmartCertiCalibrationSet req = new SmartCertiCalibrationSet(
                 strDeviceSerial,
                 nCompSelect,
                 nCompValue
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter Config certification Calibration 요청
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter Config certification Calibration 요청
     public void nfcLib_ReqSmartCertiCalibrationData() {
-        Log.i("NFC_TEST", "nfcLib_ReqSmartCertiCompData ");
+        Log.i("NFC_TEST", "nfcLib_ReqSmartCertiCalibrationData ");
         SmartCertiCalibrationReq req = new SmartCertiCalibrationReq();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter 온도 설정
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter 온도 설정
     public void nfcAct_SetSmartTemperatureData(
-            int nFlowType,
+            int flowType,
             String strDeviceSerial,
-            int nMeterCaliber,
-            int nTemperature,
-            int nMaker
+            int meterCaliber,
+            int temperature,
+            int maker
     ) {
-        Log.i(
-                "NFC_TEST",
-                "nfcAct_SetSmartTempearatureData strMeterSerial:" + strDeviceSerial
-        );
+        Log.i("NFC_TEST", "nfcAct_SetSmartTemperatureData strMeterSerial:" + strDeviceSerial);
         SmartConfSet req = new SmartConfSet(
-                NfcConstant.SMART_METER_CHANGE_MODE_WRITE_METER,
-                nFlowType,
+                SMART_METER_CHANGE_MODE_WRITE_METER,
+                flowType,
                 strDeviceSerial,
-                nMeterCaliber,
+                meterCaliber,
                 "",
                 0,
                 0,
                 0,
                 0,
                 0,
-                nTemperature,
-                nMaker
+                temperature,
+                maker
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter 자동보정
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter 자동보정
     public void nfcAct_SetSmartAutoStart(
             int nFlowType,
             String strDeviceSerial,
@@ -1351,10 +941,7 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
             int nCompSelect,
             int nQnFlow
     ) {
-        Log.i(
-                "NFC_TEST",
-                "nfcAct_SetSmartAutoStart strMeterSerial:" + strDeviceSerial
-        );
+        Log.i("NFC_TEST", "nfcAct_SetSmartAutoStart strMeterSerial:" + strDeviceSerial);
         SmartConfAutoStart req = new SmartConfAutoStart(
                 nFlowType,
                 strDeviceSerial,
@@ -1363,9 +950,8 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
                 nQnFlow
         );
 
-        int writeWaitTime = NFC_RESP_WAIT_TIME_SMART_METER;
-
-        if (strDeviceSerial.length() > 0) {
+        int writeWaitTime;
+        if (!strDeviceSerial.isEmpty()) {
             writeWaitTime = NFC_RESP_WAIT_TIME_SMART_METER;
         } else {
             writeWaitTime = NFC_RESP_WAIT_TIME_DEFAULT;
@@ -1373,132 +959,83 @@ public class NfcActivity extends Activity implements Constanse, ConstDB, ConstMe
         nfcLib_SendData(req, writeWaitTime, 0);
     }
 
-    /**
-     * <pre>
-     * SmartMeter 검침값 설정
-     * </pre>
-     *
-     * @param
-     */
+    //SmartMeter 검침값 설정
     public void nfcAct_SetSmartMeterValueData(
             String strDeviceSerial,
             String strMeterValue
     ) {
-        Log.i("NFC_TEST", "nfcAct_SetSmartMeterValueData ");
+        Log.i("NFC_TEST", "nfcAct_SetSmartMeterValueData");
         SmartMeterValueSet req = new SmartMeterValueSet(
                 strDeviceSerial,
                 strMeterValue
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_SMART_METER, 0);
     }
 
-    /**
-     * <pre>
-     * Sleep Mode 설정/해제
-     * </pre>
-     *
-     * @param
-     */
+    //Sleep Mode 설정/해제
     public void nfcLib_SetSleepMode(int sleepMode) {
-        Log.i("NFC_TEST", "nfcLib_SetSleepMode ");
+        Log.i("NFC_TEST", "nfcLib_SetSleepMode");
         BdControlReq req = new BdControlReq(
-                NfcConstant.CONF_BD_RESET_NONE,
+                CONF_BD_RESET_NONE,
                 sleepMode
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * Report Mode 설정/해제
-     * </pre>
-     *
-     * @param
-     */
+    //Report Mode 설정/해제
     public void nfcLib_SetReportMode(int reportMode) {
-        Log.i("NFC_TEST", "nfcLib_SetReportMode ");
+        Log.i("NFC_TEST", "nfcLib_SetReportMode");
         BdControlReq req = new BdControlReq(
-                NfcConstant.CONF_BD_RESET_NONE,
-                NfcConstant.CONF_SLEEP_STATE_NONE,
+                CONF_BD_RESET_NONE,
+                CONF_SLEEP_STATE_NONE,
                 reportMode
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * 기간검침  설정/해제
-     * </pre>
-     *
-     * @param
-     */
+    //기간검침  설정/해제
     public void nfcLib_SetPeriodMode(int periodMode) {
-        Log.i("NFC_TEST", "nfcLib_SetPeriodMode ");
+        Log.i("NFC_TEST", "nfcLib_SetPeriodMode");
         BdControlReq req = new BdControlReq(
-                NfcConstant.CONF_BD_RESET_NONE,
-                NfcConstant.CONF_SLEEP_STATE_NONE,
-                NfcConstant.CONF_REPORT_MODE_NONE,
+                CONF_BD_RESET_NONE,
+                CONF_SLEEP_STATE_NONE,
+                CONF_REPORT_MODE_NONE,
                 periodMode
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * 디버그모드  설정/해제
-     * </pre>
-     *
-     * @param
-     */
+    //디버그모드  설정/해제
     public void nfcLib_SetDebugMode(int debugMode) {
-        Log.i("NFC_TEST", "nfcLib_SetDebugMode ");
+        Log.i("NFC_TEST", "nfcLib_SetDebugMode");
         BdControlReq req = new BdControlReq(
-                NfcConstant.CONF_BD_RESET_NONE,
-                NfcConstant.CONF_SLEEP_STATE_NONE,
-                NfcConstant.CONF_REPORT_MODE_NONE,
-                NfcConstant.CONF_PERIOD_MODE_NONE,
+                CONF_BD_RESET_NONE,
+                CONF_SLEEP_STATE_NONE,
+                CONF_REPORT_MODE_NONE,
+                CONF_PERIOD_MODE_NONE,
                 debugMode
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * Data Skip  설정/해제
-     * </pre>
-     *
-     * @param
-     */
+    //Data Skip  설정/해제
     public void nfcLib_SetDataSkipMode(int dataSkipMode) {
-        Log.i("NFC_TEST", "nfcLib_SetDataSkipMode ");
+        Log.i("NFC_TEST", "nfcLib_SetDataSkipMode");
         BdControlReq req = new BdControlReq(
-                NfcConstant.CONF_BD_RESET_NONE,
-                NfcConstant.CONF_SLEEP_STATE_NONE,
-                NfcConstant.CONF_REPORT_MODE_NONE,
-                NfcConstant.CONF_PERIOD_MODE_NONE,
-                NfcConstant.CONF_DEBUG_MODE_NONE,
+                CONF_BD_RESET_NONE,
+                CONF_SLEEP_STATE_NONE,
+                CONF_REPORT_MODE_NONE,
+                CONF_PERIOD_MODE_NONE,
+                CONF_DEBUG_MODE_NONE,
                 dataSkipMode
         );
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 
-    /**
-     * <pre>
-     * 장비 시간 설정
-     * </pre>
-     *
-     * @param
-     */
+    //장비 시간 설정
     public void nfcLib_SetTimeInfo() {
-        Log.i("NFC_TEST", "nfcLib_SetDevTime ");
+        Log.i("NFC_TEST", "nfcLib_SetTimeInfo");
         SetTimeInfo req = new SetTimeInfo();
-
         nfcLib_SendData(req, NFC_RESP_WAIT_TIME_DEFAULT, 0);
     }
 }

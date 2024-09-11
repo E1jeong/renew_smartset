@@ -6,10 +6,10 @@
 package com.hitec.presentation.nfc_lib.protocol.recv;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant;
 import com.hitec.presentation.nfc_lib.util.DevUtil;
-import com.hitec.presentation.nfc_lib.util.bLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,61 +48,26 @@ public class NfcRxMessage implements NfcConstant {
     protected int nSec = 0;
 
     public static String GetNodeMsgName(int mtype) {
-        String name = "unknown msg message" + "[" + mtype + "]";
-        switch (mtype) {
-            case NODE_RECV_LORA_CONF_REPORT:
-                name = "NODE_RECV_LORA_CONF_REPORT";
-                break;
-            case NODE_RECV_NB_CONF_REPORT:
-                name = "NODE_RECV_NB_CONF_REPORT";
-                break;
-            case NODE_RECV_METER_REPORT:
-                name = "NODE_RECV_METER_REPORT";
-                break;
-            case NODE_RECV_SERVER_CONNECT_REPORT:
-                name = "NODE_RECV_SERVER_CONNECT_REPORT";
-                break;
-            case NODE_RECV_BD_CONTROL_ACK:
-                name = "NODE_RECV_BD_RESET_ACK";
-                break;
-            case NODE_RECV_DEVICE_INFO_REPORT:
-                name = "NODE_RECV_DEVICE_INFO_REPORT";
-                break;
-            case NODE_RECV_SLAVE_CHECK_REPORT:
-                name = "NODE_RECV_SLAVE_CHECK_REPORT";
-                break;
-            case NODE_RECV_PERIOD_METER_REPORT:
-                name = "NODE_RECV_PERIOD_METER_REPORT";
-                break;
-            case NODE_RECV_PULSE_METER_VALUE_ACK:
-                name = "NODE_RECV_PULSE_METER_VALUE_ACK";
-                break;
-            case NODE_RECV_NB_ID_REPORT:
-                name = "NODE_RECV_NB_ID_REPORT";
-                break;
-            case NODE_RECV_DISPLAY_CONF_REPORT:
-                name = "NODE_RECV_DISPLAY_CONF_REPORT";
-                break;
-            case NODE_RECV_TIME_INFO_REPORT:
-                name = "NODE_RECV_TIME_INFO_REPORT";
-                break;
-            case NODE_RECV_ACCOUNT_NO_REPORT:
-                name = "NODE_RECV_ACCOUNT_NO_REPORT";
-                break;
-            case NODE_RECV_LORA_EUI_KEY_REPORT:
-                name = "NODE_RECV_LORA_EUI_KEY_REPORT";
-                break;
-            case NODE_RECV_SMART_METER_RECV:
-                name = "NODE_RECV_SMART_METER_RECV";
-                break;
-            case NODE_RECV_FLASH_DATE_LIST_REPORT:
-                name = "NODE_RECV_FLASH_DATE_LIST_REPORT";
-                break;
-            case NODE_RECV_FLASH_DATA_REPORT:
-                name = "NODE_RECV_FLASH_DATA_REPORT";
-                break;
-        }
-        return name;
+        return switch (mtype) {
+            case NODE_RECV_LORA_CONF_REPORT -> "NODE_RECV_LORA_CONF_REPORT";
+            case NODE_RECV_NB_CONF_REPORT -> "NODE_RECV_NB_CONF_REPORT";
+            case NODE_RECV_METER_REPORT -> "NODE_RECV_METER_REPORT";
+            case NODE_RECV_SERVER_CONNECT_REPORT -> "NODE_RECV_SERVER_CONNECT_REPORT";
+            case NODE_RECV_BD_CONTROL_ACK -> "NODE_RECV_BD_RESET_ACK";
+            case NODE_RECV_DEVICE_INFO_REPORT -> "NODE_RECV_DEVICE_INFO_REPORT";
+            case NODE_RECV_SLAVE_CHECK_REPORT -> "NODE_RECV_SLAVE_CHECK_REPORT";
+            case NODE_RECV_PERIOD_METER_REPORT -> "NODE_RECV_PERIOD_METER_REPORT";
+            case NODE_RECV_PULSE_METER_VALUE_ACK -> "NODE_RECV_PULSE_METER_VALUE_ACK";
+            case NODE_RECV_NB_ID_REPORT -> "NODE_RECV_NB_ID_REPORT";
+            case NODE_RECV_DISPLAY_CONF_REPORT -> "NODE_RECV_DISPLAY_CONF_REPORT";
+            case NODE_RECV_TIME_INFO_REPORT -> "NODE_RECV_TIME_INFO_REPORT";
+            case NODE_RECV_ACCOUNT_NO_REPORT -> "NODE_RECV_ACCOUNT_NO_REPORT";
+            case NODE_RECV_LORA_EUI_KEY_REPORT -> "NODE_RECV_LORA_EUI_KEY_REPORT";
+            case NODE_RECV_SMART_METER_RECV -> "NODE_RECV_SMART_METER_RECV";
+            case NODE_RECV_FLASH_DATE_LIST_REPORT -> "NODE_RECV_FLASH_DATE_LIST_REPORT";
+            case NODE_RECV_FLASH_DATA_REPORT -> "NODE_RECV_FLASH_DATA_REPORT";
+            default -> "unknown msg message" + "[" + mtype + "]";
+        };
     }
 
     public int GetHeaderDevCode() {
@@ -157,9 +122,7 @@ public class NfcRxMessage implements NfcConstant {
 
         m_nHexLen = rxdata.length;
         if (m_nHexLen > MAX_LEN_RF_MESSAGE || m_nHexLen < MIN_LEN_RF_MESSAGE) {
-            parseFailed(
-                    "RF message: too long or too shord length(" + m_nHexLen + ")"
-            );
+            parseFailed("RF message: too long or too short length(" + m_nHexLen + ")");
             return false;
         }
 
@@ -182,13 +145,7 @@ public class NfcRxMessage implements NfcConstant {
         }
 
         if (r_checksum != c_checksum) {
-            parseFailed(
-                    "Checksum Error [R:" +
-                            String.format("%02X ", r_checksum) +
-                            ", C:" +
-                            String.format("%02X ", c_checksum) +
-                            "]"
-            );
+            parseFailed("Checksum Error [R:" + String.format("%02X ", r_checksum) + ", C:" + String.format("%02X ", c_checksum) + "]");
             return false;
         }
 
@@ -206,16 +163,16 @@ public class NfcRxMessage implements NfcConstant {
     }
 
     protected String parseDeviceId(byte[] pBuff, int nOffSet, int nLen) {
-        String srcId = DevUtil.convHexToStringCode(pBuff, nOffSet, nLen);
-        String dstId = srcId;
+        StringBuilder srcId = new StringBuilder(DevUtil.convHexToStringCode(pBuff, nOffSet, nLen));
+        String dstId = srcId.toString();
         String[] azDevId = new String[4];
         if (srcId == null) {
-            srcId = "";
+            srcId = new StringBuilder();
         }
 
         if (srcId.length() < nLen * 2) {
             for (int i = srcId.length(); i < nLen * 2; i++) {
-                srcId += "?";
+                srcId.append("?");
             }
         }
 
@@ -239,7 +196,7 @@ public class NfcRxMessage implements NfcConstant {
                     azDevId[0] + "-" + azDevId[1] + "-" + azDevId[2] + "-" + azDevId[3];
         } else if (m_nHeaderDevCode == DEVICE_CODE_DISPLAY) {
             //1234567890123456
-            dstId = srcId;
+            dstId = srcId.toString();
         }
         return dstId;
     }
@@ -378,14 +335,6 @@ public class NfcRxMessage implements NfcConstant {
 
     protected int GetDeviceFwType(int nDevType, String strFwVersion) {
         int nFwVersion = 0;
-        //int nParseVer;
-        //String strVerHead;
-        //String strVerBody;
-
-        //strVerHead = strFwVersion.substring(0, 1);
-        //strVerBody = strFwVersion.substring(1, 4);
-
-        //nParseVer = DevUtil.convertStringIntegerToInteger(strVerBody);
 
         if (nDevType == DEVICE_CODE_LORA) {
             nFwVersion = LORA_VERSION_L100;
@@ -437,7 +386,7 @@ public class NfcRxMessage implements NfcConstant {
         int hour = 1;
         int min = 1;
         int sec = 1;
-        //                   1   2   3   4   5   6   7   8   9  10  11  12
+        //                 1   2   3   4   5   6   7   8   9  10  11  12
         int[] nDays = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
         try {
@@ -506,7 +455,7 @@ public class NfcRxMessage implements NfcConstant {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String currDateTime = sdf.format(new Date());
 
-        bLog.i(TAG, "[" + currDateTime + "] " + GetNodeMsgName());
+        Log.i(TAG, "[" + currDateTime + "] " + GetNodeMsgName());
         return true;
     }
 
@@ -514,7 +463,7 @@ public class NfcRxMessage implements NfcConstant {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String currDateTime = sdf.format(new Date());
 
-        bLog.e(TAG, "[" + currDateTime + "] " + GetNodeMsgName() + ": " + reason);
+        Log.e(TAG, "[" + currDateTime + "] " + GetNodeMsgName() + ": " + reason);
         return false;
     }
 
@@ -522,7 +471,7 @@ public class NfcRxMessage implements NfcConstant {
         // 4바이트 BCD로 사용
         return String.format(
                 "%02X%02X%02X%02X",
-                getHexData(index + 0),
+                getHexData(index),
                 getHexData(index + 1),
                 getHexData(index + 2),
                 getHexData(index + 3)
@@ -548,10 +497,7 @@ public class NfcRxMessage implements NfcConstant {
         return GetNodeMsgName(m_nNodeMsgType);
     }
 
-    public boolean parse(byte[] rxdata) {
-        if (parseHeaderAndMsgType(rxdata) == false) {
-            return false;
-        }
-        return true;
+    public boolean parse(byte[] rxData) {
+        return parseHeaderAndMsgType(rxData);
     }
 }

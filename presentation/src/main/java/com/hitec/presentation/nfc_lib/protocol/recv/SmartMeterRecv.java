@@ -5,10 +5,11 @@
  */
 package com.hitec.presentation.nfc_lib.protocol.recv;
 
+import android.util.Log;
+
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant;
 import com.hitec.presentation.nfc_lib.util.DevUtil;
 import com.hitec.presentation.nfc_lib.util.Meter;
-import com.hitec.presentation.nfc_lib.util.bLog;
 
 public class SmartMeterRecv extends NfcRxMessage {
 
@@ -154,11 +155,7 @@ public class SmartMeterRecv extends NfcRxMessage {
     }
 
     public boolean GetMeterValid() {
-        if (m_nMeterValid == METER_VALID_OK) {
-            return true;
-        } else {
-            return false;
-        }
+        return m_nMeterValid == METER_VALID_OK;
     }
 
     public int GetMeterFlowType() {
@@ -195,7 +192,7 @@ public class SmartMeterRecv extends NfcRxMessage {
 
     @Override
     public boolean parse(byte[] rxdata) {
-        if (super.parse(rxdata) == false) {
+        if (!super.parse(rxdata)) {
             return false;
         }
 
@@ -211,20 +208,12 @@ public class SmartMeterRecv extends NfcRxMessage {
         m_nDataLength = getHexData(m_nOffset++);
 
         int posChecksum = m_nOffset + m_nDataLength - 1;
-        byte c_checksum = 0;
-        byte r_checksum = 0;
+        byte c_checksum;
+        byte r_checksum;
 
-        r_checksum = (byte) hexData[posChecksum];
+        r_checksum = hexData[posChecksum];
         c_checksum = DevUtil.calcChecksum(hexData, m_nOffset, m_nDataLength - 1);
-        bLog.i(
-                TAG,
-                " SmartMeterRecv ==>02 m_nDataLength:" +
-                        m_nDataLength +
-                        " r_checksum:" +
-                        r_checksum +
-                        " c_checksum:" +
-                        c_checksum
-        );
+        Log.i(TAG, "SmartMeterRecv ==>02 m_nDataLength:" + m_nDataLength + " r_checksum:" + r_checksum + " c_checksum:" + c_checksum);
 
         m_nMeterMsgType = getHexData(m_nOffset++); //C Field
 
@@ -233,8 +222,8 @@ public class SmartMeterRecv extends NfcRxMessage {
         } else {
             if (m_nMeterMsgType == NfcConstant.METER_RECV_METER_REPORT) {
                 //int aField = getHexData(m_nOffset++);	//A Field
-                //int ciField = getHexData(m_nOffset++);	//CI Field
-                //int mdh = getHexData(m_nOffset++);		//MDH
+                //int ciField = getHexData(m_nOffset++); //CI Field
+                //int mdh = getHexData(m_nOffset++); //MDH
                 m_nOffset += 3;
 
                 parserMeterReport(hexData, m_nOffset);
@@ -244,9 +233,7 @@ public class SmartMeterRecv extends NfcRxMessage {
                 parserConfMeterReport(hexData, m_nOffset);
             } else if (m_nMeterMsgType == METER_RECV_CERTI_COMP_REPORT) {
                 parserCertiCompReport(hexData, m_nOffset);
-            } else if (
-                    m_nMeterMsgType == METER_RECV_VALVE_CONTROL_REPORT
-            ) {
+            } else if (m_nMeterMsgType == METER_RECV_VALVE_CONTROL_REPORT) {
                 parserMeterValveControlReport(hexData, m_nOffset);
             } else if (m_nMeterMsgType == METER_RECV_CONF_AUTO_REPORT) {
                 parserAutoCompReport(hexData, m_nOffset);
@@ -315,7 +302,6 @@ public class SmartMeterRecv extends NfcRxMessage {
         int nValuePoint = 0;
         boolean fValueValid = true;
         byte[] pMeterVal = new byte[4];
-        //bLog.i(TAG," parserMeterReport ==>02 nOffSet:" + nOffSet);
 
         //계량기 일련번호
         byte[] pMeterSn = new byte[4];
@@ -336,11 +322,10 @@ public class SmartMeterRecv extends NfcRxMessage {
         m_strMeterCaliber =
                 Meter.ParserStandardMeterCaliberString(m_nMeterCaliberCd);
 
-        if (Meter.CheckDecValid(pBuff, nOffSet, 4) == false) {
+        if (!Meter.CheckDecValid(pBuff, nOffSet, 4)) {
             fValueValid = false;
             m_nMeterValid = METER_VALID_VALUE_ERROR;
         }
-        //bLog.i(TAG," parserMeterStandardDigital ==>02 m_nMeterValid:" + m_nMeterValid + " m_strMeterSn:" + m_strMeterSn);
         for (int i = 0; i < 4; i++) {
             //순서가 바뀌어서 다시 저장
             pMeterVal[i] = (byte) (pBuff[nOffSet + (3 - i)] & 0xFF);
@@ -351,13 +336,7 @@ public class SmartMeterRecv extends NfcRxMessage {
             m_strMeterVal =
                     Meter.ParserStandardMeterVal(pMeterVal, 0, 4, nValuePoint);
         }
-        bLog.i(
-                TAG,
-                " parserMeterStandardDigital ==>02 m_strMeterVal:" +
-                        m_strMeterVal +
-                        " m_nMeterCaliberCd:" +
-                        m_nMeterCaliberCd
-        );
+        Log.i(TAG, "parserMeterStandardDigital ==> 02 m_strMeterVal:" + m_strMeterVal + " m_nMeterCaliberCd:" + m_nMeterCaliberCd);
 
         //계량기 오류인경우
         if (m_nMeterStatus == 0xFF) {
@@ -421,7 +400,7 @@ public class SmartMeterRecv extends NfcRxMessage {
         int nValuePoint = 6;
         boolean fValueValid = true;
         byte[] pMeterVal = new byte[6];
-        if (Meter.CheckDecValid(pBuff, nOffSet, 6) == false) {
+        if (!Meter.CheckDecValid(pBuff, nOffSet, 6)) {
             fValueValid = false;
             m_nMeterValid = METER_VALID_VALUE_ERROR;
         }
@@ -448,14 +427,13 @@ public class SmartMeterRecv extends NfcRxMessage {
 
         int nDeviceSnLength = m_strSerialNum.length();
         if (nDeviceSnLength > 8) {
-            m_strMeterSn =
-                    m_strSerialNum.substring(nDeviceSnLength - 8, nDeviceSnLength);
+            m_strMeterSn = m_strSerialNum.substring(nDeviceSnLength - 8, nDeviceSnLength);
         }
 
         int nValuePoint = 6;
         boolean fValueValid = true;
         byte[] pMeterVal = new byte[6];
-        if (Meter.CheckDecValid(pBuff, nOffSet, 6) == false) {
+        if (!Meter.CheckDecValid(pBuff, nOffSet, 6)) {
             fValueValid = false;
             m_nMeterValid = METER_VALID_VALUE_ERROR;
         }
