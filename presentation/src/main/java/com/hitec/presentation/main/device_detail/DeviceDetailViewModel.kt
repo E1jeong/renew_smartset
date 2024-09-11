@@ -4,16 +4,21 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hitec.domain.model.InstallDevice
 import com.hitec.domain.usecase.LoginScreenInfoUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.presentation.R
 import com.hitec.presentation.nfc_lib.NfcManager
+import com.hitec.presentation.nfc_lib.NfcRequest
+import com.hitec.presentation.nfc_lib.NfcResponse
+import com.hitec.presentation.nfc_lib.model.ChangeSerial
 import com.hitec.presentation.util.PathHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -29,6 +34,8 @@ import javax.inject.Inject
 class DeviceDetailViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val nfcManager: NfcManager,
+    private val nfcRequest: NfcRequest,
+    private val nfcResponse: NfcResponse,
     private val loginScreenInfoUseCase: LoginScreenInfoUseCase,
     private val postDownloadableImageListUseCase: PostDownloadableImageListUseCase,
     private val postDownloadDeviceImageUseCase: PostDownloadDeviceImageUseCase,
@@ -45,6 +52,18 @@ class DeviceDetailViewModel @Inject constructor(
             }
         }
     )
+
+    init {
+        viewModelScope.launch {
+            nfcResponse.nfcResponseFlow.collect { result ->
+                when (result) {
+                    is ChangeSerial -> {
+                        Log.d(TAG, "ChangeSerial: $result")
+                    }
+                }
+            }
+        }
+    }
 
     //From DeviceDetailScreen navController, init InstallDevice
     fun initialize(installDevice: InstallDevice) = intent {
@@ -130,10 +149,10 @@ class DeviceDetailViewModel @Inject constructor(
     }
 
     fun onUpdateClick() = intent {
-        nfcManager.nfclib_start()
-        nfcManager.nfcLib_SerialChangeReq(
-            state.installDevice?.meterDeviceSn ?: "NL1234567890",
-            state.installDevice?.meterDeviceSn?.length ?: 12
+        nfcManager.start()
+        nfcRequest.changeSerial(
+            serialNumber = state.installDevice?.meterDeviceSn ?: "NL1234567890",
+            length = state.installDevice?.meterDeviceSn?.length ?: 12
         )
     }
 

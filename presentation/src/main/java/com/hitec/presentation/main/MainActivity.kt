@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        Log.i("NFC_TEST", "onNewIntent - 01");
+        Log.i("NFC_TEST", "onNewIntent - 01")
 
         val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
         if (tag != null) {
@@ -61,18 +61,12 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         Log.i("NFC_TEST", "onResume => 01")
-        if (nfcManager.nfcAdapter != null) {
-            nfcManager.NfcAdapterEnableForeground()
-        }
+        nfcManager.nfcAdapterEnableForeground()
     }
 
     override fun onPause() {
         super.onPause()
         Log.i("NFC_TEST", "onPause => 01")
-
-        if (nfcManager.nfcAdapter != null) {
-            Log.i("NFC_TEST", "onPause => 02")
-            nfcManager.nfcAdapter.disableForegroundDispatch(this)
-        }
+        nfcManager.nfcAdapter.disableForegroundDispatch(this)
     }
 }
