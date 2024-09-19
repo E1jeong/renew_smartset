@@ -14,8 +14,8 @@ class NfcResponse @Inject constructor(
         private const val TAG = "NfcResponse"
     }
 
-    private val _nfcResponseFlow = MutableStateFlow<Any?>(null)
-    val nfcResponseFlow: StateFlow<Any?> = _nfcResponseFlow
+    private val _nfcResultFlow = MutableStateFlow<Any?>(null)
+    val nfcResultFlow: StateFlow<Any?> = _nfcResultFlow
 
     fun changeSerial(nfcResponse: ByteArray?) {
         val response = SnChangeReport()
@@ -25,8 +25,8 @@ class NfcResponse @Inject constructor(
 
         nfcManager.stop()
 
-        val result = ChangeSerial(response.result)
-        _nfcResponseFlow.value = result
+        val result = ChangeSerial(resultCode = response.result)
+        _nfcResultFlow.value = result
         Log.i(TAG, "changeSerial ==> result:$result")
     }
 }

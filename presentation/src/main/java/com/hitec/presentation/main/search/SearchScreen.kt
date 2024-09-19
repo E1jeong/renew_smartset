@@ -43,7 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
-import com.hitec.presentation.main.component.InstallDeviceCard
+import com.hitec.presentation.main.installdevice.component.InstallDeviceCard
 import com.hitec.presentation.theme.Paddings
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect

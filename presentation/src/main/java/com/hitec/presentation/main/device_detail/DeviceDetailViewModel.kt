@@ -55,10 +55,13 @@ class DeviceDetailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            nfcResponse.nfcResponseFlow.collect { result ->
+            nfcResponse.nfcResultFlow.collect { result ->
                 when (result) {
                     is ChangeSerial -> {
                         Log.d(TAG, "ChangeSerial: $result")
+                        intent {
+                            reduce { state.copy(nfcResult = result.toString()) }
+                        }
                     }
                 }
             }
@@ -84,7 +87,7 @@ class DeviceDetailViewModel @Inject constructor(
     private fun setImageSaveDir(context: Context) = intent {
         val appName = context.getString(R.string.app_name)
         val photoDirName = context.getString(R.string.directory_photo)
-        val path = "$appName/$photoDirName/${state.localSite}/${state.installDevice?.consumeHouseNo}"
+        val path = "$appName/$photoDirName/${state.localSite}/${state.installDevice.consumeHouseNo}"
         PathHelper.deleteDir(path) // delete old image files
         PathHelper.isExistDir(path)
 
@@ -111,8 +114,8 @@ class DeviceDetailViewModel @Inject constructor(
             mobileId = state.id,
             bluetoothId = state.androidDeviceId,
             localSite = state.localSite,
-            meterDeviceId = state.installDevice?.meterDeviceId ?: "",
-            deviceTypeCd = state.installDevice?.deviceTypeCd ?: "",
+            meterDeviceId = state.installDevice.meterDeviceId,
+            deviceTypeCd = state.installDevice.deviceTypeCd ?: "",
         ).getOrDefault(emptyList())
 
         val resultCode = response.first().resultCd
@@ -132,8 +135,8 @@ class DeviceDetailViewModel @Inject constructor(
             mobileId = state.id,
             bluetoothId = state.androidDeviceId,
             localSite = state.localSite,
-            meterDeviceId = state.installDevice?.meterDeviceId ?: "",
-            deviceTypeCd = state.installDevice?.deviceTypeCd ?: "",
+            meterDeviceId = state.installDevice.meterDeviceId,
+            deviceTypeCd = state.installDevice.deviceTypeCd ?: "",
             meterCd = "", // check empty string value (not null), because always get a response
             photoTypeCd = photoTypeCd
         ).getOrThrow()
@@ -151,8 +154,8 @@ class DeviceDetailViewModel @Inject constructor(
     fun onUpdateClick() = intent {
         nfcManager.start()
         nfcRequest.changeSerial(
-            serialNumber = state.installDevice?.meterDeviceSn ?: "NL1234567890",
-            length = state.installDevice?.meterDeviceSn?.length ?: 12
+            serialNumber = state.installDevice.meterDeviceSn ?: "NL1234567890",
+            length = state.installDevice.meterDeviceSn?.length ?: 12
         )
     }
 
@@ -163,7 +166,7 @@ class DeviceDetailViewModel @Inject constructor(
 
 @Immutable
 data class DeviceDetailState(
-    val installDevice: InstallDevice? = null,
+    val installDevice: InstallDevice = InstallDevice(meterDeviceId = "HT-T-012345"), // this is init value, don't mind
     val id: String = "",
     val password: String = "",
     val localSite: String = "",
@@ -171,6 +174,7 @@ data class DeviceDetailState(
     val downloadableImageList: Set<Int> = emptySet(),
     val deviceImageList: List<Pair<Int, Any?>> = emptyList(),
     val imagePath: String = "",
+    val nfcResult: String = "Tag nfc",
 )
 
 sealed interface DeviceDetailSideEffect {

@@ -16,7 +16,7 @@ import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
 import com.hitec.presentation.main.MainSideEffect
 import com.hitec.presentation.main.MainViewModel
-import com.hitec.presentation.main.component.InstallDeviceCard
+import com.hitec.presentation.main.installdevice.component.InstallDeviceCard
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable

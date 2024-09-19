@@ -37,14 +37,13 @@ import javax.inject.Inject
 class NfcRequest @Inject constructor(
     private val nfcManager: NfcManager
 ) {
-
     companion object {
         private const val TAG = "NfcRequest"
     }
 
     // 장비 설정 정보 요청
     fun nodeConfig() {
-        Log.i(TAG, "nodeConfig")
+        Log.v(TAG, "nodeConfig")
         val req = NodeConfReq()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
@@ -69,7 +68,7 @@ class NfcRequest @Inject constructor(
         meterType2: Int,
         meterPort2: Int
     ) {
-        Log.i(TAG, "setNbConfig")
+        Log.v(TAG, "setNbConfig")
         val req = NbConfSet(
             msgVersion,
             serialNo,
@@ -108,7 +107,7 @@ class NfcRequest @Inject constructor(
         nwk: String?,
         strSubId: String?
     ) {
-        Log.i(TAG, "setNbConfigMaster")
+        Log.v(TAG, "setNbConfigMaster")
         val req = NbConfSet(
             msgVersion,
             serialNo,
@@ -129,15 +128,15 @@ class NfcRequest @Inject constructor(
 
     //수용가번호 설정
     fun setAccountNo(consumeHouseNo: String) {
-        Log.i(TAG, "setAccountNo")
+        Log.v(TAG, "setAccountNo")
         val req = AccountNoSet(consumeHouseNo)
         nfcManager.consumeHouseNo = consumeHouseNo
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_NODE_CONF_SET, 0)
     }
 
     //Meter 검침요청
-    fun ReqMeterData(meterPort: Int) {
-        Log.i(TAG, "ReqMeterData")
+    fun reqMeterData(meterPort: Int) {
+        Log.v(TAG, "reqMeterData")
         val req = MeterReq(meterPort)
         val startWaitTime = if (nfcManager.isResponseConnected) {
             ConstNfc.NFC_START_WAIT_TIME_READ_METER
@@ -148,47 +147,47 @@ class NfcRequest @Inject constructor(
     }
 
     //기간 검침요청
-    fun ReqPeriodMeterData(
+    fun reqPeriodMeterData(
         meterPort: Int,
         dateFrom: String?,
         dateTo: String?
     ) {
-        Log.i(TAG, "ReqPeriodMeterData")
+        Log.v(TAG, "reqPeriodMeterData")
         val req = PeriodMeterReq(meterPort, dateFrom, dateTo)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //기간 검침 응답 Ack
-    fun AckPeriodMeterData(totalBlock: Int, currentBlock: Int) {
-        Log.i(TAG, "AckPeriodMeterData")
+    fun ackPeriodMeterData(totalBlock: Int, currentBlock: Int) {
+        Log.v(TAG, "ackPeriodMeterData")
         val req = PeriodMeterAck(totalBlock, currentBlock)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_PERIOD_ACK, 0)
     }
 
     //Flash Date List 요청
-    fun ReqFlashDateList() {
-        Log.i(TAG, "ReqFlashDateList")
+    fun reqFlashDateList() {
+        Log.v(TAG, "reqFlashDateList")
         val req = FlashDateListReq()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //Flash Data 검침요청
-    fun ReqFlashData(dateFrom: String?, dateTo: String?) {
-        Log.i(TAG, "ReqFlashData")
+    fun reqFlashData(dateFrom: String?, dateTo: String?) {
+        Log.v(TAG, "reqFlashData")
         val req = FlashDataReq(dateFrom, dateTo)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //서버 접속요청
-    fun ReqServerConnect(reqType: Int) {
-        Log.i(TAG, "ReqServerConnect")
+    fun reqServerConnect(reqType: Int) {
+        Log.v(TAG, "reqServerConnect")
         val req = ServerConnectReq(reqType)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //메인리셋요청
-    fun ReqMainReset() {
-        Log.i(TAG, "ReqMainReset")
+    fun reqMainReset() {
+        Log.v(TAG, "reqMainReset")
         val req = BdControlReq(
             NfcConstant.CONF_BD_RESET_NOW,
             NfcConstant.CONF_SLEEP_STATE_NONE
@@ -197,109 +196,109 @@ class NfcRequest @Inject constructor(
     }
 
     //장비 정보 요청
-    fun ReqDeviceInfo() {
-        Log.i(TAG, "ReqDeviceInfo")
+    fun reqDeviceInfo() {
+        Log.v(TAG, "reqDeviceInfo")
         val req = SmartMeterReq()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //하위 단말기 상태 요청
     fun checkSubTerm() {
-        Log.i(TAG, "CheckSubTerm")
+        Log.v(TAG, "checkSubTerm")
         val req = CheckSubTerm()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //NB-IoT ID 요청
-    fun ReqNbId() {
-        Log.i(TAG, "ReqNbId")
+    fun reqNbId() {
+        Log.v(TAG, "reqNbId")
         val req = NbIdReq()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //NB-IoT 서비스코드 설정
-    fun WriteNbId(serviceCode: String?) {
-        Log.i(TAG, "WriteNbIdSet")
+    fun writeNbId(serviceCode: String?) {
+        Log.v(TAG, "writeNbId")
         val req = NbIdSet(serviceCode)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //장비 일련번호 변경 요청
     fun changeSerial(serialNumber: String?, length: Int) {
-        Log.i(TAG, "changeSerial")
+        Log.v(TAG, "changeSerial")
         val req = SnChangeReq(serialNumber, length)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //주기보고 분단위 변경
-    fun ChangeMinuteInterval(value: Int) {
-        Log.i(TAG, "ChangeMinuteInterval")
+    fun changeMinuteInterval(value: Int) {
+        Log.v(TAG, "changeMinuteInterval")
         val req = ChangeMinuteIntervalReq(value)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //gsm 단말기에서 gsm or lte 모드 변경
     fun selectGsmOrLte(value: Int) {
-        Log.i(TAG, "selectGsmOrLte")
+        Log.v(TAG, "selectGsmOrLte")
         val req = SelectGsmOrLteReq(value)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //gsm 단말기에서 도메인 변경
     fun changeDomain(domain: String?) {
-        Log.i(TAG, "changeDomain")
+        Log.v(TAG, "changeDomain")
         val req = GsmChangeDomainReq(domain)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //Fw Update 설정
-    fun ReqFwUpdate(
+    fun reqFwUpdate(
         serialNo: String?,
         reqMode: Int,
         fwVersion: String?
     ) {
-        Log.i(TAG, "ReqFwUpdate")
+        Log.v(TAG, "reqFwUpdate")
         val req = FwUpdateReq(serialNo, reqMode, fwVersion)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
     //SmartMeter 검침요청
-    fun ReqSmartMeterData() {
-        Log.i(TAG, "ReqSmartMeterData")
+    fun reqSmartMeterData() {
+        Log.v(TAG, "reqSmartMeterData")
         val req = SmartMeterReq()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_SMART_METER, 0)
     }
 
     //SmartMeter 카운터 설정
-    fun SetSmartMeterCount(count: Int) {
-        Log.i(TAG, "ReqSmartMeterData")
+    fun setSmartMeterCount(count: Int) {
+        Log.v(TAG, "setSmartMeterCount")
         val req = SmartMeterValveControl(count)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_SMART_METER, 0)
     }
 
     //SmartMeter Config 요청
-    fun ReqSmartConfData() {
-        Log.i(TAG, "ReqSmartConfData")
+    fun reqSmartConfData() {
+        Log.v(TAG, "reqSmartConfData")
         val req = SmartConfReq()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_SMART_METER, 0)
     }
 
     //SmartMeter 검침 Config 요청
-    fun ReqSmartConfMeterData() {
-        Log.i(TAG, "ReqSmartConfMeterData")
+    fun reqSmartConfMeterData() {
+        Log.v(TAG, "reqSmartConfMeterData")
         val req = SmartConfMeterReq()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_SMART_METER, 0)
     }
 
     //SmartMeter Config SN 설정
-    fun SetSmartConfSnData(
+    fun setSmartConfSnData(
         nFlowType: Int,
         strDeviceSerial: String?,
         nMeterCaliber: Int,
         strMeterSerial: String,
         nMaker: Int
     ) {
-        Log.i(TAG, "SetSmartConfSnData strMeterSerial:$strMeterSerial")
+        Log.v(TAG, "setSmartConfSnData strMeterSerial:$strMeterSerial")
         val req = SmartConfSet(
             NfcConstant.SMART_METER_CHANGE_MODE_WRITE_SN,
             nFlowType,
@@ -318,7 +317,7 @@ class NfcRequest @Inject constructor(
     }
 
     //SmartMeter Config Calibration 설정
-    fun SetSmartConfCalibrationData(
+    fun setSmartConfCalibrationData(
         nFlowType: Int,
         strDeviceSerial: String?,
         nMeterCaliber: Int,
@@ -331,7 +330,7 @@ class NfcRequest @Inject constructor(
         nTemperature: Int,
         nMaker: Int
     ) {
-        Log.i(TAG, "SetSmartConfCalibrationData")
+        Log.v(TAG, "setSmartConfCalibrationData")
         val req = SmartConfSet(
             NfcConstant.SMART_METER_CHANGE_MODE_WRITE_METER,
             nFlowType,
@@ -350,13 +349,13 @@ class NfcRequest @Inject constructor(
     }
 
     //SmartMeter Config 초음파 보정 설정
-    fun SetSmartUltraCompData(
+    fun setSmartUltraCompData(
         strDeviceSerial: String?,
         nCompSelect: Int,
         nCompOffset: Int,
         nCompValue: Int
     ) {
-        Log.i(TAG, "SetSmartUltraCompData")
+        Log.v(TAG, "setSmartUltraCompData")
         val req = SmartUltraCompSet(
             strDeviceSerial,
             nCompSelect,
@@ -367,12 +366,12 @@ class NfcRequest @Inject constructor(
     }
 
     //SmartMeter Config certification Calibration 설정
-    fun SetSmartCertiCalibrationData(
+    fun setSmartCertiCalibrationData(
         strDeviceSerial: String?,
         nCompSelect: Int,
         nCompValue: Int
     ) {
-        Log.i(TAG, "SetSmartCertiCalibrationData")
+        Log.v(TAG, "setSmartCertiCalibrationData")
         val req = SmartCertiCalibrationSet(
             strDeviceSerial,
             nCompSelect,
@@ -382,21 +381,21 @@ class NfcRequest @Inject constructor(
     }
 
     //SmartMeter Config certification Calibration 요청
-    fun ReqSmartCertiCalibrationData() {
-        Log.i(TAG, "ReqSmartCertiCalibrationData ")
+    fun reqSmartCertiCalibrationData() {
+        Log.v(TAG, "reqSmartCertiCalibrationData ")
         val req = SmartCertiCalibrationReq()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_SMART_METER, 0)
     }
 
     //SmartMeter 온도 설정
-    fun nfcAct_SetSmartTemperatureData(
+    fun setSmartTemperatureData(
         flowType: Int,
         strDeviceSerial: String,
         meterCaliber: Int,
         temperature: Int,
         maker: Int
     ) {
-        Log.i(TAG, "nfcAct_SetSmartTemperatureData strMeterSerial:$strDeviceSerial")
+        Log.v(TAG, "setSmartTemperatureData strDeviceSerial:$strDeviceSerial")
         val req = SmartConfSet(
             NfcConstant.SMART_METER_CHANGE_MODE_WRITE_METER,
             flowType,
@@ -415,14 +414,14 @@ class NfcRequest @Inject constructor(
     }
 
     //SmartMeter 자동보정
-    fun nfcAct_SetSmartAutoStart(
+    fun setSmartAutoStart(
         nFlowType: Int,
         strDeviceSerial: String,
         nCompMode: Int,
         nCompSelect: Int,
         nQnFlow: Int
     ) {
-        Log.i(TAG, "nfcAct_SetSmartAutoStart strMeterSerial:$strDeviceSerial")
+        Log.v(TAG, "setSmartAutoStart strDeviceSerial:$strDeviceSerial")
         val req = SmartConfAutoStart(
             nFlowType,
             strDeviceSerial,
@@ -430,7 +429,7 @@ class NfcRequest @Inject constructor(
             nCompSelect,
             nQnFlow
         )
-        val writeWaitTime = if (!strDeviceSerial.isEmpty()) {
+        val writeWaitTime = if (strDeviceSerial.isNotEmpty()) {
             ConstNfc.NFC_RESP_WAIT_TIME_SMART_METER
         } else {
             ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT
@@ -439,11 +438,11 @@ class NfcRequest @Inject constructor(
     }
 
     //SmartMeter 검침값 설정
-    fun nfcAct_SetSmartMeterValueData(
+    fun setSmartMeterValueData(
         strDeviceSerial: String?,
         strMeterValue: String?
     ) {
-        Log.i(TAG, "nfcAct_SetSmartMeterValueData")
+        Log.v(TAG, "setSmartMeterValueData")
         val req = SmartMeterValueSet(
             strDeviceSerial,
             strMeterValue
@@ -452,8 +451,8 @@ class NfcRequest @Inject constructor(
     }
 
     //Sleep Mode 설정/해제
-    fun SetSleepMode(sleepMode: Int) {
-        Log.i(TAG, "SetSleepMode")
+    fun setSleepMode(sleepMode: Int) {
+        Log.v(TAG, "setSleepMode")
         val req = BdControlReq(
             NfcConstant.CONF_BD_RESET_NONE,
             sleepMode
@@ -462,8 +461,8 @@ class NfcRequest @Inject constructor(
     }
 
     //Report Mode 설정/해제
-    fun SetReportMode(reportMode: Int) {
-        Log.i(TAG, "SetReportMode")
+    fun setReportMode(reportMode: Int) {
+        Log.v(TAG, "setReportMode")
         val req = BdControlReq(
             NfcConstant.CONF_BD_RESET_NONE,
             NfcConstant.CONF_SLEEP_STATE_NONE,
@@ -473,8 +472,8 @@ class NfcRequest @Inject constructor(
     }
 
     //기간검침  설정/해제
-    fun SetPeriodMode(periodMode: Int) {
-        Log.i(TAG, "SetPeriodMode")
+    fun setPeriodMode(periodMode: Int) {
+        Log.v(TAG, "setPeriodMode")
         val req = BdControlReq(
             NfcConstant.CONF_BD_RESET_NONE,
             NfcConstant.CONF_SLEEP_STATE_NONE,
@@ -485,8 +484,8 @@ class NfcRequest @Inject constructor(
     }
 
     //디버그모드  설정/해제
-    fun SetDebugMode(debugMode: Int) {
-        Log.i(TAG, "SetDebugMode")
+    fun setDebugMode(debugMode: Int) {
+        Log.v(TAG, "setDebugMode")
         val req = BdControlReq(
             NfcConstant.CONF_BD_RESET_NONE,
             NfcConstant.CONF_SLEEP_STATE_NONE,
@@ -498,8 +497,8 @@ class NfcRequest @Inject constructor(
     }
 
     //Data Skip  설정/해제
-    fun SetDataSkipMode(dataSkipMode: Int) {
-        Log.i(TAG, "SetDataSkipMode")
+    fun setDataSkipMode(dataSkipMode: Int) {
+        Log.v(TAG, "setDataSkipMode")
         val req = BdControlReq(
             NfcConstant.CONF_BD_RESET_NONE,
             NfcConstant.CONF_SLEEP_STATE_NONE,
@@ -513,7 +512,7 @@ class NfcRequest @Inject constructor(
 
     //장비 시간 설정
     fun setTimeInfo() {
-        Log.i(TAG, "SetTimeInfo")
+        Log.v(TAG, "setTimeInfo")
         val req = SetTimeInfo()
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
