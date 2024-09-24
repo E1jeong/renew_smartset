@@ -81,13 +81,13 @@ class NfcManager @Inject constructor(
             Ntag_Auth.AuthStatus.Disabled.value // When we open the application by default we set the status to disabled (we don't know the product yet)
         password = Ntag_Auth.Pwds.PWD0.value
         ntagI2CConnect =
-            Ntag_I2C_Connect(null, this.activity, null, 0) // Initialize the demo in order to handle tab change events
+            Ntag_I2C_Connect(null, null, 0) // Initialize the demo in order to handle tab change events
 
         txBuffer = ByteArray(SRAM_SIZE)
         rxBuffer = ByteArray(SRAM_SIZE)
         rxPeriodBuffer = ByteArray(PERIOD_BUFFER_SIZE)
 
-        setForeground(this.context)
+        setPendingIntent(this.context)
 
         this.activity.volumeControlStream = AudioManager.STREAM_MUSIC
     }
@@ -172,16 +172,16 @@ class NfcManager @Inject constructor(
         password = Ntag_Auth.Pwds.PWD0.value
         isResponseConnected = false
 
-        ntagI2CConnect = Ntag_I2C_Connect(tag, activity, password, authStatus)
+        ntagI2CConnect = Ntag_I2C_Connect(tag, password, authStatus)
         if (ntagI2CConnect.isReady) {
             authStatus = ntagI2CConnect.ObtainAuthStatus() // Retrieve Auth Status before doing any operation
-            ntagI2CConnect = Ntag_I2C_Connect(tag, activity, password, authStatus)
+            ntagI2CConnect = Ntag_I2C_Connect(tag, password, authStatus)
             connectProcess()
         }
     }
 
-    private fun setForeground(context: Context) {
-        Log.v(TAG, "setNfcForeground - 01")
+    private fun setPendingIntent(context: Context) {
+        Log.v(TAG, "setPendingIntent")
 
         pendingIntent = PendingIntent.getActivity(
             context,
@@ -191,9 +191,6 @@ class NfcManager @Inject constructor(
         )
     }
 
-    //****************************************************************************
-    //******************* GPS, Network
-    //****************************************************************************
     private fun connect() {
         Log.v(TAG, "connect - 01")
 
@@ -264,7 +261,7 @@ class NfcManager @Inject constructor(
                     }
 
                     else -> {
-                        NfcDataResp(responseSuccess, rxBuffer)
+                        parseReceiveData(responseSuccess, rxBuffer)
                     }
                 }
             }
@@ -273,13 +270,10 @@ class NfcManager @Inject constructor(
         }
     }
 
-    //****************************************************************************
-    //******************* UI
-    //****************************************************************************
-    private fun NfcDataResp(responseSuccess: Boolean, rxData: ByteArray) {
-        Log.i(TAG, "NfcDataResp => responseSuccess:$responseSuccess")
+    private fun parseReceiveData(responseSuccess: Boolean, rxData: ByteArray) {
+        Log.i(TAG, "parseReceiveData => responseSuccess:$responseSuccess")
         if (!responseSuccess) {
-            Toast.makeText(activity, "read tag failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "read tag failed", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -288,7 +282,7 @@ class NfcManager @Inject constructor(
             return
         }
 
-        bLog.i_hex(TAG, "NfcDataResp", rxBuffer, rxBuffer.size)
+        bLog.i_hex(TAG, "parseReceiveData", rxBuffer, rxBuffer.size)
 
         val msgType = rxHeader.GetNodeMsgType()
         receiveData(msgType, rxBuffer)
@@ -297,7 +291,7 @@ class NfcManager @Inject constructor(
     private fun receivePeriodData(responseSuccess: Boolean, rxData: ByteArray) {
         Log.i(TAG, "receivePeriodData => responseSuccess:$responseSuccess")
         if (!responseSuccess) {
-            Toast.makeText(activity, "read tag failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "read tag failed", Toast.LENGTH_SHORT).show()
             return
         }
         var i = 0

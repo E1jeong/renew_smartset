@@ -27,9 +27,6 @@
  */
 package com.hitec.presentation.nfc_lib.reader;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -60,7 +57,7 @@ import org.ndeftools.wellknown.TextRecord;
 import org.ndeftools.wellknown.UriRecord;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -77,32 +74,28 @@ public class Ntag_I2C_Connect implements ConstNfc {
     private static final int LAST_FOUR_BYTES = 4;
     private static final int DELAY_TIME = 100;
     private I2C_Enabled_Commands reader;
-    private Activity main;
     private Tag tag;
-    private final String TAG = "Ntag_I2C_Connect";
+    private static final String TAG = "Ntag_I2C_Connect";
 
     /**
      * Constructor.
      *
-     * @param tag  Tag with which the Demos should be performed
-     * @param main NfcActivity
+     * @param tag Tag with which the Demos should be performed
      */
-    public Ntag_I2C_Connect(Tag tag, final Activity main, final byte[] passwd, final int authStatus) {
+    public Ntag_I2C_Connect(Tag tag, final byte[] passwd, final int authStatus) {
         try {
-            Log.i(TAG, "Ntag_I2C_Demo - 00");
+            Log.i(TAG, "Ntag_I2C_Connect - 00");
             if (tag == null) {
-                Log.i(TAG, "Ntag_I2C_Demo - 01");
-                this.main = null;
+                Log.i(TAG, "Ntag_I2C_Connect - 01");
                 this.tag = null;
                 return;
             }
-            this.main = main;
             this.tag = tag;
 
             reader = I2C_Enabled_Commands.get(tag);
 
             reader.connect();
-            Log.i(TAG, "Ntag_I2C_Demo - 02");
+            Log.i(TAG, "Ntag_I2C_Connect - 02");
 
             Ntag_Get_Version.Prod prod = reader.getProduct();
 
@@ -116,8 +109,8 @@ public class Ntag_I2C_Connect implements ConstNfc {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.i(TAG, "Ntag_I2C_Demo - 05");
+            Log.e(TAG, e.toString());
+            Log.i(TAG, "Ntag_I2C_Connect - 03");
         }
     }
 
@@ -135,7 +128,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                 ndef.close();
                 return isConnected;
             } catch (final IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, e.toString());
                 return false;
             }
         } else {
@@ -148,7 +141,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
 
                     return isConnected;
                 } catch (final IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
                     return false;
                 }
             } else {
@@ -160,7 +153,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                         nfcb.close();
                         return isConnected;
                     } catch (final IOException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, e.toString());
                         return false;
                     }
                 } else {
@@ -172,7 +165,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                             nfcf.close();
                             return isConnected;
                         } catch (final IOException e) {
-                            e.printStackTrace();
+                            Log.e(TAG, e.toString());
                             return false;
                         }
                     } else {
@@ -184,7 +177,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                                 nfcv.close();
                                 return isConnected;
                             } catch (final IOException e) {
-                                e.printStackTrace();
+                                Log.e(TAG, e.toString());
                                 return false;
                             }
                         } else {
@@ -194,28 +187,6 @@ public class Ntag_I2C_Connect implements ConstNfc {
                 }
             }
         }
-    }
-
-    private void showAlert(final String message, final String title) {
-        main.runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(main)
-                                .setMessage(message)
-                                .setTitle(title)
-                                .setPositiveButton(
-                                        "OK",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                            }
-                                        }
-                                )
-                                .show();
-                    }
-                }
-        );
     }
 
     /**
@@ -251,17 +222,16 @@ public class Ntag_I2C_Connect implements ConstNfc {
      * @return Boolean indicating success or error
      */
     public int resetTagMemory() {
-        int bytesWritten = 0;
+        int bytesWritten;
 
         try {
             bytesWritten = reader.writeDeliveryNdef();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
             bytesWritten = -1;
         }
-        if (bytesWritten == 0) {
-            showDemoNotSupportedAlert();
-        } else {
+
+        if (bytesWritten != 0) {
             byte NC_REG = (byte) 0x01;
             byte LD_Reg = (byte) 0x00;
             byte SM_Reg = (byte) 0xF8;
@@ -280,7 +250,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                 );
             } catch (Exception e) {
                 //Toast.makeText(main, "Error writing configuration registers", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
+                Log.e(TAG, e.toString());
                 bytesWritten = -1;
             }
 
@@ -295,7 +265,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                 }
             } catch (Exception e) {
                 //Toast.makeText(main, "Error writing authentication registers", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
+                Log.e(TAG, e.toString());
                 bytesWritten = -1;
             }
         }
@@ -305,47 +275,26 @@ public class Ntag_I2C_Connect implements ConstNfc {
     /**
      * Builds a String array for the NTAG I2C Plus Auth Register.
      *
-     * @param auth0register  Byte Array of the Registers
-     * @param pti2cRegister
-     * @param accessRegister
-     * @return String Array
-     * @throws IOException
-     * @throws FormatException
+     * @param auth0register Byte Array of the Registers
      */
     private Ntag_I2C_Plus_Registers getPlusAuth_Settings(
             byte[] auth0register,
             byte[] accessRegister,
             byte[] pti2cRegister
-    ) throws IOException, FormatException {
+    ) {
         Ntag_I2C_Plus_Registers answerPlus = new Ntag_I2C_Plus_Registers();
 
         //Auth0 Register
         answerPlus.auth0 = (0x00000FF & auth0register[3]);
 
         //Access Register
-        if ((0x0000080 & accessRegister[0]) >> Access_Offset.NFC_PROT.getValue() == 1) {
-            answerPlus.nfcProt = true;
-        } else {
-            answerPlus.nfcProt = false;
-        }
-        if ((0x0000020 & accessRegister[0]) >> Access_Offset.NFC_DIS_SEC1.getValue() == 1) {
-            answerPlus.nfcDisSec1 = true;
-        } else {
-            answerPlus.nfcDisSec1 = false;
-        }
+        answerPlus.nfcProt = (0x0000080 & accessRegister[0]) >> Access_Offset.NFC_PROT.getValue() == 1;
+        answerPlus.nfcDisSec1 = (0x0000020 & accessRegister[0]) >> Access_Offset.NFC_DIS_SEC1.getValue() == 1;
         answerPlus.authlim = (0x0000007 & accessRegister[0]);
 
         //PT I2C Register
-        if ((0x0000008 & pti2cRegister[0]) >> PT_I2C_Offset.K2_PROT.getValue() == 1) {
-            answerPlus.k2Prot = true;
-        } else {
-            answerPlus.k2Prot = false;
-        }
-        if ((0x0000004 & pti2cRegister[0]) >> PT_I2C_Offset.SRAM_PROT.getValue() == 1) {
-            answerPlus.sram_prot = true;
-        } else {
-            answerPlus.sram_prot = false;
-        }
+        answerPlus.k2Prot = (0x0000008 & pti2cRegister[0]) >> PT_I2C_Offset.K2_PROT.getValue() == 1;
+        answerPlus.sram_prot = (0x0000004 & pti2cRegister[0]) >> PT_I2C_Offset.SRAM_PROT.getValue() == 1;
         answerPlus.i2CProt = (0x0000003 & pti2cRegister[0]);
         return answerPlus;
     }
@@ -362,29 +311,10 @@ public class Ntag_I2C_Connect implements ConstNfc {
             int memSize = reader.getProduct().getMemsize() + 16;
             // Read all the pages using the fast read method
             bytes = reader.readEEPROM(0, memSize / reader.getBlockSize());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FormatException e) {
-            e.printStackTrace();
-        } catch (CommandNotSupportedException e) {
-            e.printStackTrace();
-            showDemoNotSupportedAlert();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
         return bytes;
-    }
-
-    private void showTagNotPlusAlert() {
-        String message = "tag not supported";
-        String title = "tag";
-        showAlert(message, title);
-    }
-
-    private void showDemoNotSupportedAlert() {
-        String message = "demo not supported";
-        String title = "demo";
-        showAlert(message, title);
     }
 
     /**
@@ -397,18 +327,14 @@ public class Ntag_I2C_Connect implements ConstNfc {
         try {
             byte[] d = new byte[reader.getProduct().getMemsize()];
             reader.writeEEPROM(d);
-        } catch (IOException e) {
+        } catch (IOException | FormatException e) {
             success = false;
-            e.printStackTrace();
-        } catch (FormatException e) {
-            success = false;
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (CommandNotSupportedException e) {
-            showDemoNotSupportedAlert();
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (Exception e) {
             Log.i(TAG, "resetTagContent - 05-1 Exception");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
         return success;
     }
@@ -421,54 +347,51 @@ public class Ntag_I2C_Connect implements ConstNfc {
             // NDEF Reading time statistics
             Message highLevelMsg = new Message(msg);
 
-            // Get the message type in order to deal with it
-            // appropriately
-            //String type = "none";
-            if (!highLevelMsg.isEmpty()) {
-                //type = highLevelMsg.get(0).getClass().getSimpleName();
-            }
+            // Get the message type in order to deal with it appropriately
+//            String type = "none";
+//            if (!highLevelMsg.isEmpty()) {
+//                type = highLevelMsg.get(0).getClass().getSimpleName();
+//            }
 
-            String message = "";
-
-            for (Record rec : highLevelMsg) {
-                if (rec instanceof EmptyRecord) {
-                    message = "";
-                } else if (rec instanceof SmartPosterRecord) {
-                    SmartPosterRecord smp = (SmartPosterRecord) rec;
-                    message =
-                            smp.getUri().getUri().getHost() + smp.getUri().getUri().getPath();
-                } else if (rec instanceof TextRecord) {
-                    message = ((TextRecord) rec).getText();
-                } else if (rec instanceof AndroidApplicationRecord) {
-                    message = ((AndroidApplicationRecord) rec).getPackageName();
-                } else if (rec instanceof UriRecord) {
-                    message =
-                            ((UriRecord) rec).getUri().getHost() +
-                                    ((UriRecord) rec).getUri().getPath();
-                } else if (rec instanceof MimeRecord) {
-                    message = ((MimeRecord) rec).getMimeType();
-                } else {
-                    message = rec.getClass().getSimpleName();
-                }
-            }
+            String message = getString(highLevelMsg);
             int bytes = msg.toByteArray().length;
 
             Log.i(TAG, "NfcReadNdef : message:" + message + " bytes:" + bytes);
 
             return message;
-        } catch (CommandNotSupportedException e) {
-            e.printStackTrace();
-            return "";
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
             return "";
         }
+    }
+
+    private static String getString(Message highLevelMsg) {
+        String message = "";
+
+        for (Record rec : highLevelMsg) {
+            if (rec instanceof EmptyRecord) {
+                message = "";
+            } else if (rec instanceof SmartPosterRecord smp) {
+                message = smp.getUri().getUri().getHost() + smp.getUri().getUri().getPath();
+            } else if (rec instanceof TextRecord) {
+                message = ((TextRecord) rec).getText();
+            } else if (rec instanceof AndroidApplicationRecord) {
+                message = ((AndroidApplicationRecord) rec).getPackageName();
+            } else if (rec instanceof UriRecord) {
+                message = ((UriRecord) rec).getUri().getHost() + ((UriRecord) rec).getUri().getPath();
+            } else if (rec instanceof MimeRecord) {
+                message = ((MimeRecord) rec).getMimeType();
+            } else {
+                message = rec.getClass().getSimpleName();
+            }
+        }
+        return message;
     }
 
     public boolean NfcWriteNdef(String writeText) {
         try {
             // NDEF Message to write in the tag
-            NdefMessage msg = null;
+            NdefMessage msg;
             Log.i(TAG, "NfcWriteNdef - 01 writeText:" + writeText);
 
             String readText = NfcReadNdef();
@@ -490,7 +413,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
             Log.i(TAG, "NfcWriteNdef : writeText:" + writeText + " bytes:" + bytes);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
             return false;
         }
     }
@@ -505,7 +428,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
             }
         } catch (Exception e) {
             Log.i(TAG, "waitI2CTime => Exception");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -521,7 +444,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
 
         // We have to make sure that the Pass-Through mode is activated
         long RegTimeOutStart = System.currentTimeMillis();
-        boolean RTest = false;
+        boolean RTest;
         int i, j;
         try {
             Log.i(TAG, "NfcDataTransive : respWaitTime:" + respWaitTime + " startWaitTime:" + startWaitTime);
@@ -568,9 +491,9 @@ public class Ntag_I2C_Connect implements ConstNfc {
                     dataRx = reader.fast_readSRAMBlock();
                 } catch (Exception e) {
                     Log.i(TAG, "NfcDataTransive => Exception : readSRAMBlock");
-                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
                 }
-                devCode = (int) (dataRx[0] & 0xFF);
+                devCode = dataRx[0] & 0xFF;
                 if (
                         devCode != DEVICE_CODE_SMART && devCode != 0x00 && dataRx.length > 10
                 ) {
@@ -590,17 +513,16 @@ public class Ntag_I2C_Connect implements ConstNfc {
             return true;
         } catch (FormatException e) {
             Log.i(TAG, "NfcDataTransive => FormatException");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (IOException e) {
             Log.i(TAG, "NfcDataTransive => IOException");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (CommandNotSupportedException e) {
-            showDemoNotSupportedAlert();
             Log.i(TAG, "NfcDataTransive => CommandNotSupportedException");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (Exception e) {
             Log.i(TAG, "NfcDataTransive => Exception");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
 
         return false;
@@ -618,14 +540,14 @@ public class Ntag_I2C_Connect implements ConstNfc {
 
         // We have to make sure that the Pass-Through mode is activated
         long RegTimeOutStart = System.currentTimeMillis();
-        boolean RTest = false;
+        boolean RTest;
         try {
             Log.i(TAG, "NfcPeriodDataTransive : respWaitTime:" + respWaitTime + " startWaitTime:" + startWaitTime);
 
             // wait to prevent that a RF communication is
             // at the same time as 쨉C I2C
             //Thread.sleep(10);
-            if (fInitConnect == false) {
+            if (!fInitConnect) {
                 do {
                     if (reader.checkPTwritePossible()) {
                         break;
@@ -678,7 +600,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                     dataRx = reader.fast_readSRAMBlock();
                 } catch (Exception e) {
                     Log.i(TAG, "NfcPeriodDataTransive => Exception : readSRAMBlock");
-                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
                     exceptionCnt++;
                     if (exceptionCnt > 10) {
                         break;
@@ -696,22 +618,18 @@ public class Ntag_I2C_Connect implements ConstNfc {
                     Log.i(TAG, "NfcPeriodDataTransive msgType:" + msgType);
                     if (msgType == NfcConstant.NODE_RECV_PERIOD_METER_REPORT) {
                         //기간검침
-                        totalBlock = (int) (dataRx[12] & 0xFF);
-                        currBlock = (int) (dataRx[13] & 0xFF);
+                        totalBlock = dataRx[12] & 0xFF;
+                        currBlock = dataRx[13] & 0xFF;
                         Log.i(TAG, "NfcPeriodDataTransive totalBlock:" + totalBlock + " currBlock:" + currBlock);
                         if (totalBlock == 0 && currBlock == 0) {
-                            for (int j = 0; j < dataRx.length; j++) {
-                                recvData[j] = dataRx[j];
-                            }
+                            System.arraycopy(dataRx, 0, recvData, 0, dataRx.length);
                             break;
                         } else {
                             if (prevBlock != currBlock) {
                                 nTime = 0;
                                 prevBlock = currBlock;
                                 Log.i(TAG, "startRxPos : " + startRxPos);
-                                for (int j = 0; j < dataRx.length; j++) {
-                                    recvData[startRxPos + j] = dataRx[j];
-                                }
+                                System.arraycopy(dataRx, 0, recvData, startRxPos, dataRx.length);
                                 startRxPos += reader.getSRAMSize();
                             }
 
@@ -721,21 +639,17 @@ public class Ntag_I2C_Connect implements ConstNfc {
                         }
                     } else if (msgType == NfcConstant.NODE_RECV_FLASH_DATA_REPORT) {
                         //Flash Data 검침
-                        totalBlock = (int) (dataRx[13] & 0xFF);
-                        currBlock = (int) (dataRx[14] & 0xFF);
+                        totalBlock = dataRx[13] & 0xFF;
+                        currBlock = dataRx[14] & 0xFF;
                         Log.i(TAG, "NfcFlashDataTransive totalBlock:" + totalBlock + " currBlock:" + currBlock);
                         if (totalBlock == 0 && currBlock == 0) {
-                            for (int j = 0; j < dataRx.length; j++) {
-                                recvData[j] = dataRx[j];
-                            }
+                            System.arraycopy(dataRx, 0, recvData, 0, dataRx.length);
                             break;
                         } else {
                             if (prevBlock != currBlock) {
                                 nTime = 0;
                                 prevBlock = currBlock;
-                                for (int j = 0; j < dataRx.length; j++) {
-                                    recvData[startRxPos + j] = dataRx[j];
-                                }
+                                System.arraycopy(dataRx, 0, recvData, startRxPos, dataRx.length);
                                 startRxPos += reader.getSRAMSize();
                             }
 
@@ -744,9 +658,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                             }
                         }
                     } else {
-                        for (int j = 0; j < dataRx.length; j++) {
-                            recvData[j] = dataRx[j];
-                        }
+                        System.arraycopy(dataRx, 0, recvData, 0, dataRx.length);
                         break;
                     }
                 }
@@ -760,17 +672,16 @@ public class Ntag_I2C_Connect implements ConstNfc {
             return true;
         } catch (FormatException e) {
             Log.i(TAG, "NfcPeriodDataTransive => FormatException");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (IOException e) {
             Log.i(TAG, "NfcPeriodDataTransive => IOException");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (CommandNotSupportedException e) {
-            showDemoNotSupportedAlert();
             Log.i(TAG, "NfcPeriodDataTransive => CommandNotSupportedException");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         } catch (Exception e) {
             Log.i(TAG, "NfcPeriodDataTransive => Exception");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
 
         return false;
@@ -780,7 +691,6 @@ public class Ntag_I2C_Connect implements ConstNfc {
      * Retrieves the auth status of the tag
      *
      * @return int current auth status
-     * @throws IOException
      */
     public int ObtainAuthStatus() {
         try {
@@ -796,7 +706,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                 return reader.getProtectionPlus();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
         Log.i(TAG, "ObtainAuthStatus - 05");
         return Ntag_Auth.AuthStatus.Disabled.getValue();
@@ -808,8 +718,6 @@ public class Ntag_I2C_Connect implements ConstNfc {
      * @param pwd        Byte Array containing the password
      * @param authStatus Current Authentication Status
      * @return Boolean operation result
-     * @throws IOException
-     * @throws FormatException
      */
     public Boolean Auth(byte[] pwd, int authStatus) {
         Log.i(TAG, "Auth - 01 authStatus:" + authStatus);
@@ -835,16 +743,11 @@ public class Ntag_I2C_Connect implements ConstNfc {
             }
             Log.i(TAG, "Auth - 05");
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FormatException e) {
-            e.printStackTrace();
-        } catch (NotPlusTagException e) {
-            showTagNotPlusAlert();
-            e.printStackTrace();
+        } catch (IOException | NotPlusTagException | FormatException e) {
+            Log.e(TAG, e.toString());
         } catch (Exception e) {
             Log.i(TAG, "Auth - 05-1 Exception");
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
         Log.i(TAG, "Auth - 06");
 
@@ -860,9 +763,9 @@ public class Ntag_I2C_Connect implements ConstNfc {
     int roundUp(int num) {
         if (num <= 256) {
             return 256;
-        } else if (num > 256 && num <= 512) {
+        } else if (num <= 512) {
             return 512;
-        } else if (num > 512 && num <= 1024) {
+        } else if (num <= 1024) {
             return 1024;
         } else {
             return 4096;
@@ -936,15 +839,14 @@ public class Ntag_I2C_Connect implements ConstNfc {
      *
      * @param text Text to write
      * @return NDEF Message
-     * @throws UnsupportedEncodingException
      */
-    private NdefMessage createNdefTextMessage(String text) throws UnsupportedEncodingException {
+    private NdefMessage createNdefTextMessage(String text) {
         if (text.isEmpty()) {
             return null;
         }
         String lang = "en";
         byte[] textBytes = text.getBytes();
-        byte[] langBytes = lang.getBytes("US-ASCII");
+        byte[] langBytes = lang.getBytes(StandardCharsets.US_ASCII);
         int langLength = langBytes.length;
         int textLength = textBytes.length;
         byte[] payload = new byte[1 + langLength + textLength];
