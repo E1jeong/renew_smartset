@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.hitec.presentation.component.button.HorizontalScrollUnderlinedTextButton
 import com.hitec.presentation.component.button.UnderlinedTextButton
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.primaryBlue1
@@ -42,121 +43,11 @@ fun NfcMenu(
                 .background(primaryBlue1.copy(alpha = 0.5f)),
             verticalArrangement = Arrangement.Bottom
         ) {
-            CustomUnderlinedTextButton(
+            HorizontalScrollUnderlinedTextButton(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .padding(horizontal = Paddings.small),
                 text = "change serial",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            CustomUnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "B",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "C",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "D",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "E",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "F",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "G",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "H",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "I",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
-            )
-
-            UnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
-                text = "J",
                 onClick = {
                     onNfcTagDetected()
                     onUpdateClick()

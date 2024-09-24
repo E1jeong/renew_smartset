@@ -1,4 +1,4 @@
-package com.hitec.presentation.main.device_detail.component
+package com.hitec.presentation.component.button
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import com.hitec.presentation.theme.Paddings
 
 @Composable
-fun CustomUnderlinedTextButton(
+fun HorizontalScrollUnderlinedTextButton(
     modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit
