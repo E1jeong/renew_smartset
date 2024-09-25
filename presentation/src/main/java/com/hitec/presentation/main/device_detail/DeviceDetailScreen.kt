@@ -28,6 +28,8 @@ import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
+import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
@@ -41,6 +43,7 @@ fun DeviceDetailScreen(
     val state by viewModel.container.stateFlow.collectAsState()
     val context = LocalContext.current
     var nfcResultDialogVisible by remember { mutableStateOf(false) }
+    var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val installDeviceJson = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_INSTALL_DEVICE)
@@ -67,14 +70,28 @@ fun DeviceDetailScreen(
     DeviceDetailScreen(
         installDevice = state.installDevice,
         imageList = state.deviceImageList.sortedBy { it.first },
-        onUpdateClick = viewModel::onUpdateClick,
-        onNfcTagDetected = { nfcResultDialogVisible = true }
+        nfcRequestChangeSerial = { nfcRequestChangeSerialDialogVisible = true },
+    )
+
+    NfcRequestChangeSerialDialog(
+        visible = nfcRequestChangeSerialDialogVisible,
+        header = "Change Serial",
+        description = "enter new serial number (max ${state.installDevice.meterDeviceSn?.length ?: 12})",
+        userInput = state.nfcRequestChangeSerialUserInput,
+        onUserInputChange = viewModel::onTextChangeInChangeSerialDialog,
+        onTagButtonClick = viewModel::nfcRequestChangeSerial,
+        onResultDialogVisible = { nfcResultDialogVisible = true },
+        onUserInputClear = viewModel::clearNfcRequestChangeSerialUserInput,
+        onDismissRequest = { nfcRequestChangeSerialDialogVisible = false }
     )
 
     NfcResultDialog(
         visible = nfcResultDialogVisible,
         result = state.nfcResult,
-        onDismissRequest = { nfcResultDialogVisible = false }
+        onDismissRequest = {
+            nfcResultDialogVisible = false
+            viewModel.clearNfcResult()
+        }
     )
 }
 
@@ -82,8 +99,7 @@ fun DeviceDetailScreen(
 private fun DeviceDetailScreen(
     installDevice: InstallDevice,
     imageList: List<Pair<Int, Any?>>,
-    onUpdateClick: () -> Unit,
-    onNfcTagDetected: () -> Unit
+    nfcRequestChangeSerial: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -140,8 +156,7 @@ private fun DeviceDetailScreen(
                 height = Dimension.fillToConstraints
             },
             isVisible = isNfcMenuExpanded,
-            onNfcTagDetected = onNfcTagDetected,
-            onUpdateClick = onUpdateClick
+            onChangeSerialClick = nfcRequestChangeSerial
         )
     }
 }
@@ -154,8 +169,7 @@ fun DeviceDetailScreenPreview() {
             DeviceDetailScreen(
                 installDevice = InstallDevice(meterDeviceId = "HT-T-012345"),
                 imageList = emptyList(),
-                onUpdateClick = {},
-                onNfcTagDetected = {}
+                nfcRequestChangeSerial = {},
             )
         }
     }

@@ -13,7 +13,6 @@ import com.hitec.presentation.R
 import com.hitec.presentation.nfc_lib.NfcManager
 import com.hitec.presentation.nfc_lib.NfcRequest
 import com.hitec.presentation.nfc_lib.NfcResponse
-import com.hitec.presentation.nfc_lib.model.ChangeSerial
 import com.hitec.presentation.util.PathHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -55,14 +54,11 @@ class DeviceDetailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            nfcResponse.nfcResultFlow.collect { result ->
-                when (result) {
-                    is ChangeSerial -> {
-                        Log.d(TAG, "ChangeSerial: $result")
-                        intent {
-                            reduce { state.copy(nfcResult = result.toString()) }
-                        }
-                    }
+            nfcResponse.nfcResultFlow.collect { nfcResultFlow ->
+                Log.d(TAG, "nfcResponse.nfcResultFlow: $nfcResultFlow")
+
+                intent {
+                    reduce { state.copy(nfcResult = nfcResultFlow) }
                 }
             }
         }
@@ -151,12 +147,24 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(deviceImageList = state.deviceImageList + Pair(photoTypeCd, image)) }
     }
 
-    fun onUpdateClick() = intent {
+    fun nfcRequestChangeSerial() = intent {
         nfcManager.start()
         nfcRequest.changeSerial(
-            serialNumber = state.installDevice.meterDeviceSn ?: "NL1234567890",
-            length = state.installDevice.meterDeviceSn?.length ?: 12
+            serialNumber = state.nfcRequestChangeSerialUserInput,
+            length = state.nfcRequestChangeSerialUserInput.length
         )
+    }
+
+    fun clearNfcResult() = intent {
+        reduce { state.copy(nfcResult = "Tag nfc") }
+    }
+
+    fun onTextChangeInChangeSerialDialog(userInput: String) = blockingIntent {
+        reduce { state.copy(nfcRequestChangeSerialUserInput = userInput.trim()) }
+    }
+
+    fun clearNfcRequestChangeSerialUserInput() = intent {
+        reduce { state.copy(nfcRequestChangeSerialUserInput = "") }
     }
 
     companion object {
@@ -175,6 +183,7 @@ data class DeviceDetailState(
     val deviceImageList: List<Pair<Int, Any?>> = emptyList(),
     val imagePath: String = "",
     val nfcResult: String = "Tag nfc",
+    val nfcRequestChangeSerialUserInput: String = "",
 )
 
 sealed interface DeviceDetailSideEffect {

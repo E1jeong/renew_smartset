@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.hitec.presentation.component.button.HorizontalScrollUnderlinedTextButton
-import com.hitec.presentation.component.button.UnderlinedTextButton
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.primaryBlue1
 
@@ -27,8 +26,7 @@ import com.hitec.presentation.theme.primaryBlue1
 fun NfcMenu(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
-    onNfcTagDetected: () -> Unit,
-    onUpdateClick: () -> Unit
+    onChangeSerialClick: () -> Unit
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -39,7 +37,7 @@ fun NfcMenu(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .clip(RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(size = 16.dp))
                 .background(primaryBlue1.copy(alpha = 0.5f)),
             verticalArrangement = Arrangement.Bottom
         ) {
@@ -48,10 +46,7 @@ fun NfcMenu(
                     .fillMaxWidth(0.5f)
                     .padding(horizontal = Paddings.small),
                 text = "change serial",
-                onClick = {
-                    onNfcTagDetected()
-                    onUpdateClick()
-                }
+                onClick = onChangeSerialClick
             )
         }
     }
