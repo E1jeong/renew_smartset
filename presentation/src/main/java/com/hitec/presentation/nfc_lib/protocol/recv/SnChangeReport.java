@@ -7,19 +7,19 @@ package com.hitec.presentation.nfc_lib.protocol.recv;
 
 public class SnChangeReport extends NfcRxMessage {
 
-    private int result;
+    private int resultCode;
 
-    public int getResult() {
-        return result;
+    public int getResultCode() {
+        return resultCode;
     }
 
     @Override
-    public boolean parse(byte[] rxdata) {
-        if (super.parse(rxdata) == false) {
+    public boolean parse(byte[] rxData) {
+        if (!super.parse(rxData)) {
             return false;
         }
 
-        result = getHexData(m_nOffset++);
+        resultCode = getHexData(m_nOffset++);
 
         return parseCompleted();
     }
