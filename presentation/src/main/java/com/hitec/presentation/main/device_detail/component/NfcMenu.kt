@@ -9,7 +9,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,16 +16,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hitec.presentation.component.button.HorizontalScrollUnderlinedTextButton
 import com.hitec.presentation.theme.Paddings
+import com.hitec.presentation.theme.RenewSmartSetTheme
 import com.hitec.presentation.theme.primaryBlue1
 
 @Composable
 fun NfcMenu(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
-    onChangeSerialClick: () -> Unit
+    onChangeSerialClick: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -42,12 +43,23 @@ fun NfcMenu(
             verticalArrangement = Arrangement.Bottom
         ) {
             HorizontalScrollUnderlinedTextButton(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = Paddings.small),
+                modifier = Modifier.padding(horizontal = Paddings.small),
                 text = "change serial",
                 onClick = onChangeSerialClick
             )
+            HorizontalScrollUnderlinedTextButton(
+                modifier = Modifier.padding(horizontal = Paddings.small),
+                text = "read config",
+                onClick = {}
+            )
         }
+    }
+}
+
+@Preview
+@Composable
+fun NfcMenuPreview() {
+    RenewSmartSetTheme {
+        NfcMenu(isVisible = true, onChangeSerialClick = {})
     }
 }
