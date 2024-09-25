@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.SendToMobile
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -25,6 +27,10 @@ import com.hitec.presentation.component.dialog.model.DialogButton
 import com.hitec.presentation.component.dialog.model.DialogContent
 import com.hitec.presentation.component.dialog.model.DialogText
 import com.hitec.presentation.component.dialog.model.DialogTitle
+import com.hitec.presentation.component.dialog.wrapper.DialogButtonsRow
+import com.hitec.presentation.component.dialog.wrapper.DialogContentWrapper
+import com.hitec.presentation.component.dialog.wrapper.DialogTitleWrapper
+import com.hitec.presentation.component.icon.LeadingIcon
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
 
@@ -86,7 +92,7 @@ fun BaseDialogWithTextField(
                         }
                     }
                 )
-                buttons?.let { DialogButtonsColumn(it) }
+                buttons?.let { DialogButtonsRow(it) }
             }
         }
     }
@@ -101,7 +107,19 @@ fun BaseDialogWithTextFieldPreview() {
             dialogContent = DialogContent.Default(DialogText.Default("description")),
             textFieldValue = "input",
             onTextFieldClear = {},
-            onTextChanged = {}
+            onTextChanged = {},
+            buttons = listOf(
+                DialogButton.Primary(
+                    title = "Tag",
+                    leadingIcon = LeadingIcon(icon = Icons.Filled.SendToMobile),
+                    action = {}
+                ),
+                DialogButton.Primary(
+                    title = "Close",
+                    leadingIcon = LeadingIcon(icon = Icons.Filled.Close),
+                    action = {}
+                )
+            )
         )
     }
 }

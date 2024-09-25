@@ -1,4 +1,4 @@
-package com.hitec.presentation.component.dialog
+package com.hitec.presentation.component.dialog.wrapper
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

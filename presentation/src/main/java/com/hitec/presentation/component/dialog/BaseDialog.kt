@@ -17,6 +17,9 @@ import com.hitec.presentation.component.dialog.model.DialogButton
 import com.hitec.presentation.component.dialog.model.DialogContent
 import com.hitec.presentation.component.dialog.model.DialogText
 import com.hitec.presentation.component.dialog.model.DialogTitle
+import com.hitec.presentation.component.dialog.wrapper.DialogButtonsColumn
+import com.hitec.presentation.component.dialog.wrapper.DialogContentWrapper
+import com.hitec.presentation.component.dialog.wrapper.DialogTitleWrapper
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
 

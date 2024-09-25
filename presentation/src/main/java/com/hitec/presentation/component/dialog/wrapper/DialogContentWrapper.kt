@@ -1,4 +1,4 @@
-package com.hitec.presentation.component.dialog
+package com.hitec.presentation.component.dialog.wrapper
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
@@ -59,9 +59,20 @@ fun ColumnScope.DialogContentWrapper(content: DialogContent) {
                 NormalTextContent(content.dialogText)
             }
         }
+
+        is DialogContent.Left -> {
+            CompositionLocalProvider(
+                LocalDialogContentStyle provides DialogContentStyle(
+                    textStyle = { MaterialTheme.typography.titleMedium.copy(lineHeight = 1.6.em) },
+                    contentTopPadding = Paddings.small,
+                    contentBottomPadding = Paddings.extra
+                )
+            ) {
+                LeftTextContent(content.dialogText)
+            }
+        }
     }
 }
-
 
 @Composable
 fun ColumnScope.NormalTextContent(text: DialogText.Default) {
@@ -74,6 +85,21 @@ fun ColumnScope.NormalTextContent(text: DialogText.Default) {
             )
             .align(Alignment.CenterHorizontally),
         textAlign = TextAlign.Center,
+        style = LocalDialogContentStyle.current.textStyle.invoke()
+    )
+}
+
+@Composable
+fun ColumnScope.LeftTextContent(text: DialogText.Default) {
+    Text(
+        text = text.text ?: "",
+        modifier = Modifier
+            .padding(
+                top = LocalDialogContentStyle.current.contentTopPadding,
+                bottom = LocalDialogContentStyle.current.contentBottomPadding
+            )
+            .align(Alignment.CenterHorizontally),
+        textAlign = TextAlign.Start,
         style = LocalDialogContentStyle.current.textStyle.invoke()
     )
 }
