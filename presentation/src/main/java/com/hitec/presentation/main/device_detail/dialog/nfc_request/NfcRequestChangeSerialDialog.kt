@@ -1,6 +1,7 @@
 package com.hitec.presentation.main.device_detail.dialog.nfc_request
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.SendToMobile
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +43,11 @@ fun NfcRequestChangeSerialDialog(
                             onResultDialogVisible()
                         }
                     ),
-                    DialogButton.UnderlinedText(title = "Close", action = onDismissRequest)
+                    DialogButton.Primary(
+                        title = "Close",
+                        leadingIcon = LeadingIcon(icon = Icons.Filled.Close),
+                        action = onDismissRequest
+                    )
                 ),
                 onTextFieldClear = onUserInputClear
             )
