@@ -261,7 +261,7 @@ class NfcManager @Inject constructor(
                     }
 
                     else -> {
-                        parseReceiveData(responseSuccess, rxBuffer)
+                        parseData(responseSuccess, rxBuffer)
                     }
                 }
             }
@@ -270,8 +270,8 @@ class NfcManager @Inject constructor(
         }
     }
 
-    private fun parseReceiveData(responseSuccess: Boolean, rxData: ByteArray) {
-        Log.i(TAG, "parseReceiveData => responseSuccess:$responseSuccess")
+    private fun parseData(responseSuccess: Boolean, rxData: ByteArray) {
+        Log.i(TAG, "parseData => responseSuccess:$responseSuccess")
         if (!responseSuccess) {
             Toast.makeText(context, "read tag failed", Toast.LENGTH_SHORT).show()
             return
@@ -282,7 +282,7 @@ class NfcManager @Inject constructor(
             return
         }
 
-        bLog.i_hex(TAG, "parseReceiveData", rxBuffer, rxBuffer.size)
+        bLog.i_hex(TAG, "parseData", rxBuffer, rxBuffer.size)
 
         val msgType = rxHeader.GetNodeMsgType()
         receiveData(msgType, rxBuffer)
