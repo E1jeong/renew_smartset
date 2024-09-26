@@ -3,15 +3,20 @@ package com.hitec.presentation.component.dialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.hitec.presentation.R
 import com.hitec.presentation.component.dialog.model.DialogButton
 import com.hitec.presentation.component.dialog.model.DialogButtonArrangement
@@ -32,8 +37,12 @@ fun BaseDialog(
     buttons: List<DialogButton>? = null,
     buttonArrangement: DialogButtonArrangement? = null,
 ) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(max = screenHeight * 0.8f),
         elevation = CardDefaults.cardElevation(defaultElevation = Paddings.none),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
@@ -49,6 +58,7 @@ fun BaseDialog(
                     .background(Color.Transparent)
                     .fillMaxWidth()
                     .padding(Paddings.xlarge)
+                    .verticalScroll(rememberScrollState())
             ) {
                 dialogContent?.let { DialogContentWrapper(it) }
                 buttons?.let { DialogButtonsColumn(it) }
