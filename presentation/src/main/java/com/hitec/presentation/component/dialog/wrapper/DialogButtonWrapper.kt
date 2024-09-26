@@ -14,8 +14,17 @@ import com.hitec.presentation.component.button.SecondaryBorderlessButton
 import com.hitec.presentation.component.button.SecondaryButton
 import com.hitec.presentation.component.button.UnderlinedTextButton
 import com.hitec.presentation.component.dialog.model.DialogButton
+import com.hitec.presentation.component.dialog.model.DialogButtonArrangement
 import com.hitec.presentation.component.icon.LeadingIcon
 import com.hitec.presentation.theme.Paddings
+
+@Composable
+fun DialogButtonWrapper(arrangement: DialogButtonArrangement) {
+    when (arrangement) {
+        is DialogButtonArrangement.Column -> DialogButtonsColumn(arrangement.buttons)
+        is DialogButtonArrangement.Row -> DialogButtonsRow(arrangement.buttons)
+    }
+}
 
 
 @Composable
