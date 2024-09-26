@@ -19,7 +19,7 @@ fun NfcResultDialog(
         Dialog(onDismissRequest = onDismissRequest) {
             BaseDialog(
                 dialogTitle = DialogTitle.Header(text = "Nfc result"),
-                dialogContent = DialogContent.Default(DialogText.Default(result)),
+                dialogContent = DialogContent.Left(DialogText.Default(result)),
             )
         }
     }
