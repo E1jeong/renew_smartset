@@ -11,7 +11,7 @@ public class NbIdReport extends NfcRxMessage {
 
     private int m_nReportType = 0;
     private String m_strCseId = "";
-    private String m_strServiceCode = "";
+    private String serviceCode = "";
     private String m_strIccId = "";
 
     public int GetReportType() {
@@ -22,11 +22,11 @@ public class NbIdReport extends NfcRxMessage {
         return m_strCseId;
     }
 
-    public String GetServiceCode() {
-        return m_strServiceCode;
+    public String getServiceCode() {
+        return serviceCode;
     }
 
-    public String GetIccId() {
+    public String getIccId() {
         String dstIccId = "";
         if (m_strIccId.length() >= 19) {
             dstIccId = m_strIccId.substring(0, 19);
@@ -35,15 +35,15 @@ public class NbIdReport extends NfcRxMessage {
     }
 
     @Override
-    public boolean parse(byte[] rxdata) {
-        if (super.parse(rxdata) == false) {
+    public boolean parse(byte[] rxData) {
+        if (!super.parse(rxData)) {
             return false;
         }
 
         m_nReportType = getHexData(m_nOffset++);
 
         if (m_nNodeMsgVersion == 1) { //Version 2
-            m_strServiceCode = parseAsciiData(m_nOffset, 4);
+            serviceCode = parseAsciiData(m_nOffset, 4);
             m_nOffset += 4;
         }
 
@@ -55,11 +55,11 @@ public class NbIdReport extends NfcRxMessage {
 
         if (m_nNodeMsgVersion == 0) { //version 1
             if (m_strCseId.length() >= 25) {
-                m_strServiceCode = m_strCseId.substring(21, 25);
+                serviceCode = m_strCseId.substring(21, 25);
             }
         }
 
-        if (m_strCseId.length() < 1) {
+        if (m_strCseId.isEmpty()) {
             m_strIccId = "";
         }
 

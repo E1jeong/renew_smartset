@@ -15,8 +15,11 @@ import javax.inject.Singleton
 object NfcModule {
     @Provides
     @Singleton
-    fun provideNfcResponse(nfcManager: NfcManager): NfcResponse {
-        return NfcResponse(nfcManager)
+    fun provideNfcResponse(
+        nfcManager: NfcManager,
+        nfcRequest: NfcRequest
+    ): NfcResponse {
+        return NfcResponse(nfcManager, nfcRequest)
     }
 
     @Provides

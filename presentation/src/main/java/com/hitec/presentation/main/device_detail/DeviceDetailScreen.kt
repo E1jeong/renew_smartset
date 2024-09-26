@@ -31,6 +31,7 @@ import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestReadConfigDialog
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
@@ -43,6 +44,7 @@ fun DeviceDetailScreen(
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
     val context = LocalContext.current
+    var nfcRequestDialogVisible by remember { mutableStateOf(false) }
     var nfcResultDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
 
@@ -72,6 +74,14 @@ fun DeviceDetailScreen(
         installDevice = state.installDevice,
         imageList = state.deviceImageList.sortedBy { it.first },
         nfcRequestChangeSerial = { nfcRequestChangeSerialDialogVisible = true },
+        nfcRequestReadConfig = { nfcRequestDialogVisible = true }
+    )
+
+    NfcRequestReadConfigDialog(
+        visible = nfcRequestDialogVisible,
+        onTagButtonClick = viewModel::nfcRequestReadConfig,
+        onResultDialogVisible = { nfcResultDialogVisible = true },
+        onDismissRequest = { nfcRequestDialogVisible = false }
     )
 
     NfcRequestChangeSerialDialog(
@@ -101,6 +111,7 @@ private fun DeviceDetailScreen(
     installDevice: InstallDevice,
     imageList: List<Pair<Int, Any?>>,
     nfcRequestChangeSerial: () -> Unit,
+    nfcRequestReadConfig: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -159,7 +170,8 @@ private fun DeviceDetailScreen(
                     height = Dimension.fillToConstraints
                 },
             isVisible = isNfcMenuExpanded,
-            onChangeSerialClick = nfcRequestChangeSerial
+            onChangeSerialClick = nfcRequestChangeSerial,
+            onReadConfigClick = nfcRequestReadConfig,
         )
     }
 }
@@ -173,6 +185,7 @@ fun DeviceDetailScreenPreview() {
                 installDevice = InstallDevice(meterDeviceId = "HT-T-012345"),
                 imageList = emptyList(),
                 nfcRequestChangeSerial = {},
+                nfcRequestReadConfig = {}
             )
         }
     }

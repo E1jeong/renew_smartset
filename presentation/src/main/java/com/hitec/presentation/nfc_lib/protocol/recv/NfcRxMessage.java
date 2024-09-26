@@ -79,7 +79,7 @@ public class NfcRxMessage implements NfcConstant {
     }
 
     public String GetHeaderSrcDevId() {
-        return m_strSrcDevId.toLowerCase(); //소문자;
+        return m_strSrcDevId; //.toLowerCase(); //소문자;
     }
 
     public int GetNodeMsgType() {
@@ -90,7 +90,7 @@ public class NfcRxMessage implements NfcConstant {
         return m_nNodeMsgVersion;
     }
 
-    protected String getMessageTime() {
+    public String getMessageTime() {
         return String.format(
                 "%04d-%02d-%02d %02d:%02d:%02d",
                 nYear,

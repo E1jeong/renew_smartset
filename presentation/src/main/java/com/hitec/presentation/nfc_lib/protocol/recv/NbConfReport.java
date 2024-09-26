@@ -10,31 +10,32 @@ import android.util.Log;
 import com.hitec.presentation.nfc_lib.util.DevUtil;
 import com.hitec.presentation.nfc_lib.util.Meter;
 
+import java.util.Locale;
+
 public class NbConfReport extends NfcRxMessage {
 
     private int m_nReportType = 0;
     private int m_nResultType = 0;
     private int m_nErrorCode = 0;
-    private String m_strSerialNum = "";
+    private String serialNumber = "";
     private int m_nBattLevel = 0;
-    private int m_nSleepStatus = 0;
+    private int sleepStatus = 0;
     private int m_nDataFormat = 0;
     private int m_nPlatformMode = 0;
     private String m_strNbImsi = "";
-    private String m_strServerIp = "";
-    private int m_nServerPort = 0;
+    private String serverIp = "";
+    private int serverPort = 0;
     private String m_strPAN = "";
     private String m_strNWK = "";
     private int m_nActiveMode = 0;
-    private int m_nFwVersion = 0;
-    private String m_strFwVersion = "";
+    private String fwVersion = "";
     // meter
-    private int m_nMeterCount = 0;
-    private int[] m_nMeterUtility = new int[MAX_METER_PER_TERMINAL];
-    private int[] m_nMeterType = new int[MAX_METER_PER_TERMINAL];
-    private int[] m_nMeterPort = new int[MAX_METER_PER_TERMINAL];
-    private int nAmiMeteringInterval = 0;
-    private int nAmiReportInterval = 0;
+    private int meterCount = 0;
+    private final int[] m_nMeterUtility = new int[MAX_METER_PER_TERMINAL];
+    private final int[] m_nMeterType = new int[MAX_METER_PER_TERMINAL];
+    private final int[] m_nMeterPort = new int[MAX_METER_PER_TERMINAL];
+    private int meterInterval = 0;
+    private int reportInterval = 0;
     private int nAmiReportRange = 0;
     private int m_nSubId = 0;
     private int m_nGsmlteMode = 0;
@@ -51,16 +52,16 @@ public class NbConfReport extends NfcRxMessage {
         return m_nErrorCode;
     }
 
-    public String GetSerialNumber() {
-        return m_strSerialNum;
+    public String getSerialNumber() {
+        return serialNumber;
     }
 
-    public String GetBattLevel() {
-        return String.format("%d.%d", m_nBattLevel / 10, m_nBattLevel % 10);
+    public String getBatteryVoltage() {
+        return String.format(Locale.KOREA, "%d.%d", m_nBattLevel / 10, m_nBattLevel % 10);
     }
 
-    public int GetSleepStatus() {
-        return m_nSleepStatus;
+    public int getSleepStatus() {
+        return sleepStatus;
     }
 
     public int GetDataFormat() {
@@ -71,7 +72,7 @@ public class NbConfReport extends NfcRxMessage {
         return m_nPlatformMode;
     }
 
-    public String GetNbImsi() {
+    public String getNbImsi() {
         String dstImsi = "";
         String[] azImsi = new String[4];
         if (m_strNbImsi.length() >= 15) {
@@ -85,12 +86,12 @@ public class NbConfReport extends NfcRxMessage {
         return dstImsi;
     }
 
-    public String GetServerIp() {
-        return m_strServerIp;
+    public String getServerIp() {
+        return serverIp;
     }
 
-    public String GetServerPort() {
-        return Integer.toString(m_nServerPort);
+    public String getServerPort() {
+        return Integer.toString(serverPort);
     }
 
     public String GetPAN() {
@@ -105,12 +106,12 @@ public class NbConfReport extends NfcRxMessage {
         return m_nActiveMode;
     }
 
-    public String GetFwVersion() {
-        return m_strFwVersion;
+    public String getFwVersion() {
+        return fwVersion;
     }
 
-    public int GetNumOfMeter() {
-        return m_nMeterCount;
+    public int getMeterCount() {
+        return meterCount;
     }
 
     private void initIntArray() {
@@ -119,7 +120,7 @@ public class NbConfReport extends NfcRxMessage {
             m_nMeterType[i] = 0;
             m_nMeterPort[i] = 0;
         }
-        m_nMeterCount = 0;
+        meterCount = 0;
     }
 
     public int GetMeterUtility(int index) {
@@ -134,7 +135,7 @@ public class NbConfReport extends NfcRxMessage {
         return m_nMeterType[index];
     }
 
-    public int GetMeterType() {
+    public int getMeterProtocol() {
         return GetMeterType(0);
     }
 
@@ -146,12 +147,12 @@ public class NbConfReport extends NfcRxMessage {
         return GetMeterPort(0);
     }
 
-    public int GetAmiMeteringInterval() {
-        return nAmiMeteringInterval;
+    public int getMeterInterval() {
+        return meterInterval;
     }
 
-    public int GetAmiReportInterval() {
-        return nAmiReportInterval;
+    public int getReportInterval() {
+        return reportInterval;
     }
 
     public int GetAmiReportRange() {
@@ -171,8 +172,8 @@ public class NbConfReport extends NfcRxMessage {
     }
 
     @Override
-    public boolean parse(byte[] rxdata) {
-        if (super.parse(rxdata) == false) {
+    public boolean parse(byte[] rxData) {
+        if (!super.parse(rxData)) {
             return false;
         }
 
@@ -183,11 +184,11 @@ public class NbConfReport extends NfcRxMessage {
         m_nErrorCode = getHexData(m_nOffset++);
 
 
-        m_strSerialNum = parseSerial(m_nOffset, 12);
+        serialNumber = parseSerial(m_nOffset, 12);
         m_nOffset += 12;
 
 
-        m_nSleepStatus = getHexData(m_nOffset++);
+        sleepStatus = getHexData(m_nOffset++);
 
         if (m_nNodeMsgVersion < 4) {
             m_nDataFormat = getHexData(m_nOffset++);
@@ -195,34 +196,30 @@ public class NbConfReport extends NfcRxMessage {
 
         m_strNbImsi = DevUtil.convHexToStringCode(hexData, m_nOffset, 8);
         m_nOffset += 8;
-        m_strServerIp = parseServerIP(m_nOffset);
+        serverIp = parseServerIP(m_nOffset);
         m_nOffset += 4;
-        m_nServerPort = parseServerPort(m_nOffset);
+        serverPort = parseServerPort(m_nOffset);
         m_nOffset += 2;
 
         m_nBattLevel = getHexData(m_nOffset++);
-        m_strFwVersion = parseFwVersion(m_nOffset);
+        fwVersion = parseFwVersion(m_nOffset);
         m_nOffset += 4;
 
         //플랫폼
-        m_nPlatformMode = GetNbPlatformMode(m_strFwVersion);
+        m_nPlatformMode = GetNbPlatformMode(fwVersion);
 
-        nAmiMeteringInterval = getHexData(m_nOffset++);
-        nAmiReportInterval = getHexData(m_nOffset++);
+        meterInterval = getHexData(m_nOffset++);
+        reportInterval = getHexData(m_nOffset++);
 
         if (m_nNodeMsgVersion >= 4) {
             nAmiReportRange = getHexData(m_nOffset++);
         } else {
-            nAmiReportRange = nAmiReportInterval;
+            nAmiReportRange = reportInterval;
         }
 
-        if (
-                m_nNodeMsgVersion == 0 || m_nNodeMsgVersion == 2 || m_nNodeMsgVersion == 4
-        ) { //단말기
+        if (m_nNodeMsgVersion == 0 || m_nNodeMsgVersion == 2 || m_nNodeMsgVersion == 4) { //단말기
             parserTerm();
-        } else if (
-                m_nNodeMsgVersion == 1 || m_nNodeMsgVersion == 3 || m_nNodeMsgVersion == 5
-        ) { //보조중계기
+        } else if (m_nNodeMsgVersion == 1 || m_nNodeMsgVersion == 3 || m_nNodeMsgVersion == 5) { //보조중계기
             parserMaster();
         }
 
@@ -247,12 +244,12 @@ public class NbConfReport extends NfcRxMessage {
 //            m_nGsmlteMode = getHexData(m_nOffset++);
 //        }
 
-        m_nMeterCount = getHexData(m_nOffset++);
-        if (m_nMeterCount > MAX_METER_PER_TERMINAL) {
-            m_nMeterCount = MAX_METER_PER_TERMINAL;
+        meterCount = getHexData(m_nOffset++);
+        if (meterCount > MAX_METER_PER_TERMINAL) {
+            meterCount = MAX_METER_PER_TERMINAL;
         }
 
-        for (int i = 0; i < m_nMeterCount; i++) {
+        for (int i = 0; i < meterCount; i++) {
             m_nMeterType[i] = getHexData(m_nOffset++);
             m_nMeterPort[i] = getHexData(m_nOffset++);
             m_nMeterUtility[i] = Meter.GetMeterUtility(m_nMeterType[i]);
@@ -271,7 +268,7 @@ public class NbConfReport extends NfcRxMessage {
         m_nActiveMode = ACTIVE_MODE_AMI_AMI_M;
         m_nSubId = getHexData(m_nOffset++);
 
-        m_nMeterCount = 0;
+        meterCount = 0;
         m_nMeterType[0] = 0x01;
         m_nMeterPort[0] = 0x01; //uart
 
@@ -300,10 +297,7 @@ public class NbConfReport extends NfcRxMessage {
                 return 0;
             }
         } catch (Exception e) {
-            Log.v(
-                    "log",
-                    "GetNbPlatformVersion ===> Exception ==> strFwVersion:" + strFwVersion
-            );
+            Log.v("log", "GetNbPlatformVersion ===> Exception ==> strFwVersion:" + strFwVersion);
             return 0;
         }
     }

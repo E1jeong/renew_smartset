@@ -28,6 +28,7 @@ fun NfcMenu(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
     onChangeSerialClick: () -> Unit,
+    onReadConfigClick: () -> Unit
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -50,7 +51,7 @@ fun NfcMenu(
             HorizontalScrollUnderlinedTextButton(
                 modifier = Modifier.padding(horizontal = Paddings.small),
                 text = "read config",
-                onClick = {}
+                onClick = onReadConfigClick
             )
         }
     }
@@ -60,6 +61,10 @@ fun NfcMenu(
 @Composable
 fun NfcMenuPreview() {
     RenewSmartSetTheme {
-        NfcMenu(isVisible = true, onChangeSerialClick = {})
+        NfcMenu(
+            isVisible = true,
+            onChangeSerialClick = {},
+            onReadConfigClick = {}
+        )
     }
 }

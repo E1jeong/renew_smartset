@@ -15,6 +15,7 @@ import android.widget.Toast
 import com.hitec.presentation.main.MainActivity
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_ACCOUNT_NO_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FLASH_DATE_LIST_REPORT
+import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_NB_CONF_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_SN_CHANGE_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_SEND_ACCOUNT_NO_SET
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_SEND_FLASH_DATA_REQ
@@ -369,6 +370,7 @@ class NfcManager @Inject constructor(
         Log.i(TAG, "receiveData ==> 01 msgType:$msgType")
 
         when (msgType) {
+            NODE_RECV_NB_CONF_REPORT -> nfcResponse.get().readConfig(rxData)
             NODE_RECV_SN_CHANGE_REPORT -> nfcResponse.get().changeSerial(rxData)
             else -> {}
         }
