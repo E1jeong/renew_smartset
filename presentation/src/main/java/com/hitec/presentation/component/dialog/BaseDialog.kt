@@ -14,9 +14,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.hitec.presentation.R
 import com.hitec.presentation.component.dialog.model.DialogButton
+import com.hitec.presentation.component.dialog.model.DialogButtonArrangement
 import com.hitec.presentation.component.dialog.model.DialogContent
 import com.hitec.presentation.component.dialog.model.DialogText
 import com.hitec.presentation.component.dialog.model.DialogTitle
+import com.hitec.presentation.component.dialog.wrapper.DialogButtonWrapper
 import com.hitec.presentation.component.dialog.wrapper.DialogButtonsColumn
 import com.hitec.presentation.component.dialog.wrapper.DialogContentWrapper
 import com.hitec.presentation.component.dialog.wrapper.DialogTitleWrapper
@@ -27,7 +29,8 @@ import com.hitec.presentation.theme.RenewSmartSetTheme
 fun BaseDialog(
     dialogTitle: DialogTitle? = null,
     dialogContent: DialogContent? = null,
-    buttons: List<DialogButton>? = null
+    buttons: List<DialogButton>? = null,
+    buttonArrangement: DialogButtonArrangement? = null,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -49,6 +52,7 @@ fun BaseDialog(
             ) {
                 dialogContent?.let { DialogContentWrapper(it) }
                 buttons?.let { DialogButtonsColumn(it) }
+                buttonArrangement?.let { DialogButtonWrapper(it) }
             }
         }
     }
@@ -65,6 +69,12 @@ fun BaseDialogPopupPreview() {
             ),
             buttons = listOf(
                 DialogButton.Primary("Okay") {}
+            ),
+            buttonArrangement = DialogButtonArrangement.Row(
+                listOf(
+                    DialogButton.Primary("Okay") {},
+                    DialogButton.Primary("Cancel") {}
+                )
             )
         )
     }
