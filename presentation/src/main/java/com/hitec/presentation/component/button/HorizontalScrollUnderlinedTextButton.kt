@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import com.hitec.presentation.theme.Paddings
+import com.hitec.presentation.theme.RenewSmartSetTheme
 
 @Composable
 fun HorizontalScrollUnderlinedTextButton(
@@ -48,5 +50,16 @@ fun HorizontalScrollUnderlinedTextButton(
                 maxLines = 1,
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun HorizontalScrollUnderlinedTextButtonPreview() {
+    RenewSmartSetTheme {
+        HorizontalScrollUnderlinedTextButton(
+            text = "hhhhhhhhhhhhhhhoooooooooooooooooooohhhhhhhhhhhhhhhoooooooooooooooooooo",
+            onClick = {}
+        )
     }
 }
