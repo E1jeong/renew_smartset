@@ -21,8 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hitec.presentation.R
 import com.hitec.presentation.component.dialog.model.DialogButton
 import com.hitec.presentation.component.dialog.model.DialogContent
 import com.hitec.presentation.component.dialog.model.DialogText
@@ -87,7 +89,7 @@ fun BaseDialogWithTextField(
                             Icon(
                                 modifier = Modifier.clickable { onTextFieldClear() },
                                 imageVector = Icons.Filled.Cancel,
-                                contentDescription = "Cancel"
+                                contentDescription = stringResource(id = R.string.cancel)
                             )
                         }
                     }

@@ -4,8 +4,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.SendToMobile
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
+import com.hitec.presentation.R
 import com.hitec.presentation.component.dialog.BaseDialog
 import com.hitec.presentation.component.dialog.model.DialogButton
 import com.hitec.presentation.component.dialog.model.DialogButtonArrangement
@@ -25,12 +27,12 @@ fun NfcRequestReadConfigDialog(
     if (visible) {
         Dialog(onDismissRequest = onDismissRequest) {
             BaseDialog(
-                dialogTitle = DialogTitle.Header("Nfc Request"),
-                dialogContent = DialogContent.Default(DialogText.Default("read config")),
+                dialogTitle = DialogTitle.Header(text = stringResource(id = R.string.nfc_request)),
+                dialogContent = DialogContent.Default(DialogText.Default(text = stringResource(id = R.string.read_config))),
                 buttonArrangement = DialogButtonArrangement.Row(
                     listOf(
                         DialogButton.Primary(
-                            title = "Tag",
+                            title = stringResource(id = R.string.tag),
                             leadingIcon = LeadingIcon(icon = Icons.Filled.SendToMobile),
                             action = {
                                 onTagButtonClick()
@@ -39,7 +41,7 @@ fun NfcRequestReadConfigDialog(
                             }
                         ),
                         DialogButton.Primary(
-                            title = "Close",
+                            title = stringResource(id = R.string.close),
                             leadingIcon = LeadingIcon(icon = Icons.Filled.Close),
                             action = onDismissRequest
                         )

@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.hitec.presentation.R
 import com.hitec.presentation.navigation.MainNav
 import com.hitec.presentation.navigation.NavigationUtils
 
@@ -31,7 +33,7 @@ fun MainHeader(
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "BackIcon",
+                        contentDescription = stringResource(id = R.string.back),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
@@ -49,7 +51,7 @@ fun MainHeader(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = "SearchIcon"
+                        contentDescription = stringResource(id = R.string.search)
                     )
                 }
             }

@@ -10,9 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.R
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
 
@@ -31,10 +33,10 @@ fun InstallDeviceCard(
         onClick = onClick
     ) {
         Column(modifier = Modifier.padding(Paddings.large)) {
-            Text(text = "User house number: ${installDevice.consumeHouseNo}")
-            Text(text = "Device serial number: ${installDevice.meterDeviceSn}")
-            Text(text = "IMEI: ${installDevice.nwk}")
-            Text(text = "User House address: ${installDevice.setAreaAddr}")
+            Text(text = stringResource(id = R.string.card_content_user_house_number) + " ${installDevice.consumeHouseNo}")
+            Text(text = stringResource(id = R.string.card_content_device_serial_number) + " ${installDevice.meterDeviceSn}")
+            Text(text = stringResource(id = R.string.card_content_imei) + " ${installDevice.nwk}")
+            Text(text = stringResource(id = R.string.card_content_user_house_address) + " ${installDevice.setAreaAddr}")
         }
     }
 }

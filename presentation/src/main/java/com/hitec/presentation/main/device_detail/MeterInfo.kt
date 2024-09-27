@@ -10,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.R
 import com.hitec.presentation.main.device_detail.component.InformationRow
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.backgroundGray0
@@ -26,7 +28,10 @@ fun MeterInfo(installDevice: InstallDevice) {
             .background(backgroundGray0)
     ) {
         Column(modifier = Modifier.padding(horizontal = Paddings.medium)) {
-            InformationRow(text = "MeterInfo", style = MaterialTheme.typography.headlineMedium) //title
+            InformationRow( //title
+                text = stringResource(id = R.string.meter_info),
+                style = MaterialTheme.typography.headlineMedium
+            )
             MeterSerialNumberInfo(text = "${installDevice.meterSn1}")
             MeterCaliberInfo(text = "${installDevice.metercaliberCd1}mm")
             MeterCompanyInfo(text = "${installDevice.meterCompany1}")

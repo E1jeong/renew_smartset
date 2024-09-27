@@ -1,8 +1,10 @@
 package com.hitec.presentation.main.device_detail.dialog
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
+import com.hitec.presentation.R
 import com.hitec.presentation.component.dialog.BaseDialog
 import com.hitec.presentation.component.dialog.model.DialogContent
 import com.hitec.presentation.component.dialog.model.DialogText
@@ -18,7 +20,7 @@ fun NfcResultDialog(
     if (visible) {
         Dialog(onDismissRequest = onDismissRequest) {
             BaseDialog(
-                dialogTitle = DialogTitle.Header(text = "Nfc result"),
+                dialogTitle = DialogTitle.Header(text = stringResource(id = R.string.nfc_result)),
                 dialogContent = DialogContent.Left(DialogText.Default(result)),
             )
         }

@@ -1,4 +1,5 @@
 <resources>
+    <!-- Common -->
     <string name="app_name">SmartSetRenew</string>
     <string name="id">ID</string>
     <string name="password">Password</string>
@@ -8,6 +9,16 @@
     <string name="loading">Now loading</string>
     <string name="update">Update</string>
     <string name="upload">Upload</string>
+    <string name="nfc">Nfc</string>
+    <string name="tag">Tag</string>
+    <string name="close">Close</string>
+    <string name="search">Search</string>
+    <string name="back">Back</string>
+
+    <!-- Screen & Component Name -->
+    <string name="meter_info">Meter Info</string>
+    <string name="terminal_info">Terminal Info</string>
+    <string name="user_info">User Info</string>
 
     <!--Directory Name-->
     <string name="directory_photo">photo</string>
@@ -33,8 +44,25 @@
 
     <!--SearchScreen-->
     <string name="search_placeholder_imei">Please enter IMEI</string>
+    <string name="search_empty_chip_group_warning">No options available</string>
 
     <!--DeviceDetailScreen-->
     <string name="no_image_available">No image available</string>
+
+    <!--Nfc function common-->
+    <string name="nfc_request">NFC request</string>
+    <string name="nfc_result">NFC result</string>
+    <string name="change_serial">Change serial</string>
+    <string name="read_config">Read config</string>
+    <string name="set_sleep">Set sleep</string>
+
+    <!--NfcRequestChangeSerialDialog-->
+    <string name="nfc_request_change_serial_description">Enter new serial number</string>
+
+    <!-- InstallDeviceCard -->
+    <string name="card_content_user_house_number">User house number:</string>
+    <string name="card_content_device_serial_number">Device serial number:</string>
+    <string name="card_content_imei">IMEI:</string>
+    <string name="card_content_user_house_address">User House address:</string>
 
 </resources>

@@ -151,14 +151,17 @@ private fun SearchBox(
             maxLines = 1,
             singleLine = true,
             leadingIcon = {
-                Icon(imageVector = Icons.Filled.Search, contentDescription = "SearchIcon")
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = stringResource(id = R.string.search)
+                )
             },
             trailingIcon = {
                 if (keyword.isNotEmpty()) {
                     Icon(
                         modifier = Modifier.clickable { onClear() },
                         imageVector = Icons.Filled.Cancel,
-                        contentDescription = "Cancel"
+                        contentDescription = stringResource(id = R.string.cancel)
                     )
                 }
             }
@@ -199,7 +202,7 @@ private fun SubAreaChipGroup(
                 }
             }
         } else {
-            Text("No options available")
+            Text(stringResource(id = R.string.search_empty_chip_group_warning))
         }
     }
 }

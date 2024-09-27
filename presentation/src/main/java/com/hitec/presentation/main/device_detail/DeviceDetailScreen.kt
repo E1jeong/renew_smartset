@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -27,6 +28,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.R
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
@@ -86,8 +88,8 @@ fun DeviceDetailScreen(
 
     NfcRequestChangeSerialDialog(
         visible = nfcRequestChangeSerialDialogVisible,
-        header = "Change Serial",
-        description = "enter new serial number (max ${state.installDevice.meterDeviceSn?.length ?: 12})",
+        header = stringResource(id = R.string.change_serial),
+        description = stringResource(id = R.string.nfc_request_change_serial_description) + " (max ${state.installDevice.meterDeviceSn?.length ?: 12})",
         userInput = state.nfcRequestChangeSerialUserInput,
         onUserInputChange = viewModel::onTextChangeInChangeSerialDialog,
         onTagButtonClick = viewModel::nfcRequestChangeSerial,

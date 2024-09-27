@@ -283,7 +283,7 @@ private fun LoginFooter(onLoginClick: () -> Unit) {
             .padding(bottom = 16.dp, start = 12.dp, end = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PrimaryButton(text = "Login", onClick = onLoginClick)
+        PrimaryButton(text = stringResource(id = R.string.login), onClick = onLoginClick)
         Spacer(modifier = Modifier.size(8.dp))
         Text(
             text = stringResource(id = R.string.login_bottom_copyright),

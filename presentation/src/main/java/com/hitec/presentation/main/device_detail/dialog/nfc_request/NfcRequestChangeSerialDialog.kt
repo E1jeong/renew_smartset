@@ -4,8 +4,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.SendToMobile
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
+import com.hitec.presentation.R
 import com.hitec.presentation.component.dialog.BaseDialogWithTextField
 import com.hitec.presentation.component.dialog.model.DialogButton
 import com.hitec.presentation.component.dialog.model.DialogContent
@@ -35,7 +37,7 @@ fun NfcRequestChangeSerialDialog(
                 onTextChanged = onUserInputChange,
                 buttons = listOf(
                     DialogButton.Primary(
-                        title = "Tag",
+                        title = stringResource(id = R.string.tag),
                         leadingIcon = LeadingIcon(icon = Icons.Filled.SendToMobile),
                         action = {
                             onTagButtonClick()
@@ -44,7 +46,7 @@ fun NfcRequestChangeSerialDialog(
                         }
                     ),
                     DialogButton.Primary(
-                        title = "Close",
+                        title = stringResource(id = R.string.close),
                         leadingIcon = LeadingIcon(icon = Icons.Filled.Close),
                         action = onDismissRequest
                     )

@@ -8,6 +8,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.hitec.presentation.R
 
 @Composable
 fun NfcExtendedFab(
@@ -17,12 +19,15 @@ fun NfcExtendedFab(
 ) {
     ExtendedFloatingActionButton(
         modifier = modifier,
-        text = { Text(text = "NFC") },
+        text = { Text(text = stringResource(id = R.string.nfc)) },
         expanded = isNfcMenuExpended,
         shape = RoundedCornerShape(100),
         onClick = onClick,
         icon = {
-            Icon(imageVector = Icons.Filled.PermDeviceInformation, contentDescription = "NFC")
+            Icon(
+                imageVector = Icons.Filled.PermDeviceInformation,
+                contentDescription = stringResource(id = R.string.nfc)
+            )
         },
     )
 }
