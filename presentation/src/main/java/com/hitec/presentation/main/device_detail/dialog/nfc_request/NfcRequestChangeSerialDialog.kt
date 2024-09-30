@@ -19,8 +19,7 @@ import com.hitec.presentation.theme.RenewSmartSetTheme
 @Composable
 fun NfcRequestChangeSerialDialog(
     visible: Boolean = false,
-    header: String,
-    description: String = "",
+    maxLength: Int,
     userInput: String,
     onUserInputChange: (String) -> Unit,
     onTagButtonClick: () -> Unit,
@@ -31,8 +30,12 @@ fun NfcRequestChangeSerialDialog(
     if (visible) {
         Dialog(onDismissRequest = onDismissRequest) {
             BaseDialogWithTextField(
-                dialogTitle = DialogTitle.Header(header),
-                dialogContent = DialogContent.Default(DialogText.Default(description)),
+                dialogTitle = DialogTitle.Header(text = stringResource(id = R.string.change_serial)),
+                dialogContent = DialogContent.Default(
+                    DialogText.Default(
+                        text = stringResource(id = R.string.nfc_request_change_serial_description) + " (max $maxLength)"
+                    )
+                ),
                 textFieldValue = userInput,
                 onTextChanged = onUserInputChange,
                 buttons = listOf(
@@ -63,8 +66,7 @@ fun NfcRequestChangeSerialDialogPreview() {
     RenewSmartSetTheme {
         NfcRequestChangeSerialDialog(
             visible = true,
-            header = "Header",
-            description = "Description",
+            maxLength = 12,
             userInput = "Input",
             onUserInputChange = {},
             onTagButtonClick = {},
