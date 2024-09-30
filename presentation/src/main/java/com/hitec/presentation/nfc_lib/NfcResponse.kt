@@ -64,7 +64,7 @@ class NfcResponse @Inject constructor(
         nfcManager.stop()
 
         val currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        val state = if (nbConfReportResponse.sleepStatus == 0) "sleep" else "active"
+        val state = if (nbConfReportResponse.sleepStatus == 1) "sleep" else "active"
         val meterProtocol = when (nbConfReportResponse.meterProtocol) {
             1 -> {
                 "Seoul"
