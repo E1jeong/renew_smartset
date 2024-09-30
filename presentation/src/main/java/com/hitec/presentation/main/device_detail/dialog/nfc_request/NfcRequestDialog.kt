@@ -18,9 +18,9 @@ import com.hitec.presentation.component.icon.LeadingIcon
 import com.hitec.presentation.theme.RenewSmartSetTheme
 
 @Composable
-fun NfcRequestReadConfigDialog(
+fun NfcRequestDialog(
     visible: Boolean = false,
-    onTagButtonClick: () -> Unit,
+    requestContent: Pair<String, () -> Unit>,
     onResultDialogVisible: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
@@ -28,14 +28,14 @@ fun NfcRequestReadConfigDialog(
         Dialog(onDismissRequest = onDismissRequest) {
             BaseDialog(
                 dialogTitle = DialogTitle.Header(text = stringResource(id = R.string.nfc_request)),
-                dialogContent = DialogContent.Default(DialogText.Default(text = stringResource(id = R.string.read_config))),
+                dialogContent = DialogContent.Default(DialogText.Default(text = requestContent.first)),
                 buttonArrangement = DialogButtonArrangement.Row(
                     listOf(
                         DialogButton.Primary(
                             title = stringResource(id = R.string.tag),
                             leadingIcon = LeadingIcon(icon = Icons.Filled.SendToMobile),
                             action = {
-                                onTagButtonClick()
+                                requestContent.second()
                                 onDismissRequest()
                                 onResultDialogVisible()
                             }
@@ -56,9 +56,9 @@ fun NfcRequestReadConfigDialog(
 @Composable
 fun NfcRequestDialogPreview() {
     RenewSmartSetTheme {
-        NfcRequestReadConfigDialog(
+        NfcRequestDialog(
             visible = true,
-            onTagButtonClick = {},
+            requestContent = Pair("read config") {},
             onResultDialogVisible = {},
             onDismissRequest = {}
         )

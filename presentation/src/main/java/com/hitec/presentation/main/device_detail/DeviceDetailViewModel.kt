@@ -167,13 +167,14 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(nfcRequestChangeSerialUserInput = "") }
     }
 
-    fun nfcRequestReadConfig() = intent {
+    fun nfcRequestReadConfig() {
         nfcManager.start()
         nfcRequest.nodeConfig()
     }
 
     companion object {
         const val TAG = "DeviceDetailViewModel"
+        const val REQUEST_FLAG_READ_CONFIG = 1
     }
 }
 

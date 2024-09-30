@@ -13,11 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -27,11 +29,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.R
+import com.hitec.presentation.main.device_detail.DeviceDetailViewModel.Companion.REQUEST_FLAG_READ_CONFIG
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
-import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestReadConfigDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestDialog
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
@@ -47,6 +51,7 @@ fun DeviceDetailScreen(
     var nfcRequestDialogVisible by remember { mutableStateOf(false) }
     var nfcResultDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
+    var nfcRequestFlag by remember { mutableIntStateOf(0) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val installDeviceJson = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_INSTALL_DEVICE)
@@ -74,12 +79,22 @@ fun DeviceDetailScreen(
         installDevice = state.installDevice,
         imageList = state.deviceImageList.sortedBy { it.first },
         nfcRequestChangeSerial = { nfcRequestChangeSerialDialogVisible = true },
-        nfcRequestReadConfig = { nfcRequestDialogVisible = true }
+        nfcRequestReadConfig = {
+            nfcRequestDialogVisible = true
+            nfcRequestFlag = REQUEST_FLAG_READ_CONFIG
+        }
     )
 
-    NfcRequestReadConfigDialog(
+    val nfcRequestContent: Pair<String, () -> Unit> = when (nfcRequestFlag) {
+        REQUEST_FLAG_READ_CONFIG -> Pair(stringResource(id = R.string.read_config), viewModel::nfcRequestReadConfig)
+        else -> {
+            Pair("") {}
+        }
+    }
+
+    NfcRequestDialog(
         visible = nfcRequestDialogVisible,
-        onTagButtonClick = viewModel::nfcRequestReadConfig,
+        requestContent = nfcRequestContent,
         onResultDialogVisible = { nfcResultDialogVisible = true },
         onDismissRequest = { nfcRequestDialogVisible = false }
     )
