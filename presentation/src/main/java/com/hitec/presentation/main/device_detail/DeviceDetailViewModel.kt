@@ -14,6 +14,7 @@ import com.hitec.presentation.nfc_lib.NfcManager
 import com.hitec.presentation.nfc_lib.NfcRequest
 import com.hitec.presentation.nfc_lib.NfcResponse
 import com.hitec.presentation.nfc_lib.NfcResponse.Companion.BOARD_ACK_FLAG_ACTIVE
+import com.hitec.presentation.nfc_lib.NfcResponse.Companion.BOARD_ACK_FLAG_RESET
 import com.hitec.presentation.nfc_lib.NfcResponse.Companion.BOARD_ACK_FLAG_SLEEP
 import com.hitec.presentation.util.PathHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -186,11 +187,14 @@ class DeviceDetailViewModel @Inject constructor(
         nfcRequest.setSleepOrActive(2) // 2: active
     }
 
+    fun nfcRequestResetDevice() {
+        NfcResponse.boardControlAckFlag = BOARD_ACK_FLAG_RESET
+        nfcManager.start()
+        nfcRequest.resetDevice()
+    }
+
     companion object {
-        const val TAG = "DeviceDetailViewModel"
-        const val REQUEST_FLAG_READ_CONFIG = 1
-        const val REQUEST_FLAG_SET_SLEEP = 2
-        const val REQUEST_FLAG_SET_ACTIVE = 3
+        private const val TAG = "DeviceDetailViewModel"
     }
 }
 

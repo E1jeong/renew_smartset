@@ -118,16 +118,18 @@ class NfcResponse @Inject constructor(
 
         var resultFlow = ""
 
-        if (boardControlAckFlag == BOARD_ACK_FLAG_SLEEP) {
-            resultFlow = when (response.sleepOrActive) {
+        when (boardControlAckFlag) {
+            BOARD_ACK_FLAG_SLEEP -> resultFlow = when (response.sleepOrActive) {
                 1 -> "Sleep success"
                 else -> "Fail"
             }
-        } else if (boardControlAckFlag == BOARD_ACK_FLAG_ACTIVE) {
-            resultFlow = when (response.sleepOrActive) {
+
+            BOARD_ACK_FLAG_ACTIVE -> resultFlow = when (response.sleepOrActive) {
                 2 -> "Active success"
                 else -> "Fail"
             }
+
+            BOARD_ACK_FLAG_RESET -> resultFlow = "Reset success"
         }
 
         updateStateFlow(resultFlow)

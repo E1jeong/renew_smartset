@@ -30,9 +30,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
-import com.hitec.presentation.main.device_detail.DeviceDetailViewModel.Companion.REQUEST_FLAG_READ_CONFIG
-import com.hitec.presentation.main.device_detail.DeviceDetailViewModel.Companion.REQUEST_FLAG_SET_ACTIVE
-import com.hitec.presentation.main.device_detail.DeviceDetailViewModel.Companion.REQUEST_FLAG_SET_SLEEP
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
@@ -42,6 +39,12 @@ import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
 import org.orbitmvi.orbit.compose.collectSideEffect
+
+//share nfc request dialog
+private const val REQUEST_FLAG_READ_CONFIG = 1
+private const val REQUEST_FLAG_SET_SLEEP = 2
+private const val REQUEST_FLAG_SET_ACTIVE = 3
+private const val REQUEST_FLAG_RESET_DEVICE = 4
 
 @Composable
 fun DeviceDetailScreen(
@@ -92,6 +95,10 @@ fun DeviceDetailScreen(
         nfcRequestSetActive = {
             nfcRequestDialogVisible = true
             nfcRequestFlag = REQUEST_FLAG_SET_ACTIVE
+        },
+        nfcRequestResetDevice = {
+            nfcRequestDialogVisible = true
+            nfcRequestFlag = REQUEST_FLAG_RESET_DEVICE
         }
     )
 
@@ -99,6 +106,7 @@ fun DeviceDetailScreen(
         REQUEST_FLAG_READ_CONFIG -> Pair(stringResource(id = R.string.read_config), viewModel::nfcRequestReadConfig)
         REQUEST_FLAG_SET_SLEEP -> Pair(stringResource(id = R.string.set_sleep), viewModel::nfcRequestSetSleep)
         REQUEST_FLAG_SET_ACTIVE -> Pair(stringResource(id = R.string.set_active), viewModel::nfcRequestSetActive)
+        REQUEST_FLAG_RESET_DEVICE -> Pair(stringResource(id = R.string.reset_device), viewModel::nfcRequestResetDevice)
         else -> Pair("") {}
     }
 
@@ -138,6 +146,7 @@ private fun DeviceDetailScreen(
     nfcRequestReadConfig: () -> Unit,
     nfcRequestSetSleep: () -> Unit,
     nfcRequestSetActive: () -> Unit,
+    nfcRequestResetDevice: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -200,6 +209,7 @@ private fun DeviceDetailScreen(
             onReadConfigClick = nfcRequestReadConfig,
             onSetSleepClick = nfcRequestSetSleep,
             onSetActiveClick = nfcRequestSetActive,
+            onResetDeviceClick = nfcRequestResetDevice,
         )
     }
 }
@@ -216,6 +226,7 @@ fun DeviceDetailScreenPreview() {
                 nfcRequestReadConfig = {},
                 nfcRequestSetSleep = {},
                 nfcRequestSetActive = {},
+                nfcRequestResetDevice = {},
             )
         }
     }

@@ -185,13 +185,9 @@ class NfcRequest @Inject constructor(
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
-    //메인리셋요청
-    fun reqMainReset() {
-        Log.v(TAG, "reqMainReset")
-        val req = BdControlReq(
-            NfcConstant.CONF_BD_RESET_NOW,
-            NfcConstant.CONF_SLEEP_STATE_NONE
-        )
+    fun resetDevice() {
+        Log.v(TAG, "resetDevice")
+        val req = BdControlReq(NfcConstant.CONF_BD_RESET_NOW, NfcConstant.CONF_SLEEP_STATE_NONE)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 
