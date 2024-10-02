@@ -172,9 +172,16 @@ class DeviceDetailViewModel @Inject constructor(
         nfcRequest.nodeConfig()
     }
 
+    fun nfcRequestSetSleep() {
+        NfcResponse.boardControlAckFlag = 1
+        nfcManager.start()
+        nfcRequest.setSleepMode(1) // 1: sleep
+    }
+
     companion object {
         const val TAG = "DeviceDetailViewModel"
         const val REQUEST_FLAG_READ_CONFIG = 1
+        const val REQUEST_FLAG_SET_SLEEP = 2
     }
 }
 

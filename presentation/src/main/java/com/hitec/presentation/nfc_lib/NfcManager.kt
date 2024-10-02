@@ -14,6 +14,7 @@ import android.util.Log
 import android.widget.Toast
 import com.hitec.presentation.main.MainActivity
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_ACCOUNT_NO_REPORT
+import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_BD_CONTROL_ACK
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FLASH_DATE_LIST_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_NB_CONF_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_SN_CHANGE_REPORT
@@ -372,6 +373,7 @@ class NfcManager @Inject constructor(
         when (msgType) {
             NODE_RECV_NB_CONF_REPORT -> nfcResponse.get().readConfig(rxData)
             NODE_RECV_SN_CHANGE_REPORT -> nfcResponse.get().changeSerial(rxData)
+            NODE_RECV_BD_CONTROL_ACK -> nfcResponse.get().handleBoardControlAck(rxData)
             else -> {}
         }
     }

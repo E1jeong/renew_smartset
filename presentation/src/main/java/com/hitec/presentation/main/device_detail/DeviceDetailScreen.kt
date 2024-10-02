@@ -31,6 +31,7 @@ import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
 import com.hitec.presentation.main.device_detail.DeviceDetailViewModel.Companion.REQUEST_FLAG_READ_CONFIG
+import com.hitec.presentation.main.device_detail.DeviceDetailViewModel.Companion.REQUEST_FLAG_SET_SLEEP
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
@@ -82,14 +83,17 @@ fun DeviceDetailScreen(
         nfcRequestReadConfig = {
             nfcRequestDialogVisible = true
             nfcRequestFlag = REQUEST_FLAG_READ_CONFIG
+        },
+        nfcRequestSetSleep = {
+            nfcRequestDialogVisible = true
+            nfcRequestFlag = REQUEST_FLAG_SET_SLEEP
         }
     )
 
     val nfcRequestContent: Pair<String, () -> Unit> = when (nfcRequestFlag) {
         REQUEST_FLAG_READ_CONFIG -> Pair(stringResource(id = R.string.read_config), viewModel::nfcRequestReadConfig)
-        else -> {
-            Pair("") {}
-        }
+        REQUEST_FLAG_SET_SLEEP -> Pair(stringResource(id = R.string.set_sleep), viewModel::nfcRequestSetSleep)
+        else -> Pair("") {}
     }
 
     NfcRequestDialog(
@@ -126,6 +130,7 @@ private fun DeviceDetailScreen(
     imageList: List<Pair<Int, Any?>>,
     nfcRequestChangeSerial: () -> Unit,
     nfcRequestReadConfig: () -> Unit,
+    nfcRequestSetSleep: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -186,6 +191,7 @@ private fun DeviceDetailScreen(
             isVisible = isNfcMenuExpanded,
             onChangeSerialClick = nfcRequestChangeSerial,
             onReadConfigClick = nfcRequestReadConfig,
+            onSetSleepClick = nfcRequestSetSleep,
         )
     }
 }
@@ -199,7 +205,8 @@ fun DeviceDetailScreenPreview() {
                 installDevice = InstallDevice(meterDeviceId = "HT-T-012345"),
                 imageList = emptyList(),
                 nfcRequestChangeSerial = {},
-                nfcRequestReadConfig = {}
+                nfcRequestReadConfig = {},
+                nfcRequestSetSleep = {},
             )
         }
     }

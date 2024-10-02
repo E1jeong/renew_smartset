@@ -30,7 +30,8 @@ fun NfcMenu(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
     onChangeSerialClick: () -> Unit,
-    onReadConfigClick: () -> Unit
+    onReadConfigClick: () -> Unit,
+    onSetSleepClick: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -55,6 +56,11 @@ fun NfcMenu(
                 text = stringResource(id = R.string.read_config),
                 onClick = onReadConfigClick
             )
+            HorizontalScrollUnderlinedTextButton(
+                modifier = Modifier.padding(horizontal = Paddings.small),
+                text = stringResource(id = R.string.set_sleep),
+                onClick = onSetSleepClick
+            )
         }
     }
 }
@@ -66,7 +72,8 @@ fun NfcMenuPreview() {
         NfcMenu(
             isVisible = true,
             onChangeSerialClick = {},
-            onReadConfigClick = {}
+            onReadConfigClick = {},
+            onSetSleepClick = {},
         )
     }
 }

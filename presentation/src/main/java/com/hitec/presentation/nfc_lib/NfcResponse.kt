@@ -1,6 +1,7 @@
 package com.hitec.presentation.nfc_lib
 
 import android.util.Log
+import com.hitec.presentation.nfc_lib.protocol.recv.BdControlAck
 import com.hitec.presentation.nfc_lib.protocol.recv.NbConfReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbIdReport
 import com.hitec.presentation.nfc_lib.protocol.recv.SnChangeReport
@@ -12,10 +13,16 @@ import javax.inject.Inject
 
 class NfcResponse @Inject constructor(
     private val nfcManager: NfcManager,
-    private val nfcRequest: NfcRequest
+    private val nfcRequest: NfcRequest,
 ) {
     companion object {
         private const val TAG = "NfcResponse"
+
+        //this flag is used at DeviceDetailViewModel, and handleBoardControlAck()
+        var boardControlAckFlag = 0
+        private const val BOARD_ACK_FLAG_SLEEP = 1
+        private const val BOARD_ACK_FLAG_ACTIVE = 2
+        private const val BOARD_ACK_FLAG_RESET = 3
     }
 
     private val _nfcResultFlow = MutableStateFlow("Tag Nfc")
@@ -97,6 +104,35 @@ class NfcResponse @Inject constructor(
         resultFlow.append("meter protocol: $meterProtocol\n")
 
         updateStateFlow(resultFlow.toString())
-        Log.i(TAG, "nodeConfig ==> result:$resultFlow")
+        Log.i(TAG, "readConfig ==> result:$resultFlow")
+    }
+
+    //handle: set sleep, set active, reset device etc
+    fun handleBoardControlAck(nfcResponse: ByteArray?) {
+        nfcManager.stop()
+
+        val response = BdControlAck()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        var resultFlow = ""
+
+        if (boardControlAckFlag == BOARD_ACK_FLAG_SLEEP) {
+            resultFlow = when (response.sleepMode) {
+                1 -> "Sleep success"
+                else -> "Fail"
+            }
+        }
+//        else if (boardControlAckFlag == BOARD_ACK_FLAG_ACTIVE) {
+//            resultFlow = when (response.sleepMode) {
+//                2 -> "Active success"
+//                else -> "Fail"
+//            }
+//        }
+
+        updateStateFlow(resultFlow)
+        Log.i(TAG, "setSleep ==> result:$resultFlow")
+        boardControlAckFlag = 0 //init flag
     }
 }
