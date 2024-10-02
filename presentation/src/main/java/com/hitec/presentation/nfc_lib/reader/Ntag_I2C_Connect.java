@@ -494,9 +494,7 @@ public class Ntag_I2C_Connect implements ConstNfc {
                     Log.e(TAG, e.toString());
                 }
                 devCode = dataRx[0] & 0xFF;
-                if (
-                        devCode != DEVICE_CODE_SMART && devCode != 0x00 && dataRx.length > 10
-                ) {
+                if (devCode != DEVICE_CODE_SMART && devCode != 0x00 && dataRx.length > 10) {
                     //Copy
                     for (j = 0; j < dataRx.length; j++) {
                         recvData[j] = dataRx[j];
