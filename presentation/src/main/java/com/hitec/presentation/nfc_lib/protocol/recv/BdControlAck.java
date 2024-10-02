@@ -8,7 +8,7 @@ package com.hitec.presentation.nfc_lib.protocol.recv;
 public class BdControlAck extends NfcRxMessage {
 
     private int m_nReset = 0;
-    private int sleepMode = 0;
+    private int sleepOrActive = 0;
     private int m_nReportMode = 0;
     private int m_nPeriodMode = 0;
     private int m_nDebugMode = 0;
@@ -18,8 +18,8 @@ public class BdControlAck extends NfcRxMessage {
         return m_nReset;
     }
 
-    public int getSleepMode() {
-        return sleepMode;
+    public int getSleepOrActive() {
+        return sleepOrActive;
     }
 
     public int GetReportMode() {
@@ -44,7 +44,7 @@ public class BdControlAck extends NfcRxMessage {
             return false;
         }
         m_nReset = getHexData(m_nOffset++);
-        sleepMode = getHexData(m_nOffset++);
+        sleepOrActive = getHexData(m_nOffset++);
         int nMsgLen = m_nMsgLen - 8; //Devicd Id(8)
 
         //장비에서 메세지 버전정보를 요청한 버전으로 전송되어 길이에 따라 버전 정정

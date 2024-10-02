@@ -450,13 +450,9 @@ class NfcRequest @Inject constructor(
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_SMART_METER, 0)
     }
 
-    //Sleep Mode 설정/해제
-    fun setSleepMode(sleepMode: Int) {
-        Log.v(TAG, "setSleepMode")
-        val req = BdControlReq(
-            NfcConstant.CONF_BD_RESET_NONE,
-            sleepMode
-        )
+    fun setSleepOrActive(sleepOrActive: Int) {
+        Log.v(TAG, "setSleepOrActive")
+        val req = BdControlReq(NfcConstant.CONF_BD_RESET_NONE, sleepOrActive)
         nfcManager.sendData(req, ConstNfc.NFC_RESP_WAIT_TIME_DEFAULT, 0)
     }
 

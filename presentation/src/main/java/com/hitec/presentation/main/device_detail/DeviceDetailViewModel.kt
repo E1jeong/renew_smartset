@@ -13,6 +13,8 @@ import com.hitec.presentation.R
 import com.hitec.presentation.nfc_lib.NfcManager
 import com.hitec.presentation.nfc_lib.NfcRequest
 import com.hitec.presentation.nfc_lib.NfcResponse
+import com.hitec.presentation.nfc_lib.NfcResponse.Companion.BOARD_ACK_FLAG_ACTIVE
+import com.hitec.presentation.nfc_lib.NfcResponse.Companion.BOARD_ACK_FLAG_SLEEP
 import com.hitec.presentation.util.PathHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -173,15 +175,22 @@ class DeviceDetailViewModel @Inject constructor(
     }
 
     fun nfcRequestSetSleep() {
-        NfcResponse.boardControlAckFlag = 1
+        NfcResponse.boardControlAckFlag = BOARD_ACK_FLAG_SLEEP
         nfcManager.start()
-        nfcRequest.setSleepMode(1) // 1: sleep
+        nfcRequest.setSleepOrActive(1) // 1: sleep
+    }
+
+    fun nfcRequestSetActive() {
+        NfcResponse.boardControlAckFlag = BOARD_ACK_FLAG_ACTIVE
+        nfcManager.start()
+        nfcRequest.setSleepOrActive(2) // 2: active
     }
 
     companion object {
         const val TAG = "DeviceDetailViewModel"
         const val REQUEST_FLAG_READ_CONFIG = 1
         const val REQUEST_FLAG_SET_SLEEP = 2
+        const val REQUEST_FLAG_SET_ACTIVE = 3
     }
 }
 

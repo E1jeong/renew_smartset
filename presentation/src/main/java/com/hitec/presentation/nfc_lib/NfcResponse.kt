@@ -20,9 +20,9 @@ class NfcResponse @Inject constructor(
 
         //this flag is used at DeviceDetailViewModel, and handleBoardControlAck()
         var boardControlAckFlag = 0
-        private const val BOARD_ACK_FLAG_SLEEP = 1
-        private const val BOARD_ACK_FLAG_ACTIVE = 2
-        private const val BOARD_ACK_FLAG_RESET = 3
+        const val BOARD_ACK_FLAG_SLEEP = 1
+        const val BOARD_ACK_FLAG_ACTIVE = 2
+        const val BOARD_ACK_FLAG_RESET = 3
     }
 
     private val _nfcResultFlow = MutableStateFlow("Tag Nfc")
@@ -119,17 +119,16 @@ class NfcResponse @Inject constructor(
         var resultFlow = ""
 
         if (boardControlAckFlag == BOARD_ACK_FLAG_SLEEP) {
-            resultFlow = when (response.sleepMode) {
+            resultFlow = when (response.sleepOrActive) {
                 1 -> "Sleep success"
                 else -> "Fail"
             }
+        } else if (boardControlAckFlag == BOARD_ACK_FLAG_ACTIVE) {
+            resultFlow = when (response.sleepOrActive) {
+                2 -> "Active success"
+                else -> "Fail"
+            }
         }
-//        else if (boardControlAckFlag == BOARD_ACK_FLAG_ACTIVE) {
-//            resultFlow = when (response.sleepMode) {
-//                2 -> "Active success"
-//                else -> "Fail"
-//            }
-//        }
 
         updateStateFlow(resultFlow)
         Log.i(TAG, "setSleep ==> result:$resultFlow")
