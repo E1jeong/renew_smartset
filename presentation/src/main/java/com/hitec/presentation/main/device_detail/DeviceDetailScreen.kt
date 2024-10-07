@@ -45,6 +45,7 @@ private const val REQUEST_FLAG_READ_CONFIG = 1
 private const val REQUEST_FLAG_SET_SLEEP = 2
 private const val REQUEST_FLAG_SET_ACTIVE = 3
 private const val REQUEST_FLAG_RESET_DEVICE = 4
+private const val REQUEST_FLAG_READ_METER = 5
 
 @Composable
 fun DeviceDetailScreen(
@@ -99,6 +100,10 @@ fun DeviceDetailScreen(
         nfcRequestResetDevice = {
             nfcRequestDialogVisible = true
             nfcRequestFlag = REQUEST_FLAG_RESET_DEVICE
+        },
+        nfcRequestReadMeter = {
+            nfcRequestDialogVisible = true
+            nfcRequestFlag = REQUEST_FLAG_READ_METER
         }
     )
 
@@ -107,6 +112,11 @@ fun DeviceDetailScreen(
         REQUEST_FLAG_SET_SLEEP -> Pair(stringResource(id = R.string.set_sleep), viewModel::nfcRequestSetSleep)
         REQUEST_FLAG_SET_ACTIVE -> Pair(stringResource(id = R.string.set_active), viewModel::nfcRequestSetActive)
         REQUEST_FLAG_RESET_DEVICE -> Pair(stringResource(id = R.string.reset_device), viewModel::nfcRequestResetDevice)
+        REQUEST_FLAG_READ_METER -> Pair(
+            stringResource(id = R.string.read_meter),
+            viewModel::nfcRequestReadMeter
+        )
+
         else -> Pair("") {}
     }
 
@@ -147,6 +157,7 @@ private fun DeviceDetailScreen(
     nfcRequestSetSleep: () -> Unit,
     nfcRequestSetActive: () -> Unit,
     nfcRequestResetDevice: () -> Unit,
+    nfcRequestReadMeter: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -210,6 +221,7 @@ private fun DeviceDetailScreen(
             onSetSleepClick = nfcRequestSetSleep,
             onSetActiveClick = nfcRequestSetActive,
             onResetDeviceClick = nfcRequestResetDevice,
+            onReadMeterClick = nfcRequestReadMeter,
         )
     }
 }
@@ -227,6 +239,7 @@ fun DeviceDetailScreenPreview() {
                 nfcRequestSetSleep = {},
                 nfcRequestSetActive = {},
                 nfcRequestResetDevice = {},
+                nfcRequestReadMeter = {},
             )
         }
     }

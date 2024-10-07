@@ -193,6 +193,11 @@ class DeviceDetailViewModel @Inject constructor(
         nfcRequest.resetDevice()
     }
 
+    fun nfcRequestReadMeter() {
+        nfcManager.start()
+        nfcRequest.readMeter()
+    }
+
     companion object {
         private const val TAG = "DeviceDetailViewModel"
     }

@@ -7,9 +7,9 @@ package com.hitec.presentation.nfc_lib.protocol.recv;
 
 import android.util.Log;
 
+import com.hitec.presentation.nfc_lib.protocol.NfcConstant;
 import com.hitec.presentation.nfc_lib.util.DevUtil;
 import com.hitec.presentation.nfc_lib.util.Meter;
-import com.hitec.presentation.nfc_lib.protocol.NfcConstant;
 
 public class MeterDataReport extends NfcRxMessage {
 
@@ -162,8 +162,8 @@ public class MeterDataReport extends NfcRxMessage {
     }
 
     @Override
-    public boolean parse(byte[] rxdata) {
-        if (super.parse(rxdata) == false) {
+    public boolean parse(byte[] rxData) {
+        if (!super.parse(rxData)) {
             return false;
         }
 
@@ -202,9 +202,8 @@ public class MeterDataReport extends NfcRxMessage {
             int nIdx,
             int nMeterValuePoint
     ) {
-        if (Meter.CheckDecValid(pBuff, nOffSet, 4) == true) {
-            m_strMeterVal[nIdx] =
-                    Meter.ParserMeterVal(pBuff, nOffSet, 4, nMeterValuePoint);
+        if (Meter.CheckDecValid(pBuff, nOffSet, 4)) {
+            m_strMeterVal[nIdx] = Meter.ParserMeterVal(pBuff, nOffSet, 4, nMeterValuePoint);
         } else {
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_VALUE_ERROR;
             m_strMeterVal[nIdx] = "";
@@ -229,9 +228,8 @@ public class MeterDataReport extends NfcRxMessage {
             int nIdx,
             int nMeterValuePoint
     ) {
-        if (Meter.CheckDecValid(pBuff, nOffSet, 4) == true) {
-            m_strMeterVal[nIdx] =
-                    Meter.ParserPulseMeterVal(pBuff, nOffSet, 4, nMeterValuePoint);
+        if (Meter.CheckDecValid(pBuff, nOffSet, 4)) {
+            m_strMeterVal[nIdx] = Meter.ParserPulseMeterVal(pBuff, nOffSet, 4, nMeterValuePoint);
         } else {
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_VALUE_ERROR;
             m_strMeterVal[nIdx] = "";
@@ -263,7 +261,7 @@ public class MeterDataReport extends NfcRxMessage {
         Log.i(TAG, " parserMeterStandardDigital ==>01 nOffSet:" + nOffSet + " nIdx:" + nIdx);
         Log.i(TAG, " parserMeterStandardDigital ==>01 nMeterValuePoint:" + nMeterValuePoint);
 
-        if (Meter.CheckDecValid(pBuff, nOffSet, 4) == false) {
+        if (!Meter.CheckDecValid(pBuff, nOffSet, 4)) {
             fValueValid = false;
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_VALUE_ERROR;
         }
@@ -289,30 +287,18 @@ public class MeterDataReport extends NfcRxMessage {
         }
 
         if (fValueValid) {
-            m_strMeterVal[nIdx] =
-                    Meter.ParserStandardMeterVal(pMeterVal, 0, 4, nValuePoint);
+            m_strMeterVal[nIdx] = Meter.ParserStandardMeterVal(pMeterVal, 0, 4, nValuePoint);
         }
-        Log.i(
-                TAG,
-                " parserMeterStandardDigital ==>02 nOffSet:" + nOffSet + " nIdx:" + nIdx
-        );
-        Log.i(
-                TAG,
-                " parserMeterStandardDigital ==>02 m_strMeterVal[nIdx]:" +
-                        m_strMeterVal[nIdx] +
-                        " m_nMeterCaliberCd[nIdx]:" +
-                        m_nMeterCaliberCd[nIdx]
-        );
+        Log.i(TAG, " parserMeterStandardDigital ==>02 nOffSet:" + nOffSet + " nIdx:" + nIdx);
+        Log.i(TAG, " parserMeterStandardDigital ==>02 m_strMeterVal[nIdx]:" + m_strMeterVal[nIdx] +
+                " m_nMeterCaliberCd[nIdx]:" + m_nMeterCaliberCd[nIdx]);
 
         //계량기 오류인경우
         if (m_nMeterStatus[nIdx] == 0xFF) {
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_VALUE_ERROR;
             m_strMeterVal[nIdx] = "";
         }
-        Log.i(
-                TAG,
-                " parserMeterStandardDigital ==>03 nOffSet:" + nOffSet + " nIdx:" + nIdx
-        );
+        Log.i(TAG, " parserMeterStandardDigital ==>03 nOffSet:" + nOffSet + " nIdx:" + nIdx);
     }
 
     //원티엘 열량계 프로토콜
@@ -327,7 +313,7 @@ public class MeterDataReport extends NfcRxMessage {
         byte[] pMeterVal = new byte[4];
         byte[] pFlowVal = new byte[4];
         //Meter Data(4Byte)
-        if (Meter.CheckDecValid(pBuff, nOffSet, 4) == false) {
+        if (!Meter.CheckDecValid(pBuff, nOffSet, 4)) {
             fValueValid = false;
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_VALUE_ERROR;
         }
@@ -348,13 +334,11 @@ public class MeterDataReport extends NfcRxMessage {
 
         if (fValueValid) {
             //열량값
-            m_strMeterVal[nIdx] =
-                    Meter.ParserStandardMeterVal(pMeterVal, 0, 4, nValuePoint); //소숫점2자리
+            m_strMeterVal[nIdx] = Meter.ParserStandardMeterVal(pMeterVal, 0, 4, nValuePoint); //소숫점2자리
         }
         if (fValueValid) {
             //열량값
-            m_strCaloriFlowVal[nIdx] =
-                    Meter.ParserStandardMeterVal(pFlowVal, 0, 4, nValuePoint); //소숫점2자리
+            m_strCaloriFlowVal[nIdx] = Meter.ParserStandardMeterVal(pFlowVal, 0, 4, nValuePoint); //소숫점2자리
         }
 
         //계량기 오류인경우
@@ -373,9 +357,8 @@ public class MeterDataReport extends NfcRxMessage {
             int nMeterValuePoint
     ) {
         int nBattConfig;
-        if (Meter.CheckDecValid(pBuff, nOffSet, 4) == true) {
-            m_strMeterVal[nIdx] =
-                    Meter.ParserShinhanDigitalBigMeterVal(pBuff, nOffSet, 4);
+        if (Meter.CheckDecValid(pBuff, nOffSet, 4)) {
+            m_strMeterVal[nIdx] = Meter.ParserShinhanDigitalBigMeterVal(pBuff, nOffSet, 4);
         } else {
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_VALUE_ERROR;
             m_strMeterVal[nIdx] = "";
@@ -431,27 +414,13 @@ public class MeterDataReport extends NfcRxMessage {
 
         m_nMeterDataFlag[nIdx] = getHexData(nOffSet++);
         Log.i(TAG, " registerMeter ==>01 nOffSet:" + nOffSet + " nIdx:" + nIdx);
-        Log.i(
-                TAG,
-                " registerMeter ==>01 nUtility:" +
-                        nUtility +
-                        " nMeterType:" +
-                        nMeterType +
-                        " nMeterValuePoint:" +
-                        nMeterValuePoint
-        );
-        Log.i(
-                TAG,
-                " registerMeter ==>01 m_nMeterDataFlag[nIdx]:" + m_nMeterDataFlag[nIdx]
-        );
+        Log.i(TAG, " registerMeter ==>01 nUtility:" + nUtility + " nMeterType:" + nMeterType + " nMeterValuePoint:" + nMeterValuePoint);
+        Log.i(TAG, " registerMeter ==>01 m_nMeterDataFlag[nIdx]:" + m_nMeterDataFlag[nIdx]);
 
         if (m_nMeterDataFlag[nIdx] == 0x01) {
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_ERROR;
             nOffSet += 10; //이후 데이터는 0x00이므로 사용하지 않음
-            if (
-                    nMeterType == Meter.g_emMeterCaloriType.eOneTLDigital ||
-                            nMeterType == Meter.g_emMeterCaloriType.eIcmDplc
-            ) {
+            if (nMeterType == Meter.g_emMeterCaloriType.eOneTLDigital || nMeterType == Meter.g_emMeterCaloriType.eIcmDplc) {
                 nOffSet += 4;
             }
             return nOffSet - nStart;
@@ -459,10 +428,7 @@ public class MeterDataReport extends NfcRxMessage {
             m_nMeterValid[nIdx] = NfcConstant.METER_VALID_SUB_ERROR;
             m_nSubTermValid = NfcConstant.METER_VALID_SUB_ERROR;
             nOffSet += 10; //이후 데이터는 0x00이므로 사용하지 않음
-            if (
-                    nMeterType == Meter.g_emMeterCaloriType.eOneTLDigital ||
-                            nMeterType == Meter.g_emMeterCaloriType.eIcmDplc
-            ) {
+            if (nMeterType == Meter.g_emMeterCaloriType.eOneTLDigital || nMeterType == Meter.g_emMeterCaloriType.eIcmDplc) {
                 nOffSet += 4;
             }
             return nOffSet - nStart;
@@ -473,28 +439,16 @@ public class MeterDataReport extends NfcRxMessage {
         m_strMeterSn[nIdx] = Meter.ParserMeterSerialBCD(pBuff, nOffSet, 4);
         nOffSet += 4;
         Log.i(TAG, " registerMeter ==>03 nOffSet:" + nOffSet + " nIdx:" + nIdx);
-        Log.i(
-                TAG,
-                " registerMeter ==>01 m_nMeterDataFlag[nIdx]:" +
-                        m_nMeterDataFlag[nIdx] +
-                        " m_strMeterSn[nIdx]:" +
-                        m_strMeterSn[nIdx]
-        );
+        Log.i(TAG, " registerMeter ==>01 m_nMeterDataFlag[nIdx]:" + m_nMeterDataFlag[nIdx] + " m_strMeterSn[nIdx]:" + m_strMeterSn[nIdx]);
 
         switch (nUtility) {
-            case Meter.g_emMeterUtility.eWater:
-                registerWaterMeter(pBuff, nOffSet, nIdx, nMeterType, nMeterValuePoint);
-                break;
             case Meter.g_emMeterUtility.eGas:
                 registerGasMeter(pBuff, nOffSet, nIdx, nMeterType, nMeterValuePoint);
                 break;
             case Meter.g_emMeterUtility.eCalori:
                 registerCaloriMeter(pBuff, nOffSet, nIdx, nMeterType, nMeterValuePoint);
 
-                if (
-                        nMeterType == Meter.g_emMeterCaloriType.eOneTLDigital ||
-                                nMeterType == Meter.g_emMeterCaloriType.eIcmDplc
-                ) {
+                if (nMeterType == Meter.g_emMeterCaloriType.eOneTLDigital || nMeterType == Meter.g_emMeterCaloriType.eIcmDplc) {
                     nOffSet += 4;
                 }
                 break;
@@ -533,29 +487,17 @@ public class MeterDataReport extends NfcRxMessage {
             int nMeterType,
             int nMeterValuePoint
     ) {
-        Log.i(
-                TAG,
-                " registerWaterMeter ==>01 nIdx:" + nIdx + " nMeterType:" + nMeterType
-        );
+        Log.i(TAG, " registerWaterMeter ==>01 nIdx:" + nIdx + " nMeterType:" + nMeterType);
         if (nMeterType == Meter.g_emMeterWaterType.eStandardDigital) {
-            Log.i(
-                    TAG,
-                    " registerWaterMeter ==>02 nOffSet:" +
-                            nOffSet +
-                            " nMeterValuePoint:" +
-                            nMeterValuePoint
-            );
+            Log.i(TAG, " registerWaterMeter ==>02 nOffSet:" + nOffSet + " nMeterValuePoint:" + nMeterValuePoint);
             parserMeterStandardDigital(pBuff, nOffSet, nIdx, nMeterValuePoint);
             m_strMeterSn[nIdx] = Meter.ConvMeterSerialDefault(m_strMeterSn[nIdx]);
-            m_strMeterCaliber[nIdx] =
-                    Meter.ParserStandardMeterCaliberString(m_nMeterCaliberCd[nIdx]);
+            m_strMeterCaliber[nIdx] = Meter.ParserStandardMeterCaliberString(m_nMeterCaliberCd[nIdx]);
         } else if (nMeterType == Meter.g_emMeterWaterType.eHitecDigital) {
             parserMeterDefault(pBuff, nOffSet, nIdx, nMeterValuePoint);
             //구경먼저
-            m_nMeterCaliberCd[nIdx] =
-                    Meter.ParserHitecMeterCaliber(m_strMeterSn[nIdx]);
-            m_strMeterCaliber[nIdx] =
-                    Meter.ParserHitecMeterCaliberString(m_nMeterCaliberCd[nIdx]);
+            m_nMeterCaliberCd[nIdx] = Meter.ParserHitecMeterCaliber(m_strMeterSn[nIdx]);
+            m_strMeterCaliber[nIdx] = Meter.ParserHitecMeterCaliberString(m_nMeterCaliberCd[nIdx]);
             m_strMeterSn[nIdx] = Meter.ConvMeterSerialDefault(m_strMeterSn[nIdx]);
         } else if (nMeterType == Meter.g_emMeterWaterType.eShinhanDigital) {
             parserMeterDefault(pBuff, nOffSet, nIdx, nMeterValuePoint);
@@ -564,26 +506,21 @@ public class MeterDataReport extends NfcRxMessage {
                 //2019.09.02 번호변경없이 그대로 적용
                 //구경 15mm고정
                 m_nMeterCaliberCd[nIdx] = 1; //Meter.ParserShinhanMeterCaliber(m_strMeterSn[nIdx]);
-                m_strMeterCaliber[nIdx] =
-                        Meter.ParserShinhanMeterCaliberString(m_nMeterCaliberCd[nIdx]);
+                m_strMeterCaliber[nIdx] = Meter.ParserShinhanMeterCaliberString(m_nMeterCaliberCd[nIdx]);
                 //m_strMeterSn[nIdx] = Meter.ConvMeterSerialShinhan(m_strMeterSn[nIdx]);
             } else if (
                     m_nMeterType[nIdx] == Meter.g_emMeterWaterType.eHitecShDigital
             ) {
                 //구경먼저
-                m_nMeterCaliberCd[nIdx] =
-                        Meter.ParserHitecMeterCaliber(m_strMeterSn[nIdx]);
-                m_strMeterCaliber[nIdx] =
-                        Meter.ParserHitecMeterCaliberString(m_nMeterCaliberCd[nIdx]);
+                m_nMeterCaliberCd[nIdx] = Meter.ParserHitecMeterCaliber(m_strMeterSn[nIdx]);
+                m_strMeterCaliber[nIdx] = Meter.ParserHitecMeterCaliberString(m_nMeterCaliberCd[nIdx]);
                 m_strMeterSn[nIdx] = Meter.ConvMeterSerialDefault(m_strMeterSn[nIdx]);
             }
         } else if (nMeterType == Meter.g_emMeterWaterType.eShinhanDigitalBig) {
             parserMeterShinhanDigitalBig(pBuff, nOffSet, nIdx, nMeterValuePoint);
             //구경먼저
-            m_nMeterCaliberCd[nIdx] =
-                    Meter.ParserShinhanMeterCaliber(m_strMeterSn[nIdx]);
-            m_strMeterCaliber[nIdx] =
-                    Meter.ParserShinhanBigMeterCaliberString(m_nMeterCaliberCd[nIdx]);
+            m_nMeterCaliberCd[nIdx] = Meter.ParserShinhanMeterCaliber(m_strMeterSn[nIdx]);
+            m_strMeterCaliber[nIdx] = Meter.ParserShinhanBigMeterCaliberString(m_nMeterCaliberCd[nIdx]);
             m_strMeterSn[nIdx] = Meter.ConvMeterSerialShinhan(m_strMeterSn[nIdx]);
         } else if (nMeterType == Meter.g_emMeterWaterType.eMnSDigital) {
             parserMeterDefault(pBuff, nOffSet, nIdx, nMeterValuePoint);
@@ -592,20 +529,15 @@ public class MeterDataReport extends NfcRxMessage {
         } else if (nMeterType == Meter.g_emMeterWaterType.eModbusYk) {
             parserMeterStandardDigital(pBuff, nOffSet, nIdx, nMeterValuePoint);
             m_strMeterSn[nIdx] = Meter.ConvMeterSerialDefault(m_strMeterSn[nIdx]);
-            m_strMeterCaliber[nIdx] =
-                    Meter.ParserStandardMeterCaliberString(m_nMeterCaliberCd[nIdx]);
-        } else if (
-                nMeterType >= Meter.g_emMeterWaterType.ePulse_1000L &&
-                        nMeterType <= Meter.g_emMeterWaterType.ePulse_05L
-        ) {
+            m_strMeterCaliber[nIdx] = Meter.ParserStandardMeterCaliberString(m_nMeterCaliberCd[nIdx]);
+        } else if (nMeterType >= Meter.g_emMeterWaterType.ePulse_1000L && nMeterType <= Meter.g_emMeterWaterType.ePulse_05L) {
             parserMeterPulse(pBuff, nOffSet, nIdx, nMeterValuePoint);
         } else {
             parserMeterDefault(pBuff, nOffSet, nIdx, nMeterValuePoint);
         }
 
         //누수 플래그
-        m_fMeterLeak[nIdx] =
-                Meter.GetMeterLeakStatus(nMeterType, m_nMeterStatus[nIdx]);
+        m_fMeterLeak[nIdx] = Meter.GetMeterLeakStatus(nMeterType, m_nMeterStatus[nIdx]);
     }
 
     //Gas Meter
@@ -618,10 +550,7 @@ public class MeterDataReport extends NfcRxMessage {
     ) {
         if (nMeterType == Meter.g_emMeterGasType.eStandardDigital) {
             parserMeterStandardDigital(pBuff, nOffSet, nIdx, nMeterValuePoint);
-        } else if (
-                nMeterType >= Meter.g_emMeterGasType.ePulse_1000L &&
-                        nMeterType <= Meter.g_emMeterGasType.ePulse_05L
-        ) {
+        } else if (nMeterType >= Meter.g_emMeterGasType.ePulse_1000L && nMeterType <= Meter.g_emMeterGasType.ePulse_05L) {
             parserMeterPulse(pBuff, nOffSet, nIdx, nMeterValuePoint);
         } else {
             parserMeterDefault(pBuff, nOffSet, nIdx, nMeterValuePoint);
@@ -638,15 +567,9 @@ public class MeterDataReport extends NfcRxMessage {
     ) {
         if (nMeterType == Meter.g_emMeterCaloriType.eStandardDigital) {
             parserMeterStandardDigital(pBuff, nOffSet, nIdx, nMeterValuePoint);
-        } else if (
-                nMeterType == Meter.g_emMeterCaloriType.eOneTLDigital ||
-                        nMeterType == Meter.g_emMeterCaloriType.eIcmDplc
-        ) {
+        } else if (nMeterType == Meter.g_emMeterCaloriType.eOneTLDigital || nMeterType == Meter.g_emMeterCaloriType.eIcmDplc) {
             parserMeterCaloriOneTLDigital(pBuff, nOffSet, nIdx, nMeterValuePoint);
-        } else if (
-                nMeterType >= Meter.g_emMeterCaloriType.ePulse_1000L &&
-                        nMeterType <= Meter.g_emMeterCaloriType.ePulse_05L
-        ) {
+        } else if (nMeterType >= Meter.g_emMeterCaloriType.ePulse_1000L && nMeterType <= Meter.g_emMeterCaloriType.ePulse_05L) {
             parserMeterPulse(pBuff, nOffSet, nIdx, nMeterValuePoint);
         } else {
             parserMeterDefault(pBuff, nOffSet, nIdx, nMeterValuePoint);
@@ -663,10 +586,7 @@ public class MeterDataReport extends NfcRxMessage {
     ) {
         if (nMeterType == Meter.g_emMeterHotwaterType.eStandardDigital) {
             parserMeterStandardDigital(pBuff, nOffSet, nIdx, nMeterValuePoint);
-        } else if (
-                nMeterType >= Meter.g_emMeterHotwaterType.ePulse_1000L &&
-                        nMeterType <= Meter.g_emMeterHotwaterType.ePulse_05L
-        ) {
+        } else if (nMeterType >= Meter.g_emMeterHotwaterType.ePulse_1000L && nMeterType <= Meter.g_emMeterHotwaterType.ePulse_05L) {
             parserMeterPulse(pBuff, nOffSet, nIdx, nMeterValuePoint);
         } else {
             parserMeterDefault(pBuff, nOffSet, nIdx, nMeterValuePoint);
@@ -683,10 +603,7 @@ public class MeterDataReport extends NfcRxMessage {
     ) {
         if (nMeterType == Meter.g_emMeterElectronicType.eStandardDigital) {
             parserMeterStandardDigital(pBuff, nOffSet, nIdx, nMeterValuePoint);
-        } else if (
-                nMeterType >= Meter.g_emMeterElectronicType.ePulse_1000W &&
-                        nMeterType <= Meter.g_emMeterElectronicType.ePulse_01W
-        ) {
+        } else if (nMeterType >= Meter.g_emMeterElectronicType.ePulse_1000W && nMeterType <= Meter.g_emMeterElectronicType.ePulse_01W) {
             parserMeterPulse(pBuff, nOffSet, nIdx, nMeterValuePoint);
         }
     }

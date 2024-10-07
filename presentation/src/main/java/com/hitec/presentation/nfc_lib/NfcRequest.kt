@@ -135,8 +135,8 @@ class NfcRequest @Inject constructor(
     }
 
     //Meter 검침요청
-    fun reqMeterData(meterPort: Int) {
-        Log.v(TAG, "reqMeterData")
+    fun readMeter(meterPort: Int = 1) {
+        Log.v(TAG, "readMeter")
         val req = MeterReq(meterPort)
         val startWaitTime = if (nfcManager.isResponseConnected) {
             ConstNfc.NFC_START_WAIT_TIME_READ_METER

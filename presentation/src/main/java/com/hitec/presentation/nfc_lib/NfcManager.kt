@@ -16,6 +16,7 @@ import com.hitec.presentation.main.MainActivity
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_ACCOUNT_NO_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_BD_CONTROL_ACK
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FLASH_DATE_LIST_REPORT
+import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_METER_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_NB_CONF_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_SN_CHANGE_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_SEND_ACCOUNT_NO_SET
@@ -374,6 +375,7 @@ class NfcManager @Inject constructor(
             NODE_RECV_NB_CONF_REPORT -> nfcResponse.get().readConfig(rxData)
             NODE_RECV_SN_CHANGE_REPORT -> nfcResponse.get().changeSerial(rxData)
             NODE_RECV_BD_CONTROL_ACK -> nfcResponse.get().handleBoardControlAck(rxData)
+            NODE_RECV_METER_REPORT -> nfcResponse.get().readMeter(rxData)
             else -> {}
         }
     }

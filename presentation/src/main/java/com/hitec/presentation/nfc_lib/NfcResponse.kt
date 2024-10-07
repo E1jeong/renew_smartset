@@ -2,6 +2,7 @@ package com.hitec.presentation.nfc_lib
 
 import android.util.Log
 import com.hitec.presentation.nfc_lib.protocol.recv.BdControlAck
+import com.hitec.presentation.nfc_lib.protocol.recv.MeterDataReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbConfReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbIdReport
 import com.hitec.presentation.nfc_lib.protocol.recv.SnChangeReport
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 class NfcResponse @Inject constructor(
@@ -135,5 +137,51 @@ class NfcResponse @Inject constructor(
         updateStateFlow(resultFlow)
         Log.i(TAG, "setSleep ==> result:$resultFlow")
         boardControlAckFlag = 0 //init flag
+    }
+
+    fun readMeter(nfcResponse: ByteArray?) {
+        nfcManager.stop()
+
+        val response = MeterDataReport()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        if (response.GetMeterState() == 2) {
+            updateStateFlow("Modem is working. Please do later")
+            return
+        }
+
+        val meterCount = response.GetNumOfMeter()
+        val meterValue = response.GetMeterValue(0)
+        val meterSerial = response.GetMeterSerial(0)
+        val meterCaliber = response.GetMeterCaliber(0)
+        val meterProtocol = parseMeterProtocol(response.GetMeterType(0))
+
+        val resultFlow = StringBuilder("Metering Success\n\n")
+        resultFlow.append("meter serial: $meterSerial\n")
+        resultFlow.append("meter value: ${meterValue}t\n")
+        resultFlow.append("meter caliber: ${meterCaliber}mm\n")
+        resultFlow.append("meter protocol: $meterProtocol")
+
+        updateStateFlow(resultFlow.toString())
+        Log.i(TAG, "getMeterValue ==> result:$resultFlow")
+    }
+
+    private fun parseMeterProtocol(protocol: Int): String {
+        val hexProtocol = Integer.toHexString(protocol).uppercase(Locale.US).padStart(2, '0')
+        return when (hexProtocol) {
+            "00" -> "Unknown"
+            "01" -> "STD Digital"
+            "10" -> "HT Digital"
+            "11" -> "HT-SH Digital"
+            "20" -> "SH Digital"
+            "22" -> "Big SH Digital"
+            "30" -> "MnS Digital"
+            "43" -> "Modbus YK Flow"
+            "50" -> "OneTL Digital"
+            "B2" -> "ICM DPLC"
+            else -> "Unknown"
+        }
     }
 }
