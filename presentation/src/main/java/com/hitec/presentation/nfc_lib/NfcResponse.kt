@@ -74,19 +74,7 @@ class NfcResponse @Inject constructor(
 
         val currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         val state = if (nbConfReportResponse.sleepStatus == 1) "sleep" else "active"
-        val meterProtocol = when (nbConfReportResponse.meterProtocol) {
-            1 -> {
-                "Seoul"
-            }
-
-            2 -> {
-                "Shinhan"
-            }
-
-            else -> {
-                "Hitec"
-            }
-        }
+        val meterProtocol = parseMeterProtocol(nbConfReportResponse.meterProtocol)
 
         val resultFlow = StringBuilder()
         resultFlow.append("current time: $currentTime\n")
@@ -103,7 +91,7 @@ class NfcResponse @Inject constructor(
         resultFlow.append("report interval: ${nbConfReportResponse.reportInterval}H\n")
         resultFlow.append("meter interval: ${nbConfReportResponse.meterInterval}H\n")
         resultFlow.append("meter count: ${nbConfReportResponse.meterCount}ea\n")
-        resultFlow.append("meter protocol: $meterProtocol\n")
+        resultFlow.append("meter protocol: $meterProtocol")
 
         updateStateFlow(resultFlow.toString())
         Log.i(TAG, "readConfig ==> result:$resultFlow")
@@ -119,18 +107,9 @@ class NfcResponse @Inject constructor(
         }
 
         var resultFlow = ""
-
         when (boardControlAckFlag) {
-            BOARD_ACK_FLAG_SLEEP -> resultFlow = when (response.sleepOrActive) {
-                1 -> "Sleep success"
-                else -> "Fail"
-            }
-
-            BOARD_ACK_FLAG_ACTIVE -> resultFlow = when (response.sleepOrActive) {
-                2 -> "Active success"
-                else -> "Fail"
-            }
-
+            BOARD_ACK_FLAG_SLEEP -> resultFlow = if (response.sleepOrActive == 1) "Sleep success" else "Fail"
+            BOARD_ACK_FLAG_ACTIVE -> resultFlow = if (response.sleepOrActive == 2) "Active success" else "Fail"
             BOARD_ACK_FLAG_RESET -> resultFlow = "Reset success"
         }
 
@@ -165,7 +144,7 @@ class NfcResponse @Inject constructor(
         resultFlow.append("meter protocol: $meterProtocol")
 
         updateStateFlow(resultFlow.toString())
-        Log.i(TAG, "getMeterValue ==> result:$resultFlow")
+        Log.i(TAG, "readMeter ==> result:$resultFlow")
     }
 
     private fun parseMeterProtocol(protocol: Int): String {
