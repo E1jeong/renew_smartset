@@ -18,9 +18,9 @@ import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.NavigationUtils
 import com.hitec.presentation.navigation.RouteName
 import com.hitec.presentation.navigation.SearchNav
-import com.hitec.presentation.util.EventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -86,7 +86,7 @@ class MainViewModel @Inject constructor(
 
         val subAreaList = subAreaResponse.subAreaInfo.map { it.areaName }
         reduce { state.copy(subAreaList = subAreaList) }
-        EventBus.subAreaListState.value = subAreaList // using eventbus to pass data SearchScreen
+        subAreaListState.value = subAreaList // to pass data SearchScreen
     }
 
     fun onQrCodeValueChange(qrCodeValue: String) = intent {
@@ -149,6 +149,9 @@ class MainViewModel @Inject constructor(
 
     companion object {
         const val TAG = "MainViewModel"
+
+        //MainViewModel -> SearchViewModel
+        val subAreaListState = MutableStateFlow<List<String>>(emptyList())
     }
 }
 

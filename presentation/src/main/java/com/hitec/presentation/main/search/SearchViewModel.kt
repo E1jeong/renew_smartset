@@ -9,11 +9,11 @@ import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
+import com.hitec.presentation.main.MainViewModel
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.NavigationUtils
 import com.hitec.presentation.navigation.RouteName
-import com.hitec.presentation.util.EventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
@@ -62,7 +62,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getSubAreaListFromMainViewModel() = intent {
-        EventBus.subAreaListState.collectLatest { subAreaList ->
+        MainViewModel.subAreaListState.collectLatest { subAreaList ->
             reduce { state.copy(subAreaList = subAreaList) }
             Log.i(TAG, "getSubAreaListFromMainViewModel: $subAreaList")
         }
