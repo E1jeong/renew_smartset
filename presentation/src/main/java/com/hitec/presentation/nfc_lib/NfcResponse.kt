@@ -58,7 +58,19 @@ class NfcResponse @Inject constructor(
         Log.i(TAG, "changeSerial ==> result:$resultFlow")
     }
 
-    fun readConfig(nfcResponse: ByteArray?) {
+    fun handleNbConfReport(nfcResponse: ByteArray) {
+        val response = NbConfReport()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        when (response.GetReportType()) {
+            0 -> readConfig(nfcResponse)
+            1 -> writeConfig(nfcResponse)
+        }
+    }
+
+    private fun readConfig(nfcResponse: ByteArray) {
         val nbConfReportResponse = NbConfReport()
         if (!nbConfReportResponse.parse(nfcResponse)) {
             return
@@ -95,6 +107,30 @@ class NfcResponse @Inject constructor(
 
         updateStateFlow(resultFlow.toString())
         Log.i(TAG, "readConfig ==> result:$resultFlow")
+    }
+
+    private fun writeConfig(nfcResponse: ByteArray) {
+        nfcManager.stop()
+
+        val response = NbConfReport()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        val resultFlow = StringBuilder("Write config\n")
+
+        val errorCode = response.GetErrorCode()
+        when (errorCode) {
+            0 -> resultFlow.append("Success")
+            1 -> resultFlow.append("Error: Selected device in app is different from tagged device")
+            2 -> resultFlow.append("Error: Meter or Report interval")
+            3 -> resultFlow.append("Error: Meter type")
+            4 -> resultFlow.append("Error: Meter port")
+            else -> resultFlow.append("")
+        }
+
+        updateStateFlow(resultFlow.toString())
+        Log.i(TAG, "writeConfig ==> result:$resultFlow")
     }
 
     //handle: set sleep, set active, reset device etc

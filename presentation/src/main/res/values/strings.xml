@@ -54,6 +54,7 @@
     <string name="nfc_result">NFC result</string>
     <string name="change_serial">Change serial</string>
     <string name="read_config">Read config</string>
+    <string name="write_config">Write config</string>
     <string name="set_sleep">Set sleep</string>
     <string name="set_active">Set active</string>
     <string name="reset_device">Reset device</string>

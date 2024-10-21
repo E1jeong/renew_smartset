@@ -150,6 +150,22 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(deviceImageList = state.deviceImageList + Pair(photoTypeCd, image)) }
     }
 
+    fun setTerminalProtocolInWriteConfig(terminalProtocol: String) = intent {
+        reduce { state.copy(terminalProtocolInWriteConfig = terminalProtocol) }
+    }
+
+    fun setIpPortInWriteConfig(ipPort: String) = intent {
+        reduce { state.copy(ipPortInWriteConfig = ipPort) }
+    }
+
+    fun setMeterIntervalInWriteConfig(meterInterval: String) = intent {
+        reduce { state.copy(meterIntervalInWriteConfig = meterInterval) }
+    }
+
+    fun setReportIntervalInWriteConfig(reportInterval: String) = intent {
+        reduce { state.copy(reportIntervalInWriteConfig = reportInterval) }
+    }
+
     fun nfcRequestChangeSerial() = intent {
         nfcManager.start()
         nfcRequest.changeSerial(
@@ -198,6 +214,27 @@ class DeviceDetailViewModel @Inject constructor(
         nfcRequest.readMeter()
     }
 
+    fun nfcRequestWriteConfig() = intent {
+        nfcManager.start()
+        nfcRequest.setNbConfig(
+            consumeHouseNo = state.installDevice.consumeHouseNo ?: "",
+            serialNo = state.installDevice.meterDeviceSn,
+            amiMeteringInterval = Integer.parseInt(state.meterIntervalInWriteConfig),
+            amiReportInterval = Integer.parseInt(state.reportIntervalInWriteConfig),
+            terminalProtocol = if (state.terminalProtocolInWriteConfig == "1.6") 163 else 164,
+            strServiceCode = "HSVR",
+            strServerIp = state.ipPortInWriteConfig.substringBefore(":"),
+            strServerPort = state.ipPortInWriteConfig.substringAfter(":"),
+            meterNum = 1,
+            meterType0 = 1,
+            meterPort0 = 1,
+            meterType1 = 0,
+            meterPort1 = 0,
+            meterType2 = 0,
+            meterPort2 = 0
+        )
+    }
+
     companion object {
         private const val TAG = "DeviceDetailViewModel"
     }
@@ -215,6 +252,10 @@ data class DeviceDetailState(
     val imagePath: String = "",
     val nfcResult: String = "Tag nfc",
     val nfcRequestChangeSerialUserInput: String = "",
+    val terminalProtocolInWriteConfig: String = "1.6",
+    val ipPortInWriteConfig: String = "LG Business",
+    val meterIntervalInWriteConfig: String = "1",
+    val reportIntervalInWriteConfig: String = "6",
 )
 
 sealed interface DeviceDetailSideEffect {

@@ -35,6 +35,7 @@ import com.hitec.presentation.main.device_detail.component.NfcMenu
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestWriteConfigDialog
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
@@ -57,6 +58,7 @@ fun DeviceDetailScreen(
     var nfcRequestDialogVisible by remember { mutableStateOf(false) }
     var nfcResultDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
+    var nfcRequestWriteConfigDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestFlag by remember { mutableIntStateOf(0) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -89,6 +91,7 @@ fun DeviceDetailScreen(
             nfcRequestDialogVisible = true
             nfcRequestFlag = REQUEST_FLAG_READ_CONFIG
         },
+        nfcRequestWriteConfig = { nfcRequestWriteConfigDialogVisible = true },
         nfcRequestSetSleep = {
             nfcRequestDialogVisible = true
             nfcRequestFlag = REQUEST_FLAG_SET_SLEEP
@@ -138,6 +141,17 @@ fun DeviceDetailScreen(
         onDismissRequest = { nfcRequestChangeSerialDialogVisible = false }
     )
 
+    NfcRequestWriteConfigDialog(
+        visible = nfcRequestWriteConfigDialogVisible,
+        onSetTerminalProtocol = { protocol -> viewModel.setTerminalProtocolInWriteConfig(protocol) },
+        onSetIpPort = { ipPort -> viewModel.setIpPortInWriteConfig(ipPort) },
+        onSetMeterInterval = { meterInterval -> viewModel.setMeterIntervalInWriteConfig(meterInterval) },
+        onSetReportInterval = { reportInterval -> viewModel.setReportIntervalInWriteConfig(reportInterval) },
+        onTagButtonClick = viewModel::nfcRequestWriteConfig,
+        onResultDialogVisible = { nfcResultDialogVisible = true },
+        onDismissRequest = { nfcRequestWriteConfigDialogVisible = false }
+    )
+
     NfcResultDialog(
         visible = nfcResultDialogVisible,
         result = state.nfcResult,
@@ -154,6 +168,7 @@ private fun DeviceDetailScreen(
     imageList: List<Pair<Int, Any?>>,
     nfcRequestChangeSerial: () -> Unit,
     nfcRequestReadConfig: () -> Unit,
+    nfcRequestWriteConfig: () -> Unit,
     nfcRequestSetSleep: () -> Unit,
     nfcRequestSetActive: () -> Unit,
     nfcRequestResetDevice: () -> Unit,
@@ -218,6 +233,7 @@ private fun DeviceDetailScreen(
             isVisible = isNfcMenuExpanded,
             onChangeSerialClick = nfcRequestChangeSerial,
             onReadConfigClick = nfcRequestReadConfig,
+            onWriteConfigClick = nfcRequestWriteConfig,
             onSetSleepClick = nfcRequestSetSleep,
             onSetActiveClick = nfcRequestSetActive,
             onResetDeviceClick = nfcRequestResetDevice,
@@ -236,6 +252,7 @@ fun DeviceDetailScreenPreview() {
                 imageList = emptyList(),
                 nfcRequestChangeSerial = {},
                 nfcRequestReadConfig = {},
+                nfcRequestWriteConfig = {},
                 nfcRequestSetSleep = {},
                 nfcRequestSetActive = {},
                 nfcRequestResetDevice = {},

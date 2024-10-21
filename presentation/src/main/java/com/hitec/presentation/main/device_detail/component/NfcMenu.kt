@@ -31,6 +31,7 @@ fun NfcMenu(
     isVisible: Boolean,
     onChangeSerialClick: () -> Unit,
     onReadConfigClick: () -> Unit,
+    onWriteConfigClick: () -> Unit,
     onSetSleepClick: () -> Unit,
     onSetActiveClick: () -> Unit,
     onResetDeviceClick: () -> Unit,
@@ -58,6 +59,11 @@ fun NfcMenu(
                 modifier = Modifier.padding(horizontal = Paddings.small),
                 text = stringResource(id = R.string.read_config),
                 onClick = onReadConfigClick
+            )
+            HorizontalScrollUnderlinedTextButton(
+                modifier = Modifier.padding(horizontal = Paddings.small),
+                text = stringResource(id = R.string.write_config),
+                onClick = onWriteConfigClick
             )
             HorizontalScrollUnderlinedTextButton(
                 modifier = Modifier.padding(horizontal = Paddings.small),
@@ -91,6 +97,7 @@ fun NfcMenuPreview() {
             isVisible = true,
             onChangeSerialClick = {},
             onReadConfigClick = {},
+            onWriteConfigClick = {},
             onSetSleepClick = {},
             onSetActiveClick = {},
             onResetDeviceClick = {},

@@ -372,11 +372,13 @@ class NfcManager @Inject constructor(
         Log.i(TAG, "receiveData ==> 01 msgType:$msgType")
 
         when (msgType) {
-            NODE_RECV_NB_CONF_REPORT -> nfcResponse.get().readConfig(rxData)
+            NODE_RECV_NB_CONF_REPORT -> nfcResponse.get().handleNbConfReport(rxData)
             NODE_RECV_SN_CHANGE_REPORT -> nfcResponse.get().changeSerial(rxData)
             NODE_RECV_BD_CONTROL_ACK -> nfcResponse.get().handleBoardControlAck(rxData)
             NODE_RECV_METER_REPORT -> nfcResponse.get().readMeter(rxData)
-            else -> {}
+            else -> {
+                Log.e("NFC", "receiveData else")
+            }
         }
     }
 

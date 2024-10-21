@@ -50,10 +50,10 @@ class NfcRequest @Inject constructor(
 
     //NB-IOT Config 설정(Version 1, 3, 5)
     fun setNbConfig(
-        msgVersion: Int,
+        msgVersion: Int = 2, // value 2 = version 3 in protocol document
         consumeHouseNo: String,
         serialNo: String?,
-        sleepMode: Int,
+        sleepMode: Int = 2, // always set active
         amiMeteringInterval: Int,
         amiReportInterval: Int,
         terminalProtocol: Int,
