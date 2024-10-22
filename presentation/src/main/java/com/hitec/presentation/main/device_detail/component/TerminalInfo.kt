@@ -1,4 +1,4 @@
-package com.hitec.presentation.main.device_detail
+package com.hitec.presentation.main.device_detail.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
-import com.hitec.presentation.main.device_detail.component.InformationRow
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.backgroundGray0
 
@@ -40,6 +39,8 @@ fun TerminalInfo(installDevice: InstallDevice) {
             ServerIpPortInfo(text = "${installDevice.serverAddr1}:${installDevice.serverPort1}")
             LatitudeInfo(text = "${installDevice.gpsLatitude}")
             LongitudeInfo(text = "${installDevice.gpsLongitude}")
+            MeterIntervalInfo(text = "${installDevice.meterIntervalTime}")
+            ReportIntervalInfo(text = "${installDevice.reportIntervalTime}")
         }
     }
 }
@@ -76,5 +77,15 @@ fun LatitudeInfo(text: String) {
 
 @Composable
 fun LongitudeInfo(text: String) {
+    InformationRow(text = text, style = MaterialTheme.typography.bodyMedium)
+}
+
+@Composable
+fun MeterIntervalInfo(text: String) {
+    InformationRow(text = text, style = MaterialTheme.typography.bodyMedium)
+}
+
+@Composable
+fun ReportIntervalInfo(text: String) {
     InformationRow(text = text, style = MaterialTheme.typography.bodyMedium)
 }

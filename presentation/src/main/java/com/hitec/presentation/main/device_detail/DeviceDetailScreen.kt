@@ -30,8 +30,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
+import com.hitec.presentation.main.device_detail.component.MeterInfo
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
+import com.hitec.presentation.main.device_detail.component.TerminalInfo
+import com.hitec.presentation.main.device_detail.component.UserInfo
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestDialog

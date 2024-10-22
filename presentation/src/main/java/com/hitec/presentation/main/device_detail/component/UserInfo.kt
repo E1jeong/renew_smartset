@@ -1,4 +1,4 @@
-package com.hitec.presentation.main.device_detail
+package com.hitec.presentation.main.device_detail.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
-import com.hitec.presentation.main.device_detail.component.InformationRow
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.backgroundGray0
 
