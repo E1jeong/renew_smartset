@@ -11,6 +11,7 @@ import com.hitec.data.usecase.GetLocalSiteUseCaseImpl
 import com.hitec.data.usecase.GetSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadDeviceImageUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadableImageListUseCaseImpl
+import com.hitec.data.usecase.main.device_detail.UpdateInstallDeviceUseCaseImpl
 import com.hitec.domain.usecase.DeleteInstallDbUseCase
 import com.hitec.domain.usecase.FindLocalSiteNameUseCase
 import com.hitec.domain.usecase.GetInstallDbUrlUseCase
@@ -20,6 +21,7 @@ import com.hitec.domain.usecase.GetLocalSiteUseCase
 import com.hitec.domain.usecase.GetSubAreaUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
+import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
 import dagger.Binds
@@ -69,4 +71,7 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindGetInstallDeviceListFromImeiAndSubAreaUseCase(uc: GetInstallDeviceListFromImeiAndSubAreaUseCaseImpl): GetInstallDeviceListFromImeiAndSubAreaUseCase
+
+    @Binds
+    abstract fun bindUpdateInstallDeviceUseCase(uc: UpdateInstallDeviceUseCaseImpl): UpdateInstallDeviceUseCase
 }

@@ -9,6 +9,7 @@ import com.hitec.domain.model.InstallDevice
 import com.hitec.domain.usecase.LoginScreenInfoUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
+import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
 import com.hitec.presentation.R
 import com.hitec.presentation.nfc_lib.NfcManager
 import com.hitec.presentation.nfc_lib.NfcRequest
@@ -41,6 +42,7 @@ class DeviceDetailViewModel @Inject constructor(
     private val loginScreenInfoUseCase: LoginScreenInfoUseCase,
     private val postDownloadableImageListUseCase: PostDownloadableImageListUseCase,
     private val postDownloadDeviceImageUseCase: PostDownloadDeviceImageUseCase,
+    private val updateInstallDeviceUseCase: UpdateInstallDeviceUseCase,
 ) : ViewModel(), ContainerHost<DeviceDetailState, DeviceDetailSideEffect> {
 
     override val container: Container<DeviceDetailState, DeviceDetailSideEffect> = container(
@@ -90,6 +92,8 @@ class DeviceDetailViewModel @Inject constructor(
                             )
                         )
                     }
+
+                    updateInstallDeviceUseCase(state.installDevice)
                 }
             }
         }

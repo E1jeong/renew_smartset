@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.hitec.data.model.entity.InstallDeviceEntity
 
 @Dao
@@ -29,4 +30,7 @@ interface InstallDeviceDao {
         subArea: String,
         imei: String
     ): List<InstallDeviceEntity>
+
+    @Update
+    suspend fun updateInstallDevice(installDeviceEntity: InstallDeviceEntity)
 }
