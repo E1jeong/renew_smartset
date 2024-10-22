@@ -56,12 +56,40 @@ class DeviceDetailViewModel @Inject constructor(
     )
 
     init {
+        collectResultFlow()
+        collectWriteConfigFlow()
+    }
+
+    private fun collectResultFlow() {
         viewModelScope.launch {
             nfcResponse.nfcResultFlow.collect { nfcResultFlow ->
                 Log.d(TAG, "nfcResponse.nfcResultFlow: $nfcResultFlow")
 
                 intent {
                     reduce { state.copy(nfcResult = nfcResultFlow) }
+                }
+            }
+        }
+    }
+
+    private fun collectWriteConfigFlow() {
+        viewModelScope.launch {
+            nfcResponse.nfcWriteConfigFlow.collect { writeConfigFlow ->
+                intent {
+                    reduce {
+                        state.copy(
+                            installDevice = state.installDevice.copy(
+                                meterDeviceSn = writeConfigFlow.serialNumber,
+                                cdmaNo = writeConfigFlow.imsi,
+                                serverAddr1 = writeConfigFlow.serverIp,
+                                serverPort1 = writeConfigFlow.serverPort,
+                                firmware = writeConfigFlow.firmwareVersion,
+                                reportIntervalTime = writeConfigFlow.reportInterval.toString(),
+                                meterIntervalTime = writeConfigFlow.meterInterval.toString(),
+                                meterCount = writeConfigFlow.meterCount.toString()
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -155,7 +183,26 @@ class DeviceDetailViewModel @Inject constructor(
     }
 
     fun setIpPortInWriteConfig(ipPort: String) = intent {
-        reduce { state.copy(ipPortInWriteConfig = ipPort) }
+        var resultIpPort = ""
+        when (ipPort) {
+            "LG Business" -> {
+                resultIpPort = "106.103.250.108:5783"
+            }
+
+            "LG Dev" -> {
+                resultIpPort = "106.103.233.155:5783"
+            }
+
+            "KT Business" -> {
+                resultIpPort = "192.168.151.84:9189"
+            }
+
+            "KT Dev" -> {
+                resultIpPort = "112.175.172.106:9189"
+            }
+        }
+
+        reduce { state.copy(ipPortInWriteConfig = resultIpPort) }
     }
 
     fun setMeterIntervalInWriteConfig(meterInterval: String) = intent {

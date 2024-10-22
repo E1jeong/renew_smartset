@@ -1,6 +1,7 @@
 package com.hitec.presentation.nfc_lib
 
 import android.util.Log
+import com.hitec.presentation.nfc_lib.model.WriteConfig
 import com.hitec.presentation.nfc_lib.protocol.recv.BdControlAck
 import com.hitec.presentation.nfc_lib.protocol.recv.MeterDataReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbConfReport
@@ -30,13 +31,49 @@ class NfcResponse @Inject constructor(
     private val _nfcResultFlow = MutableStateFlow("Tag Nfc")
     val nfcResultFlow: StateFlow<String> = _nfcResultFlow
 
+    private var _nfcWriteConfigFlow = MutableStateFlow(
+        WriteConfig(
+            serialNumber = "",
+            terminalProtocol = 0,
+            imsi = "",
+            serverIp = "",
+            serverPort = "",
+            firmwareVersion = "",
+            reportInterval = 0,
+            meterInterval = 0,
+            meterCount = 0,
+            meterInfo = emptyList()
+        )
+    )
+    val nfcWriteConfigFlow: StateFlow<WriteConfig> = _nfcWriteConfigFlow
+
     // Force to emit a value if it is equal to the current value
-    private fun updateStateFlow(resultFlow: String) {
+    private fun updateResultFlow(resultFlow: String) {
         if (_nfcResultFlow.value == resultFlow) {
             _nfcResultFlow.value = ""
             _nfcResultFlow.value = resultFlow
         } else {
             _nfcResultFlow.value = resultFlow
+        }
+    }
+
+    private fun updateWriteConfigFlow(resultFlow: WriteConfig) {
+        if (_nfcWriteConfigFlow.value == resultFlow) {
+            _nfcWriteConfigFlow.value = WriteConfig(
+                serialNumber = "",
+                terminalProtocol = 0,
+                imsi = "",
+                serverIp = "",
+                serverPort = "",
+                firmwareVersion = "",
+                reportInterval = 0,
+                meterInterval = 0,
+                meterCount = 0,
+                meterInfo = emptyList()
+            )
+            _nfcWriteConfigFlow.value = resultFlow
+        } else {
+            _nfcWriteConfigFlow.value = resultFlow
         }
     }
 
@@ -54,7 +91,7 @@ class NfcResponse @Inject constructor(
             else -> "Fail"
         }
 
-        updateStateFlow(resultFlow)
+        updateResultFlow(resultFlow)
         Log.i(TAG, "changeSerial ==> result:$resultFlow")
     }
 
@@ -105,7 +142,7 @@ class NfcResponse @Inject constructor(
         resultFlow.append("meter count: ${nbConfReportResponse.meterCount}ea\n")
         resultFlow.append("meter protocol: $meterProtocol")
 
-        updateStateFlow(resultFlow.toString())
+        updateResultFlow(resultFlow.toString())
         Log.i(TAG, "readConfig ==> result:$resultFlow")
     }
 
@@ -118,19 +155,48 @@ class NfcResponse @Inject constructor(
         }
 
         val resultFlow = StringBuilder("Write config\n")
-
         val errorCode = response.GetErrorCode()
-        when (errorCode) {
-            0 -> resultFlow.append("Success")
-            1 -> resultFlow.append("Error: Selected device in app is different from tagged device")
-            2 -> resultFlow.append("Error: Meter or Report interval")
-            3 -> resultFlow.append("Error: Meter type")
-            4 -> resultFlow.append("Error: Meter port")
-            else -> resultFlow.append("")
+        val errorMessage = when (errorCode) {
+            0 -> "Success"
+            1 -> "Error: Selected device in app is different from tagged device"
+            2 -> "Error: Meter or Report interval"
+            3 -> "Error: Meter type"
+            4 -> "Error: Meter port"
+            else -> ""
+        }
+        resultFlow.append(errorMessage)
+        updateResultFlow(resultFlow.toString())
+        Log.i(TAG, "writeConfig ==> result:$resultFlow")
+
+        if (errorCode != 0) {
+            return  // Error가 있을 경우 즉시 종료
         }
 
-        updateStateFlow(resultFlow.toString())
-        Log.i(TAG, "writeConfig ==> result:$resultFlow")
+        val serialNumber = response.serialNumber
+        val terminalProtocol = response.GetDataFormat()
+        val imsi = response.nbImsi
+        val firmwareVersion = response.fwVersion
+        val serverIp = response.serverIp
+        val serverPort = response.serverPort
+        val reportInterval = response.reportInterval
+        val meterInterval = response.meterInterval
+        val meterCount = response.meterCount
+
+        // this is for UI update in DeviceDetailScreen
+        val writeConfigFlow = WriteConfig(
+            serialNumber,
+            terminalProtocol,
+            imsi,
+            serverIp,
+            serverPort,
+            firmwareVersion,
+            reportInterval,
+            meterInterval,
+            meterCount,
+            emptyList()
+        )
+        updateWriteConfigFlow(writeConfigFlow)
+        Log.i(TAG, "write config UI update:\n$writeConfigFlow")
     }
 
     //handle: set sleep, set active, reset device etc
@@ -149,7 +215,7 @@ class NfcResponse @Inject constructor(
             BOARD_ACK_FLAG_RESET -> resultFlow = "Reset success"
         }
 
-        updateStateFlow(resultFlow)
+        updateResultFlow(resultFlow)
         Log.i(TAG, "setSleep ==> result:$resultFlow")
         boardControlAckFlag = 0 //init flag
     }
@@ -163,7 +229,7 @@ class NfcResponse @Inject constructor(
         }
 
         if (response.GetMeterState() == 2) {
-            updateStateFlow("Modem is working. Please do later")
+            updateResultFlow("Modem is working. Please do later")
             return
         }
 
@@ -179,7 +245,7 @@ class NfcResponse @Inject constructor(
         resultFlow.append("meter caliber: ${meterCaliber}mm\n")
         resultFlow.append("meter protocol: $meterProtocol")
 
-        updateStateFlow(resultFlow.toString())
+        updateResultFlow(resultFlow.toString())
         Log.i(TAG, "readMeter ==> result:$resultFlow")
     }
 
