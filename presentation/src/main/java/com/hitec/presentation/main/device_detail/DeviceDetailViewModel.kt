@@ -17,6 +17,8 @@ import com.hitec.presentation.nfc_lib.NfcResponse
 import com.hitec.presentation.nfc_lib.NfcResponse.Companion.BOARD_ACK_FLAG_ACTIVE
 import com.hitec.presentation.nfc_lib.NfcResponse.Companion.BOARD_ACK_FLAG_RESET
 import com.hitec.presentation.nfc_lib.NfcResponse.Companion.BOARD_ACK_FLAG_SLEEP
+import com.hitec.presentation.nfc_lib.NfcResponse.Companion.SERVER_COMM_FLAG_CHECK
+import com.hitec.presentation.nfc_lib.NfcResponse.Companion.SERVER_COMM_FLAG_REQUEST
 import com.hitec.presentation.util.PathHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -284,6 +286,18 @@ class DeviceDetailViewModel @Inject constructor(
             meterType2 = 0,
             meterPort2 = 0
         )
+    }
+
+    fun nfcRequestReqComm() {
+        NfcResponse.serverCommFlag = SERVER_COMM_FLAG_REQUEST
+        nfcManager.start()
+        nfcRequest.reqServerConnect(1)
+    }
+
+    fun nfcRequestCheckComm() {
+        NfcResponse.serverCommFlag = SERVER_COMM_FLAG_CHECK
+        nfcManager.start()
+        nfcRequest.reqServerConnect(0)
     }
 
     companion object {

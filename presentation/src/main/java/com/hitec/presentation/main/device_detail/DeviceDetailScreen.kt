@@ -50,6 +50,8 @@ private const val REQUEST_FLAG_SET_SLEEP = 2
 private const val REQUEST_FLAG_SET_ACTIVE = 3
 private const val REQUEST_FLAG_RESET_DEVICE = 4
 private const val REQUEST_FLAG_READ_METER = 5
+private const val REQUEST_FLAG_REQ_COMM = 6
+private const val REQUEST_FLAG_CHECK_COMM = 7
 
 @Composable
 fun DeviceDetailScreen(
@@ -110,7 +112,15 @@ fun DeviceDetailScreen(
         nfcRequestReadMeter = {
             nfcRequestDialogVisible = true
             nfcRequestFlag = REQUEST_FLAG_READ_METER
-        }
+        },
+        nfcRequestReqComm = {
+            nfcRequestDialogVisible = true
+            nfcRequestFlag = REQUEST_FLAG_REQ_COMM
+        },
+        nfcRequestCheckComm = {
+            nfcRequestDialogVisible = true
+            nfcRequestFlag = REQUEST_FLAG_CHECK_COMM
+        },
     )
 
     val nfcRequestContent: Pair<String, () -> Unit> = when (nfcRequestFlag) {
@@ -121,6 +131,11 @@ fun DeviceDetailScreen(
         REQUEST_FLAG_READ_METER -> Pair(
             stringResource(id = R.string.read_meter),
             viewModel::nfcRequestReadMeter
+        )
+        REQUEST_FLAG_REQ_COMM -> Pair(stringResource(id = R.string.request_communication), viewModel::nfcRequestReqComm)
+        REQUEST_FLAG_CHECK_COMM -> Pair(
+            stringResource(id = R.string.check_communication),
+            viewModel::nfcRequestCheckComm
         )
 
         else -> Pair("") {}
@@ -176,6 +191,8 @@ private fun DeviceDetailScreen(
     nfcRequestSetActive: () -> Unit,
     nfcRequestResetDevice: () -> Unit,
     nfcRequestReadMeter: () -> Unit,
+    nfcRequestReqComm: () -> Unit,
+    nfcRequestCheckComm: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -241,6 +258,8 @@ private fun DeviceDetailScreen(
             onSetActiveClick = nfcRequestSetActive,
             onResetDeviceClick = nfcRequestResetDevice,
             onReadMeterClick = nfcRequestReadMeter,
+            onReqCommClick = nfcRequestReqComm,
+            onCheckCommClick = nfcRequestCheckComm,
         )
     }
 }
@@ -260,6 +279,8 @@ fun DeviceDetailScreenPreview() {
                 nfcRequestSetActive = {},
                 nfcRequestResetDevice = {},
                 nfcRequestReadMeter = {},
+                nfcRequestReqComm = {},
+                nfcRequestCheckComm = {},
             )
         }
     }

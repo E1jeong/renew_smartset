@@ -6,6 +6,7 @@ import com.hitec.presentation.nfc_lib.protocol.recv.BdControlAck
 import com.hitec.presentation.nfc_lib.protocol.recv.MeterDataReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbConfReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbIdReport
+import com.hitec.presentation.nfc_lib.protocol.recv.ServerConnectReport
 import com.hitec.presentation.nfc_lib.protocol.recv.SnChangeReport
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +27,10 @@ class NfcResponse @Inject constructor(
         const val BOARD_ACK_FLAG_SLEEP = 1
         const val BOARD_ACK_FLAG_ACTIVE = 2
         const val BOARD_ACK_FLAG_RESET = 3
+
+        var serverCommFlag = 0
+        const val SERVER_COMM_FLAG_REQUEST = 1
+        const val SERVER_COMM_FLAG_CHECK = 2
     }
 
     private val _nfcResultFlow = MutableStateFlow("Tag Nfc")
@@ -247,6 +252,81 @@ class NfcResponse @Inject constructor(
 
         updateResultFlow(resultFlow.toString())
         Log.i(TAG, "readMeter ==> result:$resultFlow")
+    }
+
+    fun handleServerCommunication(nfcResponse: ByteArray) {
+        when (serverCommFlag) {
+            SERVER_COMM_FLAG_REQUEST -> requestCommunication(nfcResponse)
+            SERVER_COMM_FLAG_CHECK -> checkCommunication(nfcResponse)
+        }
+
+        serverCommFlag = 0 // init flag
+    }
+
+    private fun requestCommunication(nfcResponse: ByteArray) {
+        nfcManager.stop()
+
+        val response = ServerConnectReport()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        val serverAccessCode = response.GetServerAccess()
+        val resultFlow = if (serverAccessCode == 2) "Please try again later" else "Communication start"
+
+        updateResultFlow(resultFlow)
+        Log.i(TAG, "requestCommunication ==> result:$resultFlow")
+    }
+
+    private fun checkCommunication(nfcResponse: ByteArray) {
+        nfcManager.stop()
+
+        val response = ServerConnectReport()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        val serverAccessCode = response.GetServerAccess()
+        val serverResultCode = response.GetServerResult()
+        val resultMessage = when (serverAccessCode) {
+            0, 2 -> {
+                when (serverResultCode) {
+                    0 -> "idle"
+                    1 -> "Error modem response"
+                    2 -> "Error read SIM"
+                    4 -> "Fail to connect server"
+                    5 -> "Fail to receive time"
+                    6 -> "Fail to connect network"
+                    7 -> "Fail to connect platform"
+                    else -> ""
+                }
+            }
+
+            1 -> {
+                when (serverResultCode) {
+                    0 -> "idle"
+                    1 -> "Check modem"
+                    2 -> "Check SIM"
+                    4 -> "Processing data communication"
+                    else -> ""
+                }
+            }
+
+            else -> {
+                ""
+            }
+        }
+
+        val resultFlow = StringBuilder("Check communication\n\n")
+        resultFlow.append("terminal time: ${response.messageTime}\n")
+        resultFlow.append("last comm time: ${response.GetLastTime()}\n\n")
+        resultFlow.append("result: $resultMessage\n\n")
+        resultFlow.append("RSSI: -${response.GetModemRssi()}dBm\n")
+        resultFlow.append("RSRP: -${response.GetModemRsrp()}dBm\n")
+        resultFlow.append("SNR: ${response.GetModemSnr()}")
+
+        updateResultFlow(resultFlow.toString())
+        Log.i(TAG, "checkCommunication ==> result:$resultFlow")
     }
 
     private fun parseMeterProtocol(protocol: Int): String {

@@ -18,6 +18,7 @@ import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_BD_CONTROL_
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FLASH_DATE_LIST_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_METER_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_NB_CONF_REPORT
+import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_SERVER_CONNECT_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_SN_CHANGE_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_SEND_ACCOUNT_NO_SET
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_SEND_FLASH_DATA_REQ
@@ -376,6 +377,7 @@ class NfcManager @Inject constructor(
             NODE_RECV_SN_CHANGE_REPORT -> nfcResponse.get().changeSerial(rxData)
             NODE_RECV_BD_CONTROL_ACK -> nfcResponse.get().handleBoardControlAck(rxData)
             NODE_RECV_METER_REPORT -> nfcResponse.get().readMeter(rxData)
+            NODE_RECV_SERVER_CONNECT_REPORT -> nfcResponse.get().handleServerCommunication(rxData)
             else -> {
                 Log.e("NFC", "receiveData else")
             }

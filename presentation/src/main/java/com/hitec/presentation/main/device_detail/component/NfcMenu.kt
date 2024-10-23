@@ -36,6 +36,8 @@ fun NfcMenu(
     onSetActiveClick: () -> Unit,
     onResetDeviceClick: () -> Unit,
     onReadMeterClick: () -> Unit,
+    onReqCommClick: () -> Unit,
+    onCheckCommClick: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -85,6 +87,16 @@ fun NfcMenu(
                 text = stringResource(id = R.string.read_meter),
                 onClick = onReadMeterClick
             )
+            HorizontalScrollUnderlinedTextButton(
+                modifier = Modifier.padding(horizontal = Paddings.small),
+                text = stringResource(id = R.string.request_communication),
+                onClick = onReqCommClick
+            )
+            HorizontalScrollUnderlinedTextButton(
+                modifier = Modifier.padding(horizontal = Paddings.small),
+                text = stringResource(id = R.string.check_communication),
+                onClick = onCheckCommClick
+            )
         }
     }
 }
@@ -102,6 +114,8 @@ fun NfcMenuPreview() {
             onSetActiveClick = {},
             onResetDeviceClick = {},
             onReadMeterClick = {},
+            onReqCommClick = {},
+            onCheckCommClick = {},
         )
     }
 }
