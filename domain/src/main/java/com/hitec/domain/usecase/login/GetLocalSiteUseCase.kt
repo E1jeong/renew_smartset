@@ -1,8 +1,8 @@
-package com.hitec.domain.usecase
+package com.hitec.domain.usecase.login
 
-import com.hitec.domain.model.SubArea
+import com.hitec.domain.model.LocalSite
 
-interface GetSubAreaUseCase {
+interface GetLocalSiteUseCase {
 
     suspend operator fun invoke(
 //        method: String, 해당 부분은 retrofit service에서 하드코딩 되어있음
@@ -10,6 +10,5 @@ interface GetSubAreaUseCase {
         password: String,
         mobileId: String,
         bluetoothId: String,
-        localSite: String,
-    ): Result<SubArea>
+    ): Result<LocalSite>
 }

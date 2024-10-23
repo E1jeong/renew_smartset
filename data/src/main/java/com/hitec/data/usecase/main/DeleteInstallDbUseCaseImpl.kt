@@ -1,7 +1,7 @@
-package com.hitec.data.usecase
+package com.hitec.data.usecase.main
 
 import com.hitec.data.db.retrofit.HitecService
-import com.hitec.domain.usecase.DeleteInstallDbUseCase
+import com.hitec.domain.usecase.main.DeleteInstallDbUseCase
 import javax.inject.Inject
 
 class DeleteInstallDbUseCaseImpl @Inject constructor(

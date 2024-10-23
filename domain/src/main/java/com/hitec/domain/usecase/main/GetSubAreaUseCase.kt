@@ -1,6 +1,8 @@
-package com.hitec.domain.usecase
+package com.hitec.domain.usecase.main
 
-interface GetInstallDbUrlUseCase {
+import com.hitec.domain.model.SubArea
+
+interface GetSubAreaUseCase {
 
     suspend operator fun invoke(
 //        method: String, 해당 부분은 retrofit service에서 하드코딩 되어있음
@@ -9,9 +11,5 @@ interface GetInstallDbUrlUseCase {
         mobileId: String,
         bluetoothId: String,
         localSite: String,
-        areaCd: String = "",
-        reqAsCd: String = "",
-        installGroupCd: String = "",
-        connectionType: String = "",
-    ): Result<String>
+    ): Result<SubArea>
 }

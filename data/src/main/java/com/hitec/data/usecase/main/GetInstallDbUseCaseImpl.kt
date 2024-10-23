@@ -1,8 +1,8 @@
-package com.hitec.data.usecase
+package com.hitec.data.usecase.main
 
 import com.hitec.data.db.importer.SqliteToRoomImporter
 import com.hitec.data.db.retrofit.HitecService
-import com.hitec.domain.usecase.GetInstallDbUseCase
+import com.hitec.domain.usecase.main.GetInstallDbUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

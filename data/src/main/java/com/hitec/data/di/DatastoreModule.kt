@@ -5,8 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.hitec.data.db.datastore.LoginScreenInfoPreference
-import com.hitec.data.usecase.LoginScreenInfoUseCaseImpl
-import com.hitec.domain.usecase.LoginScreenInfoUseCase
+import com.hitec.data.usecase.login.LoginScreenInfoUseCaseImpl
+import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

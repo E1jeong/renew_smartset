@@ -1,9 +1,9 @@
-package com.hitec.data.usecase
+package com.hitec.data.usecase.login
 
 import com.hitec.data.db.room.dao.LocalSiteDao
 import com.hitec.data.model.entity.toDomainModel
 import com.hitec.domain.model.LocalSiteModel
-import com.hitec.domain.usecase.FindLocalSiteNameUseCase
+import com.hitec.domain.usecase.login.FindLocalSiteNameUseCase
 import javax.inject.Inject
 
 class FindLocalSiteNameUseCaseImpl @Inject constructor(

@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hitec.domain.model.InstallDevice
-import com.hitec.domain.usecase.LoginScreenInfoUseCase
+import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase

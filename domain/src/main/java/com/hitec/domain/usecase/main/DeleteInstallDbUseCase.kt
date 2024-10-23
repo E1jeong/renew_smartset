@@ -1,8 +1,6 @@
-package com.hitec.domain.usecase
+package com.hitec.domain.usecase.main
 
-import com.hitec.domain.model.LocalSite
-
-interface GetLocalSiteUseCase {
+interface DeleteInstallDbUseCase {
 
     suspend operator fun invoke(
 //        method: String, 해당 부분은 retrofit service에서 하드코딩 되어있음
@@ -10,5 +8,6 @@ interface GetLocalSiteUseCase {
         password: String,
         mobileId: String,
         bluetoothId: String,
-    ): Result<LocalSite>
+        fileName: String,
+    ): Result<Unit>
 }

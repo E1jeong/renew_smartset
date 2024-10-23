@@ -1,7 +1,7 @@
-package com.hitec.data.usecase
+package com.hitec.data.usecase.main
 
 import com.hitec.data.db.retrofit.HitecService
-import com.hitec.domain.usecase.GetInstallDbUrlUseCase
+import com.hitec.domain.usecase.main.GetInstallDbUrlUseCase
 import javax.inject.Inject
 
 class GetInstallDbUrlUseCaseImpl @Inject constructor(

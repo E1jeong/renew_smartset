@@ -6,9 +6,9 @@ import android.provider.Settings
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
-import com.hitec.domain.usecase.FindLocalSiteNameUseCase
-import com.hitec.domain.usecase.GetLocalSiteUseCase
-import com.hitec.domain.usecase.LoginScreenInfoUseCase
+import com.hitec.domain.usecase.login.FindLocalSiteNameUseCase
+import com.hitec.domain.usecase.login.GetLocalSiteUseCase
+import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler

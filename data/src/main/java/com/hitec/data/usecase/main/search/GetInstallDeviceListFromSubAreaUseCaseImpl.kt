@@ -1,4 +1,4 @@
-package com.hitec.data.usecase
+package com.hitec.data.usecase.main.search
 
 import com.hitec.data.db.room.dao.InstallDeviceDao
 import com.hitec.data.model.entity.toDomainModel

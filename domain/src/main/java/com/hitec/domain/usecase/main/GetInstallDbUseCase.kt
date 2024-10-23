@@ -1,4 +1,4 @@
-package com.hitec.domain.usecase
+package com.hitec.domain.usecase.main
 
 interface GetInstallDbUseCase {
 

@@ -1,8 +1,8 @@
-package com.hitec.data.usecase
+package com.hitec.data.usecase.login
 
 import com.hitec.data.db.datastore.LoginScreenInfoPreference
 import com.hitec.domain.model.LoginScreenInfo
-import com.hitec.domain.usecase.LoginScreenInfoUseCase
+import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
 import javax.inject.Inject
 
 class LoginScreenInfoUseCaseImpl @Inject constructor(

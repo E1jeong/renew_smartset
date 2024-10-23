@@ -1,4 +1,4 @@
-package com.hitec.data.usecase
+package com.hitec.data.usecase.login
 
 import com.hitec.data.db.retrofit.HitecService
 import com.hitec.data.db.room.dao.LocalSiteDao
@@ -6,7 +6,7 @@ import com.hitec.data.model.entity.LocalSiteEntity
 import com.hitec.data.model.toDomainModel
 import com.hitec.data.model.toEntity
 import com.hitec.domain.model.LocalSite
-import com.hitec.domain.usecase.GetLocalSiteUseCase
+import com.hitec.domain.usecase.login.GetLocalSiteUseCase
 import javax.inject.Inject
 
 class GetLocalSiteUseCaseImpl @Inject constructor(
