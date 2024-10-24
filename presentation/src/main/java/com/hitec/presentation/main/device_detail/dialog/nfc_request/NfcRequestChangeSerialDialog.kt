@@ -54,7 +54,8 @@ fun NfcRequestChangeSerialDialog(
                         action = onDismissRequest
                     )
                 ),
-                onTextFieldClear = onUserInputClear
+                onTextFieldClear = onUserInputClear,
+                placeholder = "NL1234567890"
             )
         }
     }

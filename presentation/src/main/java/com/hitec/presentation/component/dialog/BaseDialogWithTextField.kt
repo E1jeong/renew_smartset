@@ -44,6 +44,7 @@ fun BaseDialogWithTextField(
     textFieldValue: String,
     onTextFieldClear: () -> Unit,
     onTextChanged: (String) -> Unit,
+    placeholder: String = "",
 ) {
 
     Card(
@@ -74,7 +75,7 @@ fun BaseDialogWithTextField(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.5f),
-                            text = "NL1234567890",
+                            text = placeholder,
                         )
                     },
                     onValueChange = onTextChanged,
@@ -121,7 +122,8 @@ fun BaseDialogWithTextFieldPreview() {
                     leadingIcon = LeadingIcon(icon = Icons.Filled.Close),
                     action = {}
                 )
-            )
+            ),
+            placeholder = "placeholder"
         )
     }
 }
