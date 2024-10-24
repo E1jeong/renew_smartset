@@ -38,6 +38,7 @@ import com.hitec.presentation.main.device_detail.component.UserInfo
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestUpdateFirmwareDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestWriteConfigDialog
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
@@ -64,6 +65,7 @@ fun DeviceDetailScreen(
     var nfcResultDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestWriteConfigDialogVisible by remember { mutableStateOf(false) }
+    var nfcRequestUpdateFirmwareDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestFlag by remember { mutableIntStateOf(0) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -121,6 +123,7 @@ fun DeviceDetailScreen(
             nfcRequestDialogVisible = true
             nfcRequestFlag = REQUEST_FLAG_CHECK_COMM
         },
+        nfcRequestUpdateFirmware = { nfcRequestUpdateFirmwareDialogVisible = true },
     )
 
     val nfcRequestContent: Pair<String, () -> Unit> = when (nfcRequestFlag) {
@@ -132,6 +135,7 @@ fun DeviceDetailScreen(
             stringResource(id = R.string.read_meter),
             viewModel::nfcRequestReadMeter
         )
+
         REQUEST_FLAG_REQ_COMM -> Pair(stringResource(id = R.string.request_communication), viewModel::nfcRequestReqComm)
         REQUEST_FLAG_CHECK_COMM -> Pair(
             stringResource(id = R.string.check_communication),
@@ -170,6 +174,17 @@ fun DeviceDetailScreen(
         onDismissRequest = { nfcRequestWriteConfigDialogVisible = false }
     )
 
+    NfcRequestUpdateFirmwareDialog(
+        visible = nfcRequestUpdateFirmwareDialogVisible,
+        onSetUpdateMode = { updateMode -> viewModel.setUpdateModeInUpdateFirmware(updateMode) },
+        userInputFirmware = state.userInputFirmwareInUpdateFirmware,
+        onTextChange = viewModel::onTextChangeInUpdateFirmware,
+        onUserInputClear = viewModel::onClearUserInputFirmwareInUpdateFirmware,
+        onTagButtonClick = viewModel::nfcRequestUpdateFirmware,
+        onResultDialogVisible = { nfcResultDialogVisible = true },
+        onDismissRequest = { nfcRequestUpdateFirmwareDialogVisible = false }
+    )
+
     NfcResultDialog(
         visible = nfcResultDialogVisible,
         result = state.nfcResult,
@@ -193,6 +208,7 @@ private fun DeviceDetailScreen(
     nfcRequestReadMeter: () -> Unit,
     nfcRequestReqComm: () -> Unit,
     nfcRequestCheckComm: () -> Unit,
+    nfcRequestUpdateFirmware: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -260,6 +276,7 @@ private fun DeviceDetailScreen(
             onReadMeterClick = nfcRequestReadMeter,
             onReqCommClick = nfcRequestReqComm,
             onCheckCommClick = nfcRequestCheckComm,
+            onUpdateFirmwareClick = nfcRequestUpdateFirmware,
         )
     }
 }
@@ -281,6 +298,7 @@ fun DeviceDetailScreenPreview() {
                 nfcRequestReadMeter = {},
                 nfcRequestReqComm = {},
                 nfcRequestCheckComm = {},
+                nfcRequestUpdateFirmware = {},
             )
         }
     }

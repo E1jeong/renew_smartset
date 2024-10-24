@@ -38,6 +38,7 @@ fun NfcMenu(
     onReadMeterClick: () -> Unit,
     onReqCommClick: () -> Unit,
     onCheckCommClick: () -> Unit,
+    onUpdateFirmwareClick: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -97,6 +98,11 @@ fun NfcMenu(
                 text = stringResource(id = R.string.check_communication),
                 onClick = onCheckCommClick
             )
+            HorizontalScrollUnderlinedTextButton(
+                modifier = Modifier.padding(horizontal = Paddings.small),
+                text = stringResource(id = R.string.update_firmware),
+                onClick = onUpdateFirmwareClick
+            )
         }
     }
 }
@@ -116,6 +122,7 @@ fun NfcMenuPreview() {
             onReadMeterClick = {},
             onReqCommClick = {},
             onCheckCommClick = {},
+            onUpdateFirmwareClick = {},
         )
     }
 }

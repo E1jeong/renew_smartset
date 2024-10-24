@@ -219,6 +219,18 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(reportIntervalInWriteConfig = reportInterval) }
     }
 
+    fun setUpdateModeInUpdateFirmware(updateMode: String) = intent {
+        reduce { state.copy(updateModeInUpdateFirmware = updateMode) }
+    }
+
+    fun onTextChangeInUpdateFirmware(firmware: String) = blockingIntent {
+        reduce { state.copy(userInputFirmwareInUpdateFirmware = firmware.trim()) }
+    }
+
+    fun onClearUserInputFirmwareInUpdateFirmware() = intent {
+        reduce { state.copy(userInputFirmwareInUpdateFirmware = "") }
+    }
+
     fun nfcRequestChangeSerial() = intent {
         nfcManager.start()
         nfcRequest.changeSerial(
@@ -300,8 +312,28 @@ class DeviceDetailViewModel @Inject constructor(
         nfcRequest.reqServerConnect(0)
     }
 
+    fun nfcRequestUpdateFirmware() = intent {
+        //reqMode: 0, 1 -> NB BSL
+        //reqMode: 2 -> NB, GSM FOTA
+
+        // use in NfcResponse.updateFirmware when reqMode is 0
+        // when reqMode is 2, don't use
+        userInputFirmware = state.userInputFirmwareInUpdateFirmware
+
+        nfcManager.start()
+        nfcRequest.reqFwUpdate(
+            serialNo = state.installDevice.meterDeviceSn,
+            reqMode = if (state.updateModeInUpdateFirmware == "FOTA") 2 else 0,
+            fwVersion = state.userInputFirmwareInUpdateFirmware.ifEmpty { state.installDevice.firmware }
+        )
+
+        reduce { state.copy(userInputFirmwareInUpdateFirmware = "") } // init value
+    }
+
     companion object {
         private const val TAG = "DeviceDetailViewModel"
+
+        var userInputFirmware = ""
     }
 }
 
@@ -321,6 +353,8 @@ data class DeviceDetailState(
     val ipPortInWriteConfig: String = "LG Business",
     val meterIntervalInWriteConfig: String = "1",
     val reportIntervalInWriteConfig: String = "6",
+    val updateModeInUpdateFirmware: String = "FOTA",
+    val userInputFirmwareInUpdateFirmware: String = "",
 )
 
 sealed interface DeviceDetailSideEffect {

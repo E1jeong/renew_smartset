@@ -1,8 +1,10 @@
 package com.hitec.presentation.nfc_lib
 
 import android.util.Log
+import com.hitec.presentation.main.device_detail.DeviceDetailViewModel
 import com.hitec.presentation.nfc_lib.model.WriteConfig
 import com.hitec.presentation.nfc_lib.protocol.recv.BdControlAck
+import com.hitec.presentation.nfc_lib.protocol.recv.FwUpdateReport
 import com.hitec.presentation.nfc_lib.protocol.recv.MeterDataReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbConfReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbIdReport
@@ -307,7 +309,7 @@ class NfcResponse @Inject constructor(
                     0 -> "idle"
                     1 -> "Check modem"
                     2 -> "Check SIM"
-                    4 -> "Processing data communication"
+                    4 -> "Communication is in progress"
                     else -> ""
                 }
             }
@@ -327,6 +329,45 @@ class NfcResponse @Inject constructor(
 
         updateResultFlow(resultFlow.toString())
         Log.i(TAG, "checkCommunication ==> result:$resultFlow")
+    }
+
+    fun updateFirmware(nfcResponse: ByteArray) {
+        val response = FwUpdateReport()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        when (response.GetResultCode()) {
+            2 -> {
+                updateResultFlow("Please try again later. communication is in progress")
+                return
+            }
+
+            3 -> {
+                updateResultFlow("Don't support BSL")
+                return
+            }
+
+            else -> {}
+        }
+
+        //In DeviceDetailViewModel nfcRequestUpdateFirmware(), (reqMode = 0) == (response.GetStateCode() == 0)
+        //This follows the sequence in the terminal firmware
+        if (response.GetStateCode() == 0) {
+            nfcRequest.reqFwUpdate(
+                response.GetSerialNumber(),
+                1,
+                DeviceDetailViewModel.userInputFirmware
+            )
+        }
+
+        nfcManager.stop()
+
+        val resultFlow = "Firmware update start"
+        updateResultFlow(resultFlow)
+        Log.i(TAG, "updateFirmware ==> result:$resultFlow")
+
+        DeviceDetailViewModel.userInputFirmware = "" // init value
     }
 
     private fun parseMeterProtocol(protocol: Int): String {
