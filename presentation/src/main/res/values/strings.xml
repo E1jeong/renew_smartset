@@ -62,6 +62,7 @@
     <string name="request_communication">Request communication</string>
     <string name="check_communication">Check communication</string>
     <string name="update_firmware">Update firmware</string>
+    <string name="change_ri_hour_to_minute">Change RI hour to minute</string>
 
     <!--NfcRequestChangeSerialDialog-->
     <string name="nfc_request_change_serial_description">Enter new serial number</string>

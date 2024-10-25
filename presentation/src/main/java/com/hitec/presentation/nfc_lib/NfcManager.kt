@@ -15,6 +15,7 @@ import android.widget.Toast
 import com.hitec.presentation.main.MainActivity
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_ACCOUNT_NO_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_BD_CONTROL_ACK
+import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_CHANGE_MINUTE_INTERVAL_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FLASH_DATE_LIST_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FW_UPDATE_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_METER_REPORT
@@ -380,6 +381,7 @@ class NfcManager @Inject constructor(
             NODE_RECV_METER_REPORT -> nfcResponse.get().readMeter(rxData)
             NODE_RECV_SERVER_CONNECT_REPORT -> nfcResponse.get().handleServerCommunication(rxData)
             NODE_RECV_FW_UPDATE_REPORT -> nfcResponse.get().updateFirmware(rxData)
+            NODE_RECV_CHANGE_MINUTE_INTERVAL_REPORT -> nfcResponse.get().changeRiHourToMinute(rxData)
             else -> {
                 Log.e("NFC", "receiveData else")
             }

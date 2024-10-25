@@ -36,6 +36,7 @@ import com.hitec.presentation.main.device_detail.component.NfcMenu
 import com.hitec.presentation.main.device_detail.component.TerminalInfo
 import com.hitec.presentation.main.device_detail.component.UserInfo
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeRiHourToMinuteDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestUpdateFirmwareDialog
@@ -66,6 +67,7 @@ fun DeviceDetailScreen(
     var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestWriteConfigDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestUpdateFirmwareDialogVisible by remember { mutableStateOf(false) }
+    var nfcRequestChangeRiHourToMinuteDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestFlag by remember { mutableIntStateOf(0) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -124,6 +126,7 @@ fun DeviceDetailScreen(
             nfcRequestFlag = REQUEST_FLAG_CHECK_COMM
         },
         nfcRequestUpdateFirmware = { nfcRequestUpdateFirmwareDialogVisible = true },
+        nfcRequestChangeRiHourToMinute = { nfcRequestChangeRiHourToMinuteDialogVisible = true },
     )
 
     val nfcRequestContent: Pair<String, () -> Unit> = when (nfcRequestFlag) {
@@ -185,6 +188,16 @@ fun DeviceDetailScreen(
         onDismissRequest = { nfcRequestUpdateFirmwareDialogVisible = false }
     )
 
+    NfcRequestChangeRiHourToMinuteDialog(
+        visible = nfcRequestChangeRiHourToMinuteDialogVisible,
+        userInput = state.userInputMinuteInChangeRiHourToMinute,
+        onUserInputChange = viewModel::onTextChangeInChangeRiHourToMinute,
+        onUserInputClear = viewModel::onClearUserInputMinuteInChangeRiHourToMinute,
+        onTagButtonClick = viewModel::nfcRequestChangeRiHourToMinute,
+        onResultDialogVisible = { nfcResultDialogVisible = true },
+        onDismissRequest = { nfcRequestChangeRiHourToMinuteDialogVisible = false }
+    )
+
     NfcResultDialog(
         visible = nfcResultDialogVisible,
         result = state.nfcResult,
@@ -209,6 +222,7 @@ private fun DeviceDetailScreen(
     nfcRequestReqComm: () -> Unit,
     nfcRequestCheckComm: () -> Unit,
     nfcRequestUpdateFirmware: () -> Unit,
+    nfcRequestChangeRiHourToMinute: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -277,6 +291,7 @@ private fun DeviceDetailScreen(
             onReqCommClick = nfcRequestReqComm,
             onCheckCommClick = nfcRequestCheckComm,
             onUpdateFirmwareClick = nfcRequestUpdateFirmware,
+            onChangeRiHourToMinuteClick = nfcRequestChangeRiHourToMinute,
         )
     }
 }
@@ -299,6 +314,7 @@ fun DeviceDetailScreenPreview() {
                 nfcRequestReqComm = {},
                 nfcRequestCheckComm = {},
                 nfcRequestUpdateFirmware = {},
+                nfcRequestChangeRiHourToMinute = {},
             )
         }
     }

@@ -39,6 +39,7 @@ fun NfcMenu(
     onReqCommClick: () -> Unit,
     onCheckCommClick: () -> Unit,
     onUpdateFirmwareClick: () -> Unit,
+    onChangeRiHourToMinuteClick: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -103,6 +104,11 @@ fun NfcMenu(
                 text = stringResource(id = R.string.update_firmware),
                 onClick = onUpdateFirmwareClick
             )
+            HorizontalScrollUnderlinedTextButton(
+                modifier = Modifier.padding(horizontal = Paddings.small),
+                text = stringResource(id = R.string.change_ri_hour_to_minute),
+                onClick = onChangeRiHourToMinuteClick
+            )
         }
     }
 }
@@ -123,6 +129,7 @@ fun NfcMenuPreview() {
             onReqCommClick = {},
             onCheckCommClick = {},
             onUpdateFirmwareClick = {},
+            onChangeRiHourToMinuteClick = {},
         )
     }
 }

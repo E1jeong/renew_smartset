@@ -4,6 +4,7 @@ import android.util.Log
 import com.hitec.presentation.main.device_detail.DeviceDetailViewModel
 import com.hitec.presentation.nfc_lib.model.WriteConfig
 import com.hitec.presentation.nfc_lib.protocol.recv.BdControlAck
+import com.hitec.presentation.nfc_lib.protocol.recv.ChangeMinuteIntervalReport
 import com.hitec.presentation.nfc_lib.protocol.recv.FwUpdateReport
 import com.hitec.presentation.nfc_lib.protocol.recv.MeterDataReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbConfReport
@@ -368,6 +369,28 @@ class NfcResponse @Inject constructor(
         Log.i(TAG, "updateFirmware ==> result:$resultFlow")
 
         DeviceDetailViewModel.userInputFirmware = "" // init value
+    }
+
+    fun changeRiHourToMinute(nfcResponse: ByteArray) {
+        nfcManager.stop()
+
+        val response = ChangeMinuteIntervalReport()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        val resultFlow = StringBuilder("Change ri hour to minute\n")
+        val resultCode = response.result
+        val resultMessage = when (resultCode) {
+            0 -> "Success"
+            1 -> "Error: wrong number"
+            2 -> "Error: duplicated number"
+            3 -> "changed minute to hour"
+            else -> ""
+        }
+        resultFlow.append(resultMessage)
+        updateResultFlow(resultFlow.toString())
+        Log.i(TAG, "changeRiHourToMinute ==> result:$resultFlow")
     }
 
     private fun parseMeterProtocol(protocol: Int): String {

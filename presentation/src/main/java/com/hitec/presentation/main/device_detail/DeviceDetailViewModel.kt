@@ -231,6 +231,14 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(userInputFirmwareInUpdateFirmware = "") }
     }
 
+    fun onTextChangeInChangeRiHourToMinute(userInput: String) = blockingIntent {
+        reduce { state.copy(userInputMinuteInChangeRiHourToMinute = userInput.trim()) }
+    }
+
+    fun onClearUserInputMinuteInChangeRiHourToMinute() = intent {
+        reduce { state.copy(userInputMinuteInChangeRiHourToMinute = "") }
+    }
+
     fun nfcRequestChangeSerial() = intent {
         nfcManager.start()
         nfcRequest.changeSerial(
@@ -330,6 +338,11 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(userInputFirmwareInUpdateFirmware = "") } // init value
     }
 
+    fun nfcRequestChangeRiHourToMinute() = intent {
+        nfcManager.start()
+        nfcRequest.changeMinuteInterval(value = Integer.parseInt(state.userInputMinuteInChangeRiHourToMinute))
+    }
+
     companion object {
         private const val TAG = "DeviceDetailViewModel"
 
@@ -355,6 +368,7 @@ data class DeviceDetailState(
     val reportIntervalInWriteConfig: String = "6",
     val updateModeInUpdateFirmware: String = "FOTA",
     val userInputFirmwareInUpdateFirmware: String = "",
+    val userInputMinuteInChangeRiHourToMinute: String = "",
 )
 
 sealed interface DeviceDetailSideEffect {
