@@ -352,7 +352,7 @@ class NfcResponse @Inject constructor(
             else -> {}
         }
 
-        //In DeviceDetailViewModel nfcRequestUpdateFirmware(), (reqMode = 0) == (response.GetStateCode() == 0)
+        //In DeviceDetailViewModel nfcRequestUpdateFirmwareBsl(), (reqMode = 0) == (response.GetStateCode() == 0)
         //This follows the sequence in the terminal firmware
         if (response.GetStateCode() == 0) {
             nfcRequest.reqFwUpdate(

@@ -219,10 +219,6 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(reportIntervalInWriteConfig = reportInterval) }
     }
 
-    fun setUpdateModeInUpdateFirmware(updateMode: String) = intent {
-        reduce { state.copy(updateModeInUpdateFirmware = updateMode) }
-    }
-
     fun onTextChangeInUpdateFirmware(firmware: String) = blockingIntent {
         reduce { state.copy(userInputFirmwareInUpdateFirmware = firmware.trim()) }
     }
@@ -320,18 +316,17 @@ class DeviceDetailViewModel @Inject constructor(
         nfcRequest.reqServerConnect(0)
     }
 
-    fun nfcRequestUpdateFirmware() = intent {
-        //reqMode: 0, 1 -> NB BSL
-        //reqMode: 2 -> NB, GSM FOTA
+    fun nfcRequestUpdateFirmwareBsl() = intent {
+        //reqMode: 0 -> NB BSL ready
+        //reqMode: 1 -> NB BSL start => use in NfcResponse.updateFirmware()
 
-        // use in NfcResponse.updateFirmware when reqMode is 0
-        // when reqMode is 2, don't use
+        // use in NfcResponse.updateFirmware() when reqMode is 0
         userInputFirmware = state.userInputFirmwareInUpdateFirmware
 
         nfcManager.start()
         nfcRequest.reqFwUpdate(
             serialNo = state.installDevice.meterDeviceSn,
-            reqMode = if (state.updateModeInUpdateFirmware == "FOTA") 2 else 0,
+            reqMode = 0,
             fwVersion = state.userInputFirmwareInUpdateFirmware.ifEmpty { state.installDevice.firmware }
         )
 
@@ -366,7 +361,6 @@ data class DeviceDetailState(
     val ipPortInWriteConfig: String = "LG Business",
     val meterIntervalInWriteConfig: String = "1",
     val reportIntervalInWriteConfig: String = "6",
-    val updateModeInUpdateFirmware: String = "FOTA",
     val userInputFirmwareInUpdateFirmware: String = "",
     val userInputMinuteInChangeRiHourToMinute: String = "",
 )

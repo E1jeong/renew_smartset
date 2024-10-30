@@ -38,7 +38,7 @@ fun NfcMenu(
     onReadMeterClick: () -> Unit,
     onReqCommClick: () -> Unit,
     onCheckCommClick: () -> Unit,
-    onUpdateFirmwareClick: () -> Unit,
+    onUpdateFirmwareBslClick: () -> Unit,
     onChangeRiHourToMinuteClick: () -> Unit,
 ) {
     AnimatedVisibility(
@@ -101,8 +101,8 @@ fun NfcMenu(
             )
             HorizontalScrollUnderlinedTextButton(
                 modifier = Modifier.padding(horizontal = Paddings.small),
-                text = stringResource(id = R.string.update_firmware),
-                onClick = onUpdateFirmwareClick
+                text = stringResource(id = R.string.update_firmware_bsl),
+                onClick = onUpdateFirmwareBslClick
             )
             HorizontalScrollUnderlinedTextButton(
                 modifier = Modifier.padding(horizontal = Paddings.small),
@@ -128,7 +128,7 @@ fun NfcMenuPreview() {
             onReadMeterClick = {},
             onReqCommClick = {},
             onCheckCommClick = {},
-            onUpdateFirmwareClick = {},
+            onUpdateFirmwareBslClick = {},
             onChangeRiHourToMinuteClick = {},
         )
     }

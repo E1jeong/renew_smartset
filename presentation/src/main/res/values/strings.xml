@@ -61,7 +61,7 @@
     <string name="read_meter">Read meter</string>
     <string name="request_communication">Request communication</string>
     <string name="check_communication">Check communication</string>
-    <string name="update_firmware">Update firmware</string>
+    <string name="update_firmware_bsl">Update firmware BSL</string>
     <string name="change_ri_hour_to_minute">Change RI hour to minute</string>
 
     <!--NfcRequestChangeSerialDialog-->

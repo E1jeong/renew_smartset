@@ -35,7 +35,7 @@ import com.hitec.presentation.main.device_detail.component.UserInfo
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeRiHourToMinuteDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
-import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestUpdateFirmwareDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestUpdateFirmwareBslDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestWriteConfigDialog
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
@@ -136,13 +136,12 @@ fun DeviceDetailScreen(
         onDismissRequest = { nfcRequestWriteConfigDialogVisible = false }
     )
 
-    NfcRequestUpdateFirmwareDialog(
+    NfcRequestUpdateFirmwareBslDialog(
         visible = nfcRequestUpdateFirmwareDialogVisible,
-        onSetUpdateMode = { updateMode -> viewModel.setUpdateModeInUpdateFirmware(updateMode) },
         userInputFirmware = state.userInputFirmwareInUpdateFirmware,
         onTextChange = viewModel::onTextChangeInUpdateFirmware,
         onUserInputClear = viewModel::onClearUserInputFirmwareInUpdateFirmware,
-        onTagButtonClick = viewModel::nfcRequestUpdateFirmware,
+        onTagButtonClick = viewModel::nfcRequestUpdateFirmwareBsl,
         onResultDialogVisible = { nfcResultDialogVisible = true },
         onDismissRequest = { nfcRequestUpdateFirmwareDialogVisible = false }
     )
@@ -249,7 +248,7 @@ private fun DeviceDetailScreen(
             onReadMeterClick = nfcRequestReadMeter,
             onReqCommClick = nfcRequestReqComm,
             onCheckCommClick = nfcRequestCheckComm,
-            onUpdateFirmwareClick = nfcRequestUpdateFirmware,
+            onUpdateFirmwareBslClick = nfcRequestUpdateFirmware,
             onChangeRiHourToMinuteClick = nfcRequestChangeRiHourToMinute,
         )
     }
