@@ -13,13 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -29,7 +27,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
-import com.hitec.presentation.R
 import com.hitec.presentation.main.device_detail.component.MeterInfo
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
@@ -38,22 +35,12 @@ import com.hitec.presentation.main.device_detail.component.UserInfo
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeRiHourToMinuteDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
-import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestUpdateFirmwareDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestWriteConfigDialog
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
 import org.orbitmvi.orbit.compose.collectSideEffect
-
-//share nfc request dialog
-private const val REQUEST_FLAG_READ_CONFIG = 1
-private const val REQUEST_FLAG_SET_SLEEP = 2
-private const val REQUEST_FLAG_SET_ACTIVE = 3
-private const val REQUEST_FLAG_RESET_DEVICE = 4
-private const val REQUEST_FLAG_READ_METER = 5
-private const val REQUEST_FLAG_REQ_COMM = 6
-private const val REQUEST_FLAG_CHECK_COMM = 7
 
 @Composable
 fun DeviceDetailScreen(
@@ -62,13 +49,11 @@ fun DeviceDetailScreen(
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
     val context = LocalContext.current
-    var nfcRequestDialogVisible by remember { mutableStateOf(false) }
     var nfcResultDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestWriteConfigDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestUpdateFirmwareDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeRiHourToMinuteDialogVisible by remember { mutableStateOf(false) }
-    var nfcRequestFlag by remember { mutableIntStateOf(0) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val installDeviceJson = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_INSTALL_DEVICE)
@@ -97,62 +82,36 @@ fun DeviceDetailScreen(
         imageList = state.deviceImageList.sortedBy { it.first },
         nfcRequestChangeSerial = { nfcRequestChangeSerialDialogVisible = true },
         nfcRequestReadConfig = {
-            nfcRequestDialogVisible = true
-            nfcRequestFlag = REQUEST_FLAG_READ_CONFIG
+            nfcResultDialogVisible = true
+            viewModel.nfcRequestReadConfig()
         },
         nfcRequestWriteConfig = { nfcRequestWriteConfigDialogVisible = true },
         nfcRequestSetSleep = {
-            nfcRequestDialogVisible = true
-            nfcRequestFlag = REQUEST_FLAG_SET_SLEEP
+            nfcResultDialogVisible = true
+            viewModel.nfcRequestSetSleep()
         },
         nfcRequestSetActive = {
-            nfcRequestDialogVisible = true
-            nfcRequestFlag = REQUEST_FLAG_SET_ACTIVE
+            nfcResultDialogVisible = true
+            viewModel.nfcRequestSetActive()
         },
         nfcRequestResetDevice = {
-            nfcRequestDialogVisible = true
-            nfcRequestFlag = REQUEST_FLAG_RESET_DEVICE
+            nfcResultDialogVisible = true
+            viewModel.nfcRequestResetDevice()
         },
         nfcRequestReadMeter = {
-            nfcRequestDialogVisible = true
-            nfcRequestFlag = REQUEST_FLAG_READ_METER
+            nfcResultDialogVisible = true
+            viewModel.nfcRequestReadMeter()
         },
         nfcRequestReqComm = {
-            nfcRequestDialogVisible = true
-            nfcRequestFlag = REQUEST_FLAG_REQ_COMM
+            nfcResultDialogVisible = true
+            viewModel.nfcRequestReqComm()
         },
         nfcRequestCheckComm = {
-            nfcRequestDialogVisible = true
-            nfcRequestFlag = REQUEST_FLAG_CHECK_COMM
+            nfcResultDialogVisible = true
+            viewModel.nfcRequestCheckComm()
         },
         nfcRequestUpdateFirmware = { nfcRequestUpdateFirmwareDialogVisible = true },
         nfcRequestChangeRiHourToMinute = { nfcRequestChangeRiHourToMinuteDialogVisible = true },
-    )
-
-    val nfcRequestContent: Pair<String, () -> Unit> = when (nfcRequestFlag) {
-        REQUEST_FLAG_READ_CONFIG -> Pair(stringResource(id = R.string.read_config), viewModel::nfcRequestReadConfig)
-        REQUEST_FLAG_SET_SLEEP -> Pair(stringResource(id = R.string.set_sleep), viewModel::nfcRequestSetSleep)
-        REQUEST_FLAG_SET_ACTIVE -> Pair(stringResource(id = R.string.set_active), viewModel::nfcRequestSetActive)
-        REQUEST_FLAG_RESET_DEVICE -> Pair(stringResource(id = R.string.reset_device), viewModel::nfcRequestResetDevice)
-        REQUEST_FLAG_READ_METER -> Pair(
-            stringResource(id = R.string.read_meter),
-            viewModel::nfcRequestReadMeter
-        )
-
-        REQUEST_FLAG_REQ_COMM -> Pair(stringResource(id = R.string.request_communication), viewModel::nfcRequestReqComm)
-        REQUEST_FLAG_CHECK_COMM -> Pair(
-            stringResource(id = R.string.check_communication),
-            viewModel::nfcRequestCheckComm
-        )
-
-        else -> Pair("") {}
-    }
-
-    NfcRequestDialog(
-        visible = nfcRequestDialogVisible,
-        requestContent = nfcRequestContent,
-        onResultDialogVisible = { nfcResultDialogVisible = true },
-        onDismissRequest = { nfcRequestDialogVisible = false }
     )
 
     NfcRequestChangeSerialDialog(
