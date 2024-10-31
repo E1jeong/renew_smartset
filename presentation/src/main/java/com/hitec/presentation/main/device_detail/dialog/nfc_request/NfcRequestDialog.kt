@@ -17,6 +17,7 @@ import com.hitec.presentation.component.dialog.model.DialogTitle
 import com.hitec.presentation.component.icon.LeadingIcon
 import com.hitec.presentation.theme.RenewSmartSetTheme
 
+//2024.10.31 this dialog don't use because unnecessary
 @Composable
 fun NfcRequestDialog(
     visible: Boolean = false,
