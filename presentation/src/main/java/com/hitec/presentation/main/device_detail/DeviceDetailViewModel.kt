@@ -333,6 +333,17 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(userInputFirmwareInUpdateFirmware = "") } // init value
     }
 
+    fun nfcRequestUpdateFirmwareFota() = intent {
+        //reqMode: 2 -> NB, GSM FOTA
+
+        nfcManager.start()
+        nfcRequest.reqFwUpdate(
+            serialNo = state.installDevice.meterDeviceSn,
+            reqMode = 2,
+            fwVersion = state.installDevice.firmware,
+        )
+    }
+
     fun nfcRequestChangeRiHourToMinute() = intent {
         nfcManager.start()
         nfcRequest.changeMinuteInterval(value = Integer.parseInt(state.userInputMinuteInChangeRiHourToMinute))

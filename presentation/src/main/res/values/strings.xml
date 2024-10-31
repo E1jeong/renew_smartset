@@ -62,6 +62,7 @@
     <string name="request_communication">Request communication</string>
     <string name="check_communication">Check communication</string>
     <string name="update_firmware_bsl">Update firmware BSL</string>
+    <string name="update_firmware_fota">Update firmware Fota</string>
     <string name="change_ri_hour_to_minute">Change RI hour to minute</string>
 
     <!--NfcRequestChangeSerialDialog-->

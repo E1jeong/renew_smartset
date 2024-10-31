@@ -110,7 +110,11 @@ fun DeviceDetailScreen(
             nfcResultDialogVisible = true
             viewModel.nfcRequestCheckComm()
         },
-        nfcRequestUpdateFirmware = { nfcRequestUpdateFirmwareDialogVisible = true },
+        nfcRequestUpdateFirmwareBsl = { nfcRequestUpdateFirmwareDialogVisible = true },
+        nfcRequestUpdateFirmwareFota = {
+            nfcResultDialogVisible = true
+            viewModel.nfcRequestUpdateFirmwareFota()
+        },
         nfcRequestChangeRiHourToMinute = { nfcRequestChangeRiHourToMinuteDialogVisible = true },
     )
 
@@ -179,7 +183,8 @@ private fun DeviceDetailScreen(
     nfcRequestReadMeter: () -> Unit,
     nfcRequestReqComm: () -> Unit,
     nfcRequestCheckComm: () -> Unit,
-    nfcRequestUpdateFirmware: () -> Unit,
+    nfcRequestUpdateFirmwareBsl: () -> Unit,
+    nfcRequestUpdateFirmwareFota: () -> Unit,
     nfcRequestChangeRiHourToMinute: () -> Unit,
 ) {
     // control nfcMenu expanded
@@ -248,7 +253,8 @@ private fun DeviceDetailScreen(
             onReadMeterClick = nfcRequestReadMeter,
             onReqCommClick = nfcRequestReqComm,
             onCheckCommClick = nfcRequestCheckComm,
-            onUpdateFirmwareBslClick = nfcRequestUpdateFirmware,
+            onUpdateFirmwareBslClick = nfcRequestUpdateFirmwareBsl,
+            onUpdateFirmwareFotaClick = nfcRequestUpdateFirmwareFota,
             onChangeRiHourToMinuteClick = nfcRequestChangeRiHourToMinute,
         )
     }
@@ -271,7 +277,8 @@ fun DeviceDetailScreenPreview() {
                 nfcRequestReadMeter = {},
                 nfcRequestReqComm = {},
                 nfcRequestCheckComm = {},
-                nfcRequestUpdateFirmware = {},
+                nfcRequestUpdateFirmwareBsl = {},
+                nfcRequestUpdateFirmwareFota = {},
                 nfcRequestChangeRiHourToMinute = {},
             )
         }
