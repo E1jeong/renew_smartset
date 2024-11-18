@@ -35,6 +35,7 @@ import com.hitec.presentation.main.device_detail.component.UserInfo
 import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeRiHourToMinuteDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestReadPeriodDataDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestUpdateFirmwareBslDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestWriteConfigDialog
 import com.hitec.presentation.navigation.ArgumentName
@@ -49,11 +50,13 @@ fun DeviceDetailScreen(
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
     val context = LocalContext.current
+
     var nfcResultDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestWriteConfigDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestUpdateFirmwareDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeRiHourToMinuteDialogVisible by remember { mutableStateOf(false) }
+    var nfcRequestReadPeriodDataDialogVisible by remember { mutableStateOf(false) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val installDeviceJson = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_INSTALL_DEVICE)
@@ -116,6 +119,7 @@ fun DeviceDetailScreen(
             viewModel.nfcRequestUpdateFirmwareFota()
         },
         nfcRequestChangeRiHourToMinute = { nfcRequestChangeRiHourToMinuteDialogVisible = true },
+        nfcRequestReadPeriodData = { nfcRequestReadPeriodDataDialogVisible = true },
     )
 
     NfcRequestChangeSerialDialog(
@@ -160,6 +164,17 @@ fun DeviceDetailScreen(
         onDismissRequest = { nfcRequestChangeRiHourToMinuteDialogVisible = false }
     )
 
+    NfcRequestReadPeriodDataDialog(
+        visible = nfcRequestReadPeriodDataDialogVisible,
+        startDate = state.startDate,
+        endDate = state.endDate,
+        onStartDateSelected = viewModel::setStartDate,
+        onEndDateSelected = viewModel::setEndDate,
+        onTagButtonClick = viewModel::nfcRequestReadPeriodData,
+        onResultDialogVisible = { nfcResultDialogVisible = true },
+        onDismissRequest = { nfcRequestReadPeriodDataDialogVisible = false }
+    )
+
     NfcResultDialog(
         visible = nfcResultDialogVisible,
         result = state.nfcResult,
@@ -186,6 +201,7 @@ private fun DeviceDetailScreen(
     nfcRequestUpdateFirmwareBsl: () -> Unit,
     nfcRequestUpdateFirmwareFota: () -> Unit,
     nfcRequestChangeRiHourToMinute: () -> Unit,
+    nfcRequestReadPeriodData: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -256,6 +272,7 @@ private fun DeviceDetailScreen(
             onUpdateFirmwareBslClick = nfcRequestUpdateFirmwareBsl,
             onUpdateFirmwareFotaClick = nfcRequestUpdateFirmwareFota,
             onChangeRiHourToMinuteClick = nfcRequestChangeRiHourToMinute,
+            onReadPeriodDataClick = nfcRequestReadPeriodData,
         )
     }
 }
@@ -280,6 +297,7 @@ fun DeviceDetailScreenPreview() {
                 nfcRequestUpdateFirmwareBsl = {},
                 nfcRequestUpdateFirmwareFota = {},
                 nfcRequestChangeRiHourToMinute = {},
+                nfcRequestReadPeriodData = {},
             )
         }
     }

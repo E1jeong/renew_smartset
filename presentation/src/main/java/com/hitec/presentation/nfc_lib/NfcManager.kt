@@ -16,6 +16,7 @@ import com.hitec.presentation.main.MainActivity
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_ACCOUNT_NO_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_BD_CONTROL_ACK
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_CHANGE_MINUTE_INTERVAL_REPORT
+import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FLASH_DATA_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FLASH_DATE_LIST_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_FW_UPDATE_REPORT
 import com.hitec.presentation.nfc_lib.protocol.NfcConstant.NODE_RECV_METER_REPORT
@@ -48,8 +49,8 @@ class NfcManager @Inject constructor(
         @JvmField
         var password: ByteArray? = null
 
-        private const val SRAM_SIZE = 64
-        private const val PERIOD_BUFFER_SIZE = SRAM_SIZE * 100 * 2
+        const val SRAM_SIZE = 64
+        const val PERIOD_BUFFER_SIZE = SRAM_SIZE * 100 * 2
 
         private const val TAG = "NfcManager"
     }
@@ -301,11 +302,11 @@ class NfcManager @Inject constructor(
             return
         }
         var i = 0
-        while (i < PERIOD_BUFFER_SIZE) {
-            rxPeriodBuffer[i] = rxData[i]
+        while (i < SRAM_SIZE) {
+            rxBuffer[i] = rxData[i]
             i++
         }
-        bLog.i_hex(TAG, "receivePeriodData rxPeriodBuffer ==> ", rxPeriodBuffer, rxPeriodBuffer.size)
+        bLog.i_hex(TAG, "receivePeriodData rxBuffer ==> ", rxBuffer, rxBuffer.size)
 
         if (rxBuffer[0].toInt() == 0x00) return
 
@@ -382,6 +383,8 @@ class NfcManager @Inject constructor(
             NODE_RECV_SERVER_CONNECT_REPORT -> nfcResponse.get().handleServerCommunication(rxData)
             NODE_RECV_FW_UPDATE_REPORT -> nfcResponse.get().updateFirmware(rxData)
             NODE_RECV_CHANGE_MINUTE_INTERVAL_REPORT -> nfcResponse.get().changeRiHourToMinute(rxData)
+            NODE_RECV_FLASH_DATE_LIST_REPORT -> nfcResponse.get().readPeriodData(rxData)
+            NODE_RECV_FLASH_DATA_REPORT -> nfcResponse.get().parsePeriodData(rxData)
             else -> {
                 Log.e("NFC", "receiveData else")
             }

@@ -2,19 +2,24 @@ package com.hitec.presentation.nfc_lib
 
 import android.util.Log
 import com.hitec.presentation.main.device_detail.DeviceDetailViewModel
+import com.hitec.presentation.nfc_lib.NfcManager.Companion.SRAM_SIZE
 import com.hitec.presentation.nfc_lib.model.WriteConfig
 import com.hitec.presentation.nfc_lib.protocol.recv.BdControlAck
 import com.hitec.presentation.nfc_lib.protocol.recv.ChangeMinuteIntervalReport
+import com.hitec.presentation.nfc_lib.protocol.recv.FlashDataReport
+import com.hitec.presentation.nfc_lib.protocol.recv.FlashDateListReport
 import com.hitec.presentation.nfc_lib.protocol.recv.FwUpdateReport
 import com.hitec.presentation.nfc_lib.protocol.recv.MeterDataReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbConfReport
 import com.hitec.presentation.nfc_lib.protocol.recv.NbIdReport
 import com.hitec.presentation.nfc_lib.protocol.recv.ServerConnectReport
 import com.hitec.presentation.nfc_lib.protocol.recv.SnChangeReport
+import com.hitec.presentation.nfc_lib.util.bLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Arrays
 import java.util.Locale
 import javax.inject.Inject
 
@@ -54,6 +59,8 @@ class NfcResponse @Inject constructor(
         )
     )
     val nfcWriteConfigFlow: StateFlow<WriteConfig> = _nfcWriteConfigFlow
+
+    private val periodDataList = mutableListOf<String>()
 
     // Force to emit a value if it is equal to the current value
     private fun updateResultFlow(resultFlow: String) {
@@ -391,6 +398,108 @@ class NfcResponse @Inject constructor(
         resultFlow.append(resultMessage)
         updateResultFlow(resultFlow.toString())
         Log.i(TAG, "changeRiHourToMinute ==> result:$resultFlow")
+    }
+
+    fun readPeriodData(nfcResponse: ByteArray) {
+        Log.e(TAG, "readPeriodData 실행")
+
+        val response = FlashDateListReport()
+        if (!response.parse(nfcResponse)) {
+            return
+        }
+
+        if (response.GetResultState() == 1) {
+            nfcManager.stop()
+            return
+        }
+
+        val totalBlock = response.GetTotalBlock()
+
+        if (totalBlock <= 0) {
+            nfcManager.stop()
+            return
+        } else {
+            val startDate = response.GetStartDate()
+            val endDate = response.GetEndDate()
+
+            Log.e(TAG, "readPeriodData ==> start:$startDate, end:$endDate")
+//            nfcRequest.reqFlashData("2024-11-07", "2024-11-14")
+        }
+    }
+
+    fun parsePeriodData(nfcResponse: ByteArray) {
+        Log.v(TAG, "parsePeriodData ==> 01")
+        var index = 0
+        val nMax: Int = nfcResponse.size / SRAM_SIZE
+
+        for (i in 0 until nMax) {
+            if (index + SRAM_SIZE > nfcResponse.size) {
+                break // 남은 데이터가 부족하면 루프 종료
+            }
+
+            val rxBuffer: ByteArray = Arrays.copyOfRange(nfcResponse, index, index + SRAM_SIZE)
+            index += SRAM_SIZE
+
+            bLog.i_hex(TAG, "rxBuffer ==> ", rxBuffer, rxBuffer.size)
+
+            if (rxBuffer.isNotEmpty() && rxBuffer[0].toInt() == 0x00) {
+                break
+            }
+
+            handlePeriodData(rxBuffer)
+        }
+    }
+
+    //Flash 검침 파싱
+    private fun handlePeriodData(rxBuffer: ByteArray) {
+        Log.v(TAG, "handlePeriodData ==> 01")
+
+        val response = FlashDataReport()
+        if (!response.parse(rxBuffer)) {
+            return
+        }
+
+        if (response.GetResultState() == 1) { //통신중
+            Log.v(TAG, "handlePeriodData ==> GetResultState == 1")
+            nfcManager.stop()
+            return
+        }
+
+        var moreFlag = 0
+
+        if (response.GetTotalBlock() == 0) {
+            moreFlag = 2 // no data
+        } else if (response.GetCurrentBlock() == response.GetTotalBlock()) {
+            moreFlag = 0 // last
+        } else if (response.GetCurrentBlock() < response.GetTotalBlock()) {
+            moreFlag = 1 // continue
+        }
+
+        if (moreFlag == 2 || moreFlag == 0) {
+            nfcManager.stop()
+        }
+
+        Log.v(TAG, "handlePeriodData ==> GetCurrentBlock(): ${response.GetCurrentBlock()}")
+        Log.v(TAG, "handlePeriodData ==> GetTotalBlock(): ${response.GetTotalBlock()}")
+
+        if (moreFlag == 0 || moreFlag == 1) {
+            Log.v(TAG, "handlePeriodData ==> response.GetNumOfData(): ${response.GetNumOfData()}")
+
+            for (i in 0 until response.GetNumOfData()) {
+                periodDataList.add("${response.GetFirstMeteredTime(i)}: ${response.GetFirstMeterValue(i)}")
+            }
+        }
+
+        if (moreFlag == 0) {
+            updateResultFlow(periodDataList.sortedDescending().joinToString(", "))
+            Log.i(TAG, "handlePeriodData ==> result:$periodDataList")
+            periodDataList.clear()
+        } else if (moreFlag == 1) {
+            //"기간 검침 계속.";
+
+        } else if (moreFlag == 2) {
+            //"검침데이터가 없습니다.";
+        }
     }
 
     private fun parseMeterProtocol(protocol: Int): String {

@@ -32,6 +32,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalDate
 import javax.inject.Inject
 
 @OptIn(OrbitExperimental::class)
@@ -349,6 +350,27 @@ class DeviceDetailViewModel @Inject constructor(
         nfcRequest.changeMinuteInterval(value = Integer.parseInt(state.userInputMinuteInChangeRiHourToMinute))
     }
 
+    fun nfcRequestReadPeriodData() = intent {
+        nfcManager.start()
+        nfcRequest.reqPeriodMeterData(
+            1,
+            state.startDate.toString(),
+            state.endDate.toString()
+        )
+        nfcRequest.reqFlashData(
+            state.startDate.toString(),
+            state.endDate.toString()
+        )
+    }
+
+    fun setStartDate(date: LocalDate) = intent {
+        reduce { state.copy(startDate = date) }
+    }
+
+    fun setEndDate(date: LocalDate) = intent {
+        reduce { state.copy(endDate = date) }
+    }
+
     companion object {
         private const val TAG = "DeviceDetailViewModel"
 
@@ -374,6 +396,8 @@ data class DeviceDetailState(
     val reportIntervalInWriteConfig: String = "6",
     val userInputFirmwareInUpdateFirmware: String = "",
     val userInputMinuteInChangeRiHourToMinute: String = "",
+    val startDate: LocalDate? = null,
+    val endDate: LocalDate? = LocalDate.now(),
 )
 
 sealed interface DeviceDetailSideEffect {
