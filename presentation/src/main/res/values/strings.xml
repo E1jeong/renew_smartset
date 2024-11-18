@@ -48,6 +48,8 @@
 
     <!--DeviceDetailScreen-->
     <string name="no_image_available">No image available</string>
+    <string name="rationale_title_text">File access permission</string>
+    <string name="rationale_content_text">Please grant permissions to external storage files</string>
 
     <!--Nfc function common-->
     <string name="nfc_request">NFC request</string>

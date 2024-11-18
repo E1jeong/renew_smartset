@@ -1,6 +1,10 @@
 package com.hitec.presentation.main.device_detail
 
+import android.Manifest
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -27,6 +33,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
+import com.hitec.presentation.R
 import com.hitec.presentation.main.device_detail.component.MeterInfo
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
@@ -41,8 +48,11 @@ import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestWr
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
+import com.hitec.presentation.util.PermissionState
+import com.hitec.presentation.util.permissionRequest
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun DeviceDetailScreen(
     navController: NavHostController,
@@ -80,47 +90,64 @@ fun DeviceDetailScreen(
         }
     }
 
-    DeviceDetailScreen(
-        installDevice = state.installDevice,
-        imageList = state.deviceImageList.sortedBy { it.first },
-        nfcRequestChangeSerial = { nfcRequestChangeSerialDialogVisible = true },
-        nfcRequestReadConfig = {
-            nfcResultDialogVisible = true
-            viewModel.nfcRequestReadConfig()
-        },
-        nfcRequestWriteConfig = { nfcRequestWriteConfigDialogVisible = true },
-        nfcRequestSetSleep = {
-            nfcResultDialogVisible = true
-            viewModel.nfcRequestSetSleep()
-        },
-        nfcRequestSetActive = {
-            nfcResultDialogVisible = true
-            viewModel.nfcRequestSetActive()
-        },
-        nfcRequestResetDevice = {
-            nfcResultDialogVisible = true
-            viewModel.nfcRequestResetDevice()
-        },
-        nfcRequestReadMeter = {
-            nfcResultDialogVisible = true
-            viewModel.nfcRequestReadMeter()
-        },
-        nfcRequestReqComm = {
-            nfcResultDialogVisible = true
-            viewModel.nfcRequestReqComm()
-        },
-        nfcRequestCheckComm = {
-            nfcResultDialogVisible = true
-            viewModel.nfcRequestCheckComm()
-        },
-        nfcRequestUpdateFirmwareBsl = { nfcRequestUpdateFirmwareDialogVisible = true },
-        nfcRequestUpdateFirmwareFota = {
-            nfcResultDialogVisible = true
-            viewModel.nfcRequestUpdateFirmwareFota()
-        },
-        nfcRequestChangeRiHourToMinute = { nfcRequestChangeRiHourToMinuteDialogVisible = true },
-        nfcRequestReadPeriodData = { nfcRequestReadPeriodDataDialogVisible = true },
+    val requiredPermissions = listOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+    val permissionState = permissionRequest(
+        permissions = requiredPermissions,
+        rationaleTitle = stringResource(R.string.rationale_title_text),
+        rationaleText = stringResource(R.string.rationale_content_text)
     )
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (permissionState) {
+            PermissionState.Granted -> {
+                DeviceDetailScreen(
+                    installDevice = state.installDevice,
+                    imageList = state.deviceImageList.sortedBy { it.first },
+                    nfcRequestChangeSerial = { nfcRequestChangeSerialDialogVisible = true },
+                    nfcRequestReadConfig = {
+                        nfcResultDialogVisible = true
+                        viewModel.nfcRequestReadConfig()
+                    },
+                    nfcRequestWriteConfig = { nfcRequestWriteConfigDialogVisible = true },
+                    nfcRequestSetSleep = {
+                        nfcResultDialogVisible = true
+                        viewModel.nfcRequestSetSleep()
+                    },
+                    nfcRequestSetActive = {
+                        nfcResultDialogVisible = true
+                        viewModel.nfcRequestSetActive()
+                    },
+                    nfcRequestResetDevice = {
+                        nfcResultDialogVisible = true
+                        viewModel.nfcRequestResetDevice()
+                    },
+                    nfcRequestReadMeter = {
+                        nfcResultDialogVisible = true
+                        viewModel.nfcRequestReadMeter()
+                    },
+                    nfcRequestReqComm = {
+                        nfcResultDialogVisible = true
+                        viewModel.nfcRequestReqComm()
+                    },
+                    nfcRequestCheckComm = {
+                        nfcResultDialogVisible = true
+                        viewModel.nfcRequestCheckComm()
+                    },
+                    nfcRequestUpdateFirmwareBsl = { nfcRequestUpdateFirmwareDialogVisible = true },
+                    nfcRequestUpdateFirmwareFota = {
+                        nfcResultDialogVisible = true
+                        viewModel.nfcRequestUpdateFirmwareFota()
+                    },
+                    nfcRequestChangeRiHourToMinute = { nfcRequestChangeRiHourToMinuteDialogVisible = true },
+                    nfcRequestReadPeriodData = { nfcRequestReadPeriodDataDialogVisible = true },
+                )
+            }
+
+            PermissionState.Denied, PermissionState.NeedsSpecialPermission -> {
+                Text(text = stringResource(R.string.rationale_content_text))
+            }
+        }
+    }
 
     NfcRequestChangeSerialDialog(
         visible = nfcRequestChangeSerialDialogVisible,
