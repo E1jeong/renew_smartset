@@ -116,6 +116,8 @@ class DeviceDetailViewModel @Inject constructor(
                 getDeviceImages(photoTypeCd)
             }
         }
+
+        selectedDevice = installDevice
     }
 
     private fun setImageSaveDir(context: Context) = intent {
@@ -375,6 +377,7 @@ class DeviceDetailViewModel @Inject constructor(
         private const val TAG = "DeviceDetailViewModel"
 
         var userInputFirmware = ""
+        var selectedDevice = InstallDevice(meterDeviceId = "HT-T-012345")
     }
 }
 

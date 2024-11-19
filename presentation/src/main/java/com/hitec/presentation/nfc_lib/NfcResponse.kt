@@ -15,6 +15,7 @@ import com.hitec.presentation.nfc_lib.protocol.recv.NbIdReport
 import com.hitec.presentation.nfc_lib.protocol.recv.ServerConnectReport
 import com.hitec.presentation.nfc_lib.protocol.recv.SnChangeReport
 import com.hitec.presentation.nfc_lib.util.bLog
+import com.hitec.presentation.util.ExcelHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
@@ -490,15 +491,22 @@ class NfcResponse @Inject constructor(
             }
         }
 
-        if (moreFlag == 0) {
-            updateResultFlow(periodDataList.sortedDescending().joinToString(", "))
-            Log.i(TAG, "handlePeriodData ==> result:$periodDataList")
-            periodDataList.clear()
-        } else if (moreFlag == 1) {
-            //"기간 검침 계속.";
+        when (moreFlag) {
+            0 -> {
+                val sortedData = periodDataList.sortedDescending()
+                updateResultFlow(sortedData.joinToString(", "))
+                ExcelHelper.savePeriodData(
+                    dataList = sortedData,
+                    consumerHouseNumber = DeviceDetailViewModel.selectedDevice.consumeHouseNo ?: "period_data"
+                )
 
-        } else if (moreFlag == 2) {
-            //"검침데이터가 없습니다.";
+                periodDataList.clear()
+                Log.i(TAG, "handlePeriodData ==> result:$sortedData")
+            }
+
+            2 -> {
+                updateResultFlow("don't exist data")
+            }
         }
     }
 

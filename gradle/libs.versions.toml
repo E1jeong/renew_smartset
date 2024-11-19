@@ -87,6 +87,8 @@ camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", versi
 camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
 mlkit = { group = "com.google.mlkit", name = "barcode-scanning", version = "17.0.2" }
 
+apache-poi = { group = "org.apache.poi", name = "poi-ooxml", version = "5.2.3" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
