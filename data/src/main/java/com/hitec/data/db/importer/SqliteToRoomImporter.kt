@@ -6,14 +6,21 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.room.withTransaction
 import com.hitec.data.db.room.ApplicationDatabase
+import com.hitec.data.db.room.dao.AsCodeDao
+import com.hitec.data.db.room.dao.AsDeviceDao
 import com.hitec.data.db.room.dao.InstallDeviceDao
 import com.hitec.data.db.room.dao.ServerInfoDao
+import com.hitec.data.model.entity.AsCodeEntity
+import com.hitec.data.model.entity.AsDeviceEntity
 import com.hitec.data.model.entity.InstallDeviceEntity
 import com.hitec.data.model.entity.ServerInfoEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import java.io.File
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class SqliteToRoomImporter @Inject constructor(
@@ -21,6 +28,8 @@ class SqliteToRoomImporter @Inject constructor(
     private val database: ApplicationDatabase,
     private val serverInfoDao: ServerInfoDao,
     private val installDeviceDao: InstallDeviceDao,
+    private val asDeviceDao: AsDeviceDao,
+    private val asCodeDao: AsCodeDao,
 ) {
     suspend fun importDatabase(responseBody: ResponseBody) {
         val tempDbFile = saveTempDatabase(responseBody)
@@ -41,6 +50,8 @@ class SqliteToRoomImporter @Inject constructor(
             .use { tempDb ->
                 importServerInfo(tempDb)
                 importInstallDevice(tempDb)
+                importAsDevice(tempDb)
+                importAsCode(tempDb)
             }
     }
 
@@ -100,6 +111,79 @@ class SqliteToRoomImporter @Inject constructor(
 
                 val insertedCount = installDeviceDao.insert(entities).size
                 Log.d("DatabaseImport", "Inserted entity count: $insertedCount")
+            }
+        }
+    }
+
+    private suspend fun importAsDevice(tempDb: SQLiteDatabase) {
+        val query = "SELECT * FROM $SQLITE_TABLE_AS_DEVICE"
+
+        val entities = tempDb.rawQuery(query, null).use { cursor ->
+            generateSequence { if (cursor.moveToNext()) cursor else null }
+                .map { mapToAsDeviceEntity(it) }
+                .toList()
+        }
+        Log.d("DatabaseImport", "Total AsDevice entities: ${entities.size}")
+
+        withContext(Dispatchers.IO) {
+            database.withTransaction {
+                asDeviceDao.delete()
+                asDeviceDao.insert(entities)
+
+                installDeviceDao.getAll().forEachIndexed { index, installDevice ->
+                    asDeviceDao.findByMeterDeviceId(installDevice.meterDeviceId)?.let { asDevice ->
+                        val updatedAsDeviceEntity = asDevice.copy(
+                            modTypeCd = "I",
+                            reportNo = makeRandomReportNo(index),
+                            receiptDt = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                            receiptType = "1", //defualt = 1
+                            siteId = serverInfoDao.getAll()[0].serverName,
+                            consumeHouseNo = installDevice.consumeHouseNo,
+                            consumeHouseNm = installDevice.consumeHouseNm,
+                            firstSetDt = installDevice.setInitDate,
+                            meterMethodCd = installDevice.meterMethodCd,
+                            deviceTypeCd = installDevice.deviceTypeCd,
+                            communicationTypeCd = installDevice.communicationTypeCd,
+                            telecomTypeCd = installDevice.telecomTypeCd,
+                            statusSet = "1", // as진행과정: 1 = 접수
+                            deviceSn = installDevice.meterDeviceSn,
+                            pan = installDevice.pan,
+                            nwk = installDevice.nwk,
+                            firmware = installDevice.firmware,
+                            terminalTypeCd = installDevice.terminalTypeCd,
+                            areaBig = installDevice.AreaBig,
+                            setAreaAddr = installDevice.setAreaAddr,
+                            gpsLatitude = installDevice.gpsLatitude,
+                            gpsLongitude = installDevice.gpsLongitude,
+                            cdmaNo = installDevice.cdmaNo
+                        )
+                        asDeviceDao.update(updatedAsDeviceEntity)
+                    }
+                }
+
+//                asDeviceDao.getAll().forEach { asDevice ->
+//                    if (installDeviceDao.findByMeterDeviceId(asDevice.meterDeviceId) == null) {
+//                        asDeviceDao.deleteByMeterDeviceId(asDevice.meterDeviceId)
+//                    }
+//                }
+            }
+        }
+    }
+
+    private suspend fun importAsCode(tempDb: SQLiteDatabase) {
+        val query = "SELECT * FROM $SQLITE_TABLE_AS_CD"
+
+        val entities = tempDb.rawQuery(query, null).use { cursor ->
+            generateSequence { if (cursor.moveToNext()) cursor else null }
+                .map { mapToAsCodeEntity(it) }
+                .toList()
+        }
+        Log.d("DatabaseImport", "Total AsCode entities: ${entities.size}")
+
+        withContext(Dispatchers.IO) {
+            database.withTransaction {
+                asCodeDao.delete()
+                asCodeDao.insert(entities)
             }
         }
     }
@@ -247,10 +331,83 @@ class SqliteToRoomImporter @Inject constructor(
         )
     }
 
+    private fun mapToAsDeviceEntity(cursor: Cursor): AsDeviceEntity {
+        return AsDeviceEntity(
+            modTypeCd = cursor.getStringOrNull("modTypeCd"),
+            reportNo = cursor.getStringOrNull("reportNo"),
+            receiptDt = cursor.getStringOrNull("receiptDt"),
+            receiptUserId = cursor.getStringOrNull("receiptUserId"),
+            uploadResultCd = cursor.getStringOrNull("uploadResultCd"),
+            uploadErrorCd = cursor.getStringOrNull("uploadErrorCd"),
+            receiptType = cursor.getStringOrNull("receiptType"),
+            receiptMemo = cursor.getStringOrNull("receiptMemo"),
+            siteId = cursor.getStringOrNull("siteId"),
+            consumeHouseNo = cursor.getStringOrNull("consumeHouseNo"),
+            consumeHouseNm = cursor.getStringOrNull("consumeHouseNm"),
+            firstSetDt = cursor.getStringOrNull("firstSetDt"),
+            meterMethodCd = cursor.getStringOrNull("meterMethodCd"),
+            deviceTypeCd = cursor.getStringOrNull("deviceTypeCd"),
+            communicationTypeCd = cursor.getStringOrNull("communicationTypeCd"),
+            telecomTypeCd = cursor.getStringOrNull("telecomTypeCd"),
+            nbServiceCode = cursor.getStringOrNull("nbServiceCode"),
+            nbCseId = cursor.getStringOrNull("nbCseId"),
+            nbIccId = cursor.getStringOrNull("nbIccId"),
+            productYear = cursor.getStringOrNull("productYear"),
+            deviceModelCd = cursor.getStringOrNull("deviceModelCd"),
+            caliberCd = cursor.getStringOrNull("caliberCd"),
+            fieldActionMain = cursor.getStringOrNull("fieldActionMain"),
+            fieldActionMainEdit = cursor.getStringOrNull("fieldActionMainEdit"),
+            fieldActionSub = cursor.getStringOrNull("fieldActionSub"),
+            fieldActionSubEdit = cursor.getStringOrNull("fieldActionSubEdit"),
+            fieldActionMemo = cursor.getStringOrNull("fieldActionMemo"),
+            analysisType = cursor.getStringOrNull("analysisType"),
+            analysisTypeDetail = cursor.getStringOrNull("analysisTypeDetail"),
+            statusSet = cursor.getStringOrNull("statusSet"),
+            perNext = cursor.getStringOrNull("perNext"),
+            meterDeviceId = cursor.getStringOrNull("meterDeviceId") ?: "",
+            deviceSn = cursor.getStringOrNull("deviceSn"),
+            pan = cursor.getStringOrNull("pan"),
+            nwk = cursor.getStringOrNull("nwk"),
+            firmware = cursor.getStringOrNull("firmware"),
+            cdmaTypeCd = cursor.getStringOrNull("cdmaTypeCd"),
+            firmwareGateway = cursor.getStringOrNull("firmwareGateway"),
+            terminalTypeCd = cursor.getStringOrNull("terminalTypeCd"),
+            meterTypeCd = cursor.getStringOrNull("meterTypeCd"),
+            areaBig = cursor.getStringOrNull("areaBig"),
+            areaBigCd = cursor.getStringOrNull("areaBigCd"),
+            areaMid = cursor.getStringOrNull("areaMid"),
+            areaMidCd = cursor.getStringOrNull("areaMidCd"),
+            areaSmall = cursor.getStringOrNull("areaSmall"),
+            areaSmallCd = cursor.getStringOrNull("areaSmallCd"),
+            setAreaAddr = cursor.getStringOrNull("setAreaAddr"),
+            setPlaceDesc = cursor.getStringOrNull("setPlaceDesc"),
+            gpsLatitude = cursor.getStringOrNull("gpsLatitude"),
+            gpsLongitude = cursor.getStringOrNull("gpsLongitude"),
+            connectDtm = cursor.getStringOrNull("connectDtm"),
+            lastVal = cursor.getStringOrNull("lastVal"),
+            deviceBattery = cursor.getStringOrNull("deviceBattery"),
+            stateDisplay = cursor.getStringOrNull("stateDisplay"),
+            cdmaNo = cursor.getStringOrNull("cdmaNo")
+        )
+    }
+
+    private fun mapToAsCodeEntity(cursor: Cursor): AsCodeEntity {
+        return AsCodeEntity(
+            asCodeGroupId = cursor.getStringOrNull("CD_GROUP_ID"),
+            asCodeId = cursor.getStringOrNull("CD_ID"),
+            asCodeSubId = cursor.getStringOrNull("CD_ID_SUB"),
+            asCodeName = cursor.getStringOrNull("CD_NM"),
+            asCodeSubName = cursor.getStringOrNull("CD_SUBNM"),
+            asCodeFieldActionMain = cursor.getStringOrNull("CD_FIELD_ACTION_MAIN")
+        )
+    }
+
     companion object {
         const val SQLITE_TABLE_INSTALL = "INSTALL"
         const val SQLITE_TABLE_SERVER = "SERVER"
         const val SQLITE_TABLE_SYSINFO = "SYSINFO"
+        const val SQLITE_TABLE_AS_DEVICE = "AS_TABLE"
+        const val SQLITE_TABLE_AS_CD = "AS_CD"
         const val COMMUNICATION_TYPE_NBIOT = "4"
         const val COMMUNICATION_TYPE_GSM = "6"
     }
@@ -263,3 +420,6 @@ private fun Cursor.getStringOrNull(columnName: String): String? {
 private fun Cursor.getIntOrNull(columnName: String): Int? {
     return getColumnIndex(columnName).takeIf { it >= 0 }?.let { getInt(it) }
 }
+
+private fun makeRandomReportNo(nCount: Int) =
+    "A${LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMddHHmmss"))}-$nCount"

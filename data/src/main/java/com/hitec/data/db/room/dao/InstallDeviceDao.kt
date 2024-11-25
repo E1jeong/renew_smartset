@@ -31,6 +31,9 @@ interface InstallDeviceDao {
         imei: String
     ): List<InstallDeviceEntity>
 
+    @Query("SELECT * FROM T_InstallDevice WHERE meterDeviceId = :meterDeviceId LIMIT 1")
+    suspend fun findByMeterDeviceId(meterDeviceId: String): InstallDeviceEntity?
+
     @Update
     suspend fun updateInstallDevice(installDeviceEntity: InstallDeviceEntity)
 }

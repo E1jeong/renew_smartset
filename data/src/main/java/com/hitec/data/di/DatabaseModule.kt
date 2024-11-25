@@ -3,6 +3,8 @@ package com.hitec.data.di
 import android.content.Context
 import androidx.room.Room
 import com.hitec.data.db.room.ApplicationDatabase
+import com.hitec.data.db.room.dao.AsCodeDao
+import com.hitec.data.db.room.dao.AsDeviceDao
 import com.hitec.data.db.room.dao.InstallDeviceDao
 import com.hitec.data.db.room.dao.LocalSiteDao
 import com.hitec.data.db.room.dao.ServerInfoDao
@@ -50,5 +52,17 @@ object DatabaseModule {
     @Singleton
     fun provideServerInfoDao(database: ApplicationDatabase): ServerInfoDao {
         return database.serverInfoDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAsDeviceDao(database: ApplicationDatabase): AsDeviceDao {
+        return database.asDeviceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAsCodeDao(database: ApplicationDatabase): AsCodeDao {
+        return database.asCodeDao()
     }
 }

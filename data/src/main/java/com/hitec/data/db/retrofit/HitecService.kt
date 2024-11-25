@@ -72,7 +72,7 @@ interface HitecService {
         @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
         @Query(LOCAL_SITE) localSite: String,
         @Query(AREA_CODE) areaCd: String = "", //subArea에서 받아온 읍,면,동 지역코드
-        @Query(REQUEST_AS_CODE) reqAsCd: String = "", // 0: 설치리스트, 1: 설치리스트 + AS리스트
+        @Query(REQUEST_AS_CODE) reqAsCd: String = "1", // 0: 설치리스트, 1: 설치리스트 + AS리스트
         @Query(INSTALL_GROUP_CODE) installGroupCd: String = "", // null: 모든 데이터 다운로드, 1 ~ 10: 앱에서 설치시 사용한 그룹
         @Query(COMPANY_CODE) companyCd: String = "", // 0: 전체, 1: 하이텍
         @Query(CONNECTION_TYPE) connectionType: String = "", // 0: 일반, 1:VPN, 2:각 지역서버
