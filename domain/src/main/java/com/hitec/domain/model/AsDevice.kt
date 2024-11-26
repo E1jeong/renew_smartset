@@ -1,10 +1,6 @@
-package com.hitec.data.model.entity
+package com.hitec.domain.model
 
-import androidx.room.Entity
-import com.hitec.domain.model.AsDevice
-
-@Entity(tableName = "T_AsDevice", primaryKeys = ["meterDeviceId"])
-data class AsDeviceEntity(
+data class AsDevice(
     val modTypeCd: String? = null,
     val reportNo: String? = null,
     val receiptDt: String? = null,
@@ -60,62 +56,4 @@ data class AsDeviceEntity(
     val deviceBattery: String? = null,
     val stateDisplay: String? = null,
     val cdmaNo: String? = null,
-)
-
-fun AsDeviceEntity.toDomainModel(): AsDevice = AsDevice(
-    modTypeCd = modTypeCd,
-    reportNo = reportNo,
-    receiptDt = receiptDt,
-    receiptUserId = receiptUserId,
-    uploadResultCd = uploadResultCd,
-    uploadErrorCd = uploadErrorCd,
-    receiptType = receiptType,
-    receiptMemo = receiptMemo,
-    siteId = siteId,
-    consumeHouseNo = consumeHouseNo,
-    consumeHouseNm = consumeHouseNm,
-    firstSetDt = firstSetDt,
-    meterMethodCd = meterMethodCd,
-    deviceTypeCd = deviceTypeCd,
-    communicationTypeCd = communicationTypeCd,
-    telecomTypeCd = telecomTypeCd,
-    nbServiceCode = nbServiceCode,
-    nbCseId = nbCseId,
-    nbIccId = nbIccId,
-    productYear = productYear,
-    deviceModelCd = deviceModelCd,
-    caliberCd = caliberCd,
-    fieldActionMain = fieldActionMain,
-    fieldActionMainEdit = fieldActionMainEdit,
-    fieldActionSub = fieldActionSub,
-    fieldActionSubEdit = fieldActionSubEdit,
-    fieldActionMemo = fieldActionMemo,
-    analysisType = analysisType,
-    analysisTypeDetail = analysisTypeDetail,
-    statusSet = statusSet,
-    perNext = perNext,
-    meterDeviceId = meterDeviceId,
-    deviceSn = deviceSn,
-    pan = pan,
-    nwk = nwk,
-    firmware = firmware,
-    cdmaTypeCd = cdmaTypeCd,
-    firmwareGateway = firmwareGateway,
-    terminalTypeCd = terminalTypeCd,
-    meterTypeCd = meterTypeCd,
-    areaBig = areaBig,
-    areaBigCd = areaBigCd,
-    areaMid = areaMid,
-    areaMidCd = areaMidCd,
-    areaSmall = areaSmall,
-    areaSmallCd = areaSmallCd,
-    setAreaAddr = setAreaAddr,
-    setPlaceDesc = setPlaceDesc,
-    gpsLatitude = gpsLatitude,
-    gpsLongitude = gpsLongitude,
-    connectDtm = connectDtm,
-    lastVal = lastVal,
-    deviceBattery = deviceBattery,
-    stateDisplay = stateDisplay,
-    cdmaNo = cdmaNo,
 )

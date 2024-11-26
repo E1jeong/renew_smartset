@@ -6,13 +6,15 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
+import com.hitec.domain.model.AsDevice
 import com.hitec.domain.model.InstallDevice
+import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
 import com.hitec.domain.usecase.main.DeleteInstallDbUseCase
+import com.hitec.domain.usecase.main.GetAsDeviceUseCase
 import com.hitec.domain.usecase.main.GetInstallDbUrlUseCase
 import com.hitec.domain.usecase.main.GetInstallDbUseCase
 import com.hitec.domain.usecase.main.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.main.GetSubAreaUseCase
-import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.NavigationUtils
@@ -40,6 +42,7 @@ class MainViewModel @Inject constructor(
     private val getInstallDbUseCase: GetInstallDbUseCase,
     private val getInstallDeviceUseCase: GetInstallDeviceUseCase,
     private val deleteInstallDbUseCase: DeleteInstallDbUseCase,
+    private val getAsDeviceUseCase: GetAsDeviceUseCase,
 ) : ViewModel(), ContainerHost<MainState, MainSideEffect> {
 
     override val container: Container<MainState, MainSideEffect> = container(
@@ -138,11 +141,24 @@ class MainViewModel @Inject constructor(
             bluetoothId = state.androidDeviceId,
             fileName = dbFileName
         ).getOrThrow()
+        
+        //as device db depend on install device db
+        getAsDevice()
 
         reduce {
             state.copy(
                 installDeviceList = installDeviceList,
                 isNetworkLoading = false,
+            )
+        }
+    }
+
+    private fun getAsDevice() = intent {
+        val asDeviceList = getAsDeviceUseCase().getOrThrow()
+
+        reduce {
+            state.copy(
+                asDeviceList = asDeviceList
             )
         }
     }
@@ -166,6 +182,7 @@ data class MainState(
     val installDeviceList: List<InstallDevice> = emptyList(),
     val subAreaList: List<String> = emptyList(),
     val isNetworkLoading: Boolean = false,
+    val asDeviceList: List<AsDevice> = emptyList(),
 )
 
 sealed interface MainSideEffect {

@@ -3,6 +3,7 @@ package com.hitec.data.di
 import com.hitec.data.usecase.login.FindLocalSiteNameUseCaseImpl
 import com.hitec.data.usecase.login.GetLocalSiteUseCaseImpl
 import com.hitec.data.usecase.main.DeleteInstallDbUseCaseImpl
+import com.hitec.data.usecase.main.GetAsDeviceUseCaseImpl
 import com.hitec.data.usecase.main.GetInstallDbUrlUseCaseImpl
 import com.hitec.data.usecase.main.GetInstallDbUseCaseImpl
 import com.hitec.data.usecase.main.GetInstallDeviceUseCaseImpl
@@ -15,6 +16,7 @@ import com.hitec.data.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
 import com.hitec.domain.usecase.login.FindLocalSiteNameUseCase
 import com.hitec.domain.usecase.login.GetLocalSiteUseCase
 import com.hitec.domain.usecase.main.DeleteInstallDbUseCase
+import com.hitec.domain.usecase.main.GetAsDeviceUseCase
 import com.hitec.domain.usecase.main.GetInstallDbUrlUseCase
 import com.hitec.domain.usecase.main.GetInstallDbUseCase
 import com.hitec.domain.usecase.main.GetInstallDeviceUseCase
@@ -74,4 +76,7 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindUpdateInstallDeviceUseCase(uc: UpdateInstallDeviceUseCaseImpl): UpdateInstallDeviceUseCase
+
+    @Binds
+    abstract fun bindGetAsDeviceUseCase(uc: GetAsDeviceUseCaseImpl): GetAsDeviceUseCase
 }

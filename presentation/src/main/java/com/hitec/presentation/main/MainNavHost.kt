@@ -61,7 +61,10 @@ fun MainNavHost(sharedViewModel: MainViewModel) {
                         CameraScreen(sharedViewModel)
                     }
                     composable(route = MainNav.AsDevice.route) {
-                        AsDeviceScreen()
+                        AsDeviceScreen(
+                            navController = navController,
+                            viewModel = sharedViewModel
+                        )
                     }
                     composable(route = MainNav.MyPage.route) {
                         MyPageScreen()
