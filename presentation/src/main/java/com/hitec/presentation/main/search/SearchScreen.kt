@@ -83,8 +83,11 @@ fun SearchScreen(
         state = state,
         onChipSelected = viewModel::onChipSelected,
         onSearch = viewModel::search,
-        onItemClick = { installDevice ->
+        onInstallDeviceClick = { installDevice ->
             viewModel.openDeviceDetailScreen(navController, installDevice)
+        },
+        onAsDeviceClick = { asDevice ->
+            viewModel.openAsReportScreen(navController, asDevice)
         }
     )
 }
@@ -94,7 +97,8 @@ private fun SearchContent(
     state: SearchState,
     onChipSelected: (String) -> Unit,
     onSearch: (String) -> Unit,
-    onItemClick: (InstallDevice) -> Unit,
+    onInstallDeviceClick: (InstallDevice) -> Unit,
+    onAsDeviceClick: (AsDevice) -> Unit,
 ) {
     var userInput by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -123,9 +127,9 @@ private fun SearchContent(
                 SearchResult(
                     isInstallDevice = state.previousRoute == RouteName.INSTALL_DEVICE,
                     installDeviceList = state.searchedInstallDeviceList,
-                    onItemClick = onItemClick,
+                    onInstallDeviceClick = onInstallDeviceClick,
                     asDeviceList = state.searchedAsDeviceList,
-                    onAsDeviceClick = {}
+                    onAsDeviceClick = onAsDeviceClick
                 )
             }
         }
@@ -230,16 +234,16 @@ private fun SubAreaChipGroup(
 private fun SearchResult(
     isInstallDevice: Boolean,
     installDeviceList: List<InstallDevice>,
-    onItemClick: (InstallDevice) -> Unit,
+    onInstallDeviceClick: (InstallDevice) -> Unit,
     asDeviceList: List<AsDevice>,
-    onAsDeviceClick: () -> Unit,
+    onAsDeviceClick: (AsDevice) -> Unit,
 ) {
     if (isInstallDevice) {
         LazyColumn {
             items(installDeviceList.size) { index ->
                 InstallDeviceCard(
                     installDevice = installDeviceList[index],
-                    onClick = { onItemClick(installDeviceList[index]) }
+                    onClick = { onInstallDeviceClick(installDeviceList[index]) }
                 )
             }
         }
@@ -248,7 +252,7 @@ private fun SearchResult(
             items(asDeviceList.size) { index ->
                 AsDeviceCard(
                     asDevice = asDeviceList[index],
-                    onClick = onAsDeviceClick
+                    onClick = { onAsDeviceClick(asDeviceList[index]) }
                 )
             }
         }

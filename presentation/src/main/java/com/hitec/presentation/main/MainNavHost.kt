@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.hitec.presentation.main.as_report.AsReportScreen
 import com.hitec.presentation.main.asdevice.AsDeviceScreen
 import com.hitec.presentation.main.camera.CameraScreen
 import com.hitec.presentation.main.device_detail.DeviceDetailScreen
@@ -24,6 +25,7 @@ import com.hitec.presentation.main.installdevice.InstallDeviceScreen
 import com.hitec.presentation.main.mypage.MyPageScreen
 import com.hitec.presentation.main.search.SearchScreen
 import com.hitec.presentation.navigation.ArgumentName
+import com.hitec.presentation.navigation.AsReportNav
 import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.MainNav
 import com.hitec.presentation.navigation.SearchNav
@@ -81,6 +83,11 @@ fun MainNavHost(sharedViewModel: MainViewModel) {
                         )
                     ) {
                         DeviceDetailScreen(navController = navController)
+                    }
+                    composable(
+                        route = AsReportNav.route,
+                    ) {
+                        AsReportScreen(navController = navController)
                     }
                 }
             },

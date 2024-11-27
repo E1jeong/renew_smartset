@@ -14,6 +14,7 @@ import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAr
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
 import com.hitec.presentation.main.MainViewModel
 import com.hitec.presentation.navigation.ArgumentName
+import com.hitec.presentation.navigation.AsReportNav
 import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.NavigationUtils
 import com.hitec.presentation.navigation.RouteName
@@ -62,6 +63,20 @@ class SearchViewModel @Inject constructor(
         val encodedJson = Uri.encode(installDeviceJson)
         val route =
             DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", encodedJson)
+
+        NavigationUtils.navigate(
+            controller = navHostController,
+            routeName = route,
+            backStackRouteName = RouteName.SEARCH
+        )
+    }
+
+    fun openAsReportScreen(navHostController: NavHostController, asDevice: AsDevice) {
+        val gson = Gson()
+        val asDeviceJson = gson.toJson(asDevice)
+        val encodedJson = Uri.encode(asDeviceJson)
+        val route =
+            AsReportNav.route.replace("{${ArgumentName.ARGU_AS_DEVICE}}", encodedJson)
 
         NavigationUtils.navigate(
             controller = navHostController,

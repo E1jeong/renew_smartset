@@ -45,7 +45,7 @@ fun AsDeviceScreen(
         } else {
             AsDeviceScreen(
                 asDeviceList = state.asDeviceList,
-                onItemClick = { }
+                onItemClick = { asDevice -> viewModel.openAsReportScreen(navController, asDevice) }
             )
         }
     }

@@ -16,6 +16,7 @@ import com.hitec.domain.usecase.main.GetInstallDbUseCase
 import com.hitec.domain.usecase.main.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.main.GetSubAreaUseCase
 import com.hitec.presentation.navigation.ArgumentName
+import com.hitec.presentation.navigation.AsReportNav
 import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.NavigationUtils
 import com.hitec.presentation.navigation.RouteName
@@ -114,6 +115,20 @@ class MainViewModel @Inject constructor(
         )
     }
 
+    fun openAsReportScreen(navHostController: NavHostController, asDevice: AsDevice) {
+        val gson = Gson()
+        val asDeviceJson = gson.toJson(asDevice)
+        val encodedJson = Uri.encode(asDeviceJson)
+        val route =
+            AsReportNav.route.replace("{${ArgumentName.ARGU_AS_DEVICE}}", encodedJson)
+
+        NavigationUtils.navigate(
+            controller = navHostController,
+            routeName = route,
+            backStackRouteName = RouteName.AS_DEVICE
+        )
+    }
+
     private fun getInstallDevice() = intent {
         //get sqlite db url
         val url = getInstallDbUrlUseCase(
@@ -141,7 +156,7 @@ class MainViewModel @Inject constructor(
             bluetoothId = state.androidDeviceId,
             fileName = dbFileName
         ).getOrThrow()
-        
+
         //as device db depend on install device db
         getAsDevice()
 

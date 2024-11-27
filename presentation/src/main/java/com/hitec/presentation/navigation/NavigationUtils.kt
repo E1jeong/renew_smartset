@@ -30,6 +30,7 @@ object NavigationUtils {
             route.contains(RouteName.MY_PAGE) -> MainNav.MyPage
             route.contains(RouteName.SEARCH) -> SearchNav
             route.contains(RouteName.DEVICE_DETAIL) -> DeviceDetailNav
+            route.contains(RouteName.AS_REPORT) -> AsReportNav
             else -> MainNav.InstallDevice
         }
     }

@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Recycling
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.hitec.presentation.navigation.ArgumentName.ARGU_AS_DEVICE
 import com.hitec.presentation.navigation.ArgumentName.ARGU_INSTALL_DEVICE
 import com.hitec.presentation.navigation.RouteName.AS_DEVICE
+import com.hitec.presentation.navigation.RouteName.AS_REPORT
 import com.hitec.presentation.navigation.RouteName.CAMERA
 import com.hitec.presentation.navigation.RouteName.DEVICE_DETAIL
 import com.hitec.presentation.navigation.RouteName.INSTALL_DEVICE
@@ -45,6 +47,11 @@ object DeviceDetailNav : Destination {
     override val title: String = "DeviceDetail"
 }
 
+object AsReportNav : Destination {
+    override val route: String = "$AS_REPORT/{$ARGU_AS_DEVICE}"
+    override val title: String = "AsReport"
+}
+
 interface Destination {
     val route: String
     val title: String
@@ -57,8 +64,10 @@ object RouteName {
     const val MY_PAGE = "MyPageScreen"
     const val SEARCH = "SearchScreen"
     const val DEVICE_DETAIL = "DeviceDetailScreen"
+    const val AS_REPORT = "AsReportScreen"
 }
 
 object ArgumentName {
     const val ARGU_INSTALL_DEVICE = "installDevice"
+    const val ARGU_AS_DEVICE = "asDevice"
 }
