@@ -41,10 +41,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.hitec.domain.model.AsDevice
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
+import com.hitec.presentation.main.asdevice.component.AsDeviceCard
 import com.hitec.presentation.main.installdevice.component.InstallDeviceCard
+import com.hitec.presentation.navigation.RouteName
 import com.hitec.presentation.theme.Paddings
+import com.hitec.presentation.theme.backgroundGray0
+import com.hitec.presentation.theme.textFieldDefaultColor
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -55,6 +60,12 @@ fun SearchScreen(
 ) {
     val state by viewModel.collectAsState()
     val context = LocalContext.current
+
+    val previousRoute = navController.previousBackStackEntry?.destination?.route
+    when (previousRoute) {
+        RouteName.INSTALL_DEVICE -> viewModel.setPreviousRoute(RouteName.INSTALL_DEVICE)
+        RouteName.AS_DEVICE -> viewModel.setPreviousRoute(RouteName.AS_DEVICE)
+    }
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -90,6 +101,7 @@ private fun SearchContent(
 
     Column {
         SearchBox(
+            isInstallDevice = state.previousRoute == RouteName.INSTALL_DEVICE,
             keyword = userInput,
             onValueChange = { userInput = it },
             searchAction = {
@@ -109,8 +121,11 @@ private fun SearchContent(
                 Text(stringResource(R.string.loading))
             } else {
                 SearchResult(
+                    isInstallDevice = state.previousRoute == RouteName.INSTALL_DEVICE,
                     installDeviceList = state.searchedInstallDeviceList,
-                    onItemClick = onItemClick
+                    onItemClick = onItemClick,
+                    asDeviceList = state.searchedAsDeviceList,
+                    onAsDeviceClick = {}
                 )
             }
         }
@@ -120,6 +135,7 @@ private fun SearchContent(
 
 @Composable
 private fun SearchBox(
+    isInstallDevice: Boolean,
     keyword: String,
     onValueChange: (String) -> Unit,
     searchAction: () -> Unit,
@@ -144,6 +160,9 @@ private fun SearchBox(
                 onSearch = { searchAction() }
             ),
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = if (isInstallDevice) textFieldDefaultColor else backgroundGray0,
+                unfocusedContainerColor = if (isInstallDevice) textFieldDefaultColor else backgroundGray0,
+                disabledContainerColor = if (isInstallDevice) textFieldDefaultColor else backgroundGray0,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
@@ -209,15 +228,29 @@ private fun SubAreaChipGroup(
 
 @Composable
 private fun SearchResult(
+    isInstallDevice: Boolean,
     installDeviceList: List<InstallDevice>,
-    onItemClick: (InstallDevice) -> Unit
+    onItemClick: (InstallDevice) -> Unit,
+    asDeviceList: List<AsDevice>,
+    onAsDeviceClick: () -> Unit,
 ) {
-    LazyColumn {
-        items(installDeviceList.size) { index ->
-            InstallDeviceCard(
-                installDevice = installDeviceList[index],
-                onClick = { onItemClick(installDeviceList[index]) }
-            )
+    if (isInstallDevice) {
+        LazyColumn {
+            items(installDeviceList.size) { index ->
+                InstallDeviceCard(
+                    installDevice = installDeviceList[index],
+                    onClick = { onItemClick(installDeviceList[index]) }
+                )
+            }
+        }
+    } else {
+        LazyColumn {
+            items(asDeviceList.size) { index ->
+                AsDeviceCard(
+                    asDevice = asDeviceList[index],
+                    onClick = onAsDeviceClick
+                )
+            }
         }
     }
 }

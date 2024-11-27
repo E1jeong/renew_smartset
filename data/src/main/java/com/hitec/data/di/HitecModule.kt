@@ -11,6 +11,8 @@ import com.hitec.data.usecase.main.GetSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadDeviceImageUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadableImageListUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.UpdateInstallDeviceUseCaseImpl
+import com.hitec.data.usecase.main.search.GetAsDeviceListFromImeiAndSubAreaUseCaseImpl
+import com.hitec.data.usecase.main.search.GetAsDeviceListFromSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.search.GetInstallDeviceListFromSubAreaUseCaseImpl
 import com.hitec.domain.usecase.login.FindLocalSiteNameUseCase
@@ -24,6 +26,8 @@ import com.hitec.domain.usecase.main.GetSubAreaUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
+import com.hitec.domain.usecase.main.search.GetAsDeviceListFromImeiAndSubAreaUseCase
+import com.hitec.domain.usecase.main.search.GetAsDeviceListFromSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
 import dagger.Binds
@@ -79,4 +83,10 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindGetAsDeviceUseCase(uc: GetAsDeviceUseCaseImpl): GetAsDeviceUseCase
+
+    @Binds
+    abstract fun bindGetAsDeviceListFromSubAreaUseCase(uc: GetAsDeviceListFromSubAreaUseCaseImpl): GetAsDeviceListFromSubAreaUseCase
+
+    @Binds
+    abstract fun bindGetAsDeviceListFromImeiAndSubAreaUseCase(uc: GetAsDeviceListFromImeiAndSubAreaUseCaseImpl): GetAsDeviceListFromImeiAndSubAreaUseCase
 }

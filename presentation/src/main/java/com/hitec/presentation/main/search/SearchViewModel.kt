@@ -6,7 +6,10 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
+import com.hitec.domain.model.AsDevice
 import com.hitec.domain.model.InstallDevice
+import com.hitec.domain.usecase.main.search.GetAsDeviceListFromImeiAndSubAreaUseCase
+import com.hitec.domain.usecase.main.search.GetAsDeviceListFromSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
 import com.hitec.presentation.main.MainViewModel
@@ -29,6 +32,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val getInstallDeviceListFromSubAreaUseCase: GetInstallDeviceListFromSubAreaUseCase,
     private val getInstallDeviceListFromImeiAndSubAreaUseCase: GetInstallDeviceListFromImeiAndSubAreaUseCase,
+    private val getAsDeviceListFromSubAreaUseCase: GetAsDeviceListFromSubAreaUseCase,
+    private val getAsDeviceListFromImeiAndSubAreaUseCase: GetAsDeviceListFromImeiAndSubAreaUseCase,
 ) : ViewModel(), ContainerHost<SearchState, SearchSideEffect> {
 
     override val container: Container<SearchState, SearchSideEffect> = container(
@@ -45,6 +50,10 @@ class SearchViewModel @Inject constructor(
 
     init {
         getSubAreaListFromMainViewModel()
+    }
+
+    fun setPreviousRoute(route: String) = intent {
+        reduce { state.copy(previousRoute = route) }
     }
 
     fun openDeviceDetailScreen(navHostController: NavHostController, installDevice: InstallDevice) {
@@ -78,7 +87,10 @@ class SearchViewModel @Inject constructor(
         }
 
         if (state.selectedChip.isNotEmpty()) {
-            searchInstallDeviceFromSubArea()
+            when (state.previousRoute) {
+                RouteName.INSTALL_DEVICE -> searchInstallDeviceFromSubArea()
+                RouteName.AS_DEVICE -> searchAsDeviceFromSubArea()
+            }
         }
     }
 
@@ -87,18 +99,30 @@ class SearchViewModel @Inject constructor(
         postSideEffect(SearchSideEffect.Toast("Searching for: $query"))
 
         reduce { state.copy(isNetworkLoading = true) }
-        val searchedInstallDeviceList =
-            getInstallDeviceListFromImeiAndSubAreaUseCase(
-                subArea = state.selectedChip,
-                imei = query
-            ).getOrThrow()
 
-        reduce {
-            state.copy(
-                searchedInstallDeviceList = searchedInstallDeviceList,
-                isNetworkLoading = false
-            )
+        when (state.previousRoute) {
+            RouteName.INSTALL_DEVICE -> {
+                val searchedInstallDeviceList =
+                    getInstallDeviceListFromImeiAndSubAreaUseCase(
+                        subArea = state.selectedChip,
+                        imei = query
+                    ).getOrThrow()
+
+                reduce { state.copy(searchedInstallDeviceList = searchedInstallDeviceList) }
+            }
+
+            RouteName.AS_DEVICE -> {
+                val searchedAsDeviceList =
+                    getAsDeviceListFromImeiAndSubAreaUseCase(
+                        subArea = state.selectedChip,
+                        imei = query
+                    ).getOrThrow()
+
+                reduce { state.copy(searchedAsDeviceList = searchedAsDeviceList) }
+            }
         }
+
+        reduce { state.copy(isNetworkLoading = false) }
     }
 
     private fun searchInstallDeviceFromSubArea() = intent {
@@ -109,6 +133,19 @@ class SearchViewModel @Inject constructor(
         reduce {
             state.copy(
                 searchedInstallDeviceList = searchedInstallDeviceList,
+                isNetworkLoading = false
+            )
+        }
+    }
+
+    private fun searchAsDeviceFromSubArea() = intent {
+        reduce { state.copy(isNetworkLoading = true) }
+        val searchedAsDeviceList =
+            getAsDeviceListFromSubAreaUseCase(state.selectedChip).getOrThrow()
+
+        reduce {
+            state.copy(
+                searchedAsDeviceList = searchedAsDeviceList,
                 isNetworkLoading = false
             )
         }
@@ -125,7 +162,9 @@ data class SearchState(
     val selectedChip: String = "",
     val searchQuery: String = "",
     val searchedInstallDeviceList: List<InstallDevice> = emptyList(),
+    val searchedAsDeviceList: List<AsDevice> = emptyList(),
     val isNetworkLoading: Boolean = false,
+    val previousRoute: String = "",
 )
 
 sealed interface SearchSideEffect {

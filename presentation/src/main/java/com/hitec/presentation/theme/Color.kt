@@ -26,3 +26,6 @@ val backgroundGray2 = Color(0xFF9F9F9F)
 val backgroundGray3 = Color(0xFF7E7E7E)
 val backgroundGray4 = Color(0xFF5D5D5D)
 val backgroundGray5 = Color(0xFF353635)
+
+val textFieldDefaultColor = Color(0xFFE7E0EC)
+val textFieldDefaultContentColor = Color(0xFF1C1B1F)

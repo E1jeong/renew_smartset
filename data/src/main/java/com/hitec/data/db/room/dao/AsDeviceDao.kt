@@ -26,4 +26,17 @@ interface AsDeviceDao {
 
     @Update
     suspend fun update(entity: AsDeviceEntity)
+
+    @Query("SELECT * FROM T_AsDevice WHERE areaBig = :subArea")
+    suspend fun getAsDeviceListWithSubArea(subArea: String): List<AsDeviceEntity>
+
+    @Query(
+        "SELECT * FROM T_AsDevice " +
+                "WHERE (:subArea != '' AND areaBig = :subArea AND (REPLACE(nwk, '-', '') LIKE '%' || REPLACE(:imei, '-', '') || '%')) " +
+                "OR (:subArea = '' AND REPLACE(nwk, '-', '') LIKE '%' || REPLACE(:imei, '-', '') || '%')"
+    )
+    suspend fun getAsDeviceListWithImeiAndSubArea(
+        subArea: String,
+        imei: String
+    ): List<AsDeviceEntity>
 }
