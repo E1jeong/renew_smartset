@@ -8,6 +8,8 @@ import com.hitec.data.usecase.main.GetInstallDbUrlUseCaseImpl
 import com.hitec.data.usecase.main.GetInstallDbUseCaseImpl
 import com.hitec.data.usecase.main.GetInstallDeviceUseCaseImpl
 import com.hitec.data.usecase.main.GetSubAreaUseCaseImpl
+import com.hitec.data.usecase.main.as_report.GetAsCodeUseCaseImpl
+import com.hitec.data.usecase.main.as_report.PostUploadAsEssentialUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadDeviceImageUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadableImageListUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.UpdateInstallDeviceUseCaseImpl
@@ -23,6 +25,8 @@ import com.hitec.domain.usecase.main.GetInstallDbUrlUseCase
 import com.hitec.domain.usecase.main.GetInstallDbUseCase
 import com.hitec.domain.usecase.main.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.main.GetSubAreaUseCase
+import com.hitec.domain.usecase.main.as_report.GetAsCodeUseCase
+import com.hitec.domain.usecase.main.as_report.PostUploadAsEssentialUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
@@ -89,4 +93,7 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindGetAsDeviceListFromImeiAndSubAreaUseCase(uc: GetAsDeviceListFromImeiAndSubAreaUseCaseImpl): GetAsDeviceListFromImeiAndSubAreaUseCase
+
+    @Binds
+    abstract fun bindGetAsCodeUseCase(uc: GetAsCodeUseCaseImpl): GetAsCodeUseCase
 }

@@ -13,4 +13,7 @@ interface AsCodeDao {
 
     @Query("DELETE FROM T_AsCode")
     suspend fun delete()
+
+    @Query("SELECT * FROM T_AsCode WHERE CD_GROUP_ID = :groupId AND CD_ID_SUB = 3")
+    suspend fun getAsCode(groupId: String): List<AsCodeEntity>
 }
