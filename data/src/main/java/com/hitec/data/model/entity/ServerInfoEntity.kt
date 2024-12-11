@@ -2,6 +2,7 @@ package com.hitec.data.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.hitec.domain.model.ServerInfo
 
 @Entity(tableName = "T_ServerInfo")
 data class ServerInfoEntity(
@@ -38,3 +39,19 @@ data class ServerInfoEntity(
         )
     }
 }
+
+fun ServerInfoEntity.toDomainModel(): ServerInfo = ServerInfo(
+    nbServiceCode = this.nbServiceCode ?: "",
+    dbVersion = this.dbVersion ?: 0,
+    meterManPwd = this.meterManPwd ?: "",
+    serverName = this.serverName ?: "",
+    serverSite = this.serverSite ?: "",
+    asSiteId = this.asSiteId ?: 0,
+    localGoverName = this.localGoverName ?: "",
+    serverIP = this.serverIP ?: "",
+    serverPort = this.serverPort ?: 0,
+    serverURL = this.serverURL ?: "",
+    serverConnectionCode = this.serverConnectionCode ?: 0,
+    nbServerIp = this.nbServerIp ?: "",
+    nbServerPort = this.nbServerPort ?: 0
+)

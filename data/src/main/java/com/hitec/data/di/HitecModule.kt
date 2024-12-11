@@ -7,8 +7,10 @@ import com.hitec.data.usecase.main.GetAsDeviceUseCaseImpl
 import com.hitec.data.usecase.main.GetInstallDbUrlUseCaseImpl
 import com.hitec.data.usecase.main.GetInstallDbUseCaseImpl
 import com.hitec.data.usecase.main.GetInstallDeviceUseCaseImpl
+import com.hitec.data.usecase.main.GetServerInfoUseCaseImpl
 import com.hitec.data.usecase.main.GetSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.as_report.GetAsCodeUseCaseImpl
+import com.hitec.data.usecase.main.as_report.PostUploadAsDeviceUseCaseImpl
 import com.hitec.data.usecase.main.as_report.PostUploadAsEssentialUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadDeviceImageUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadableImageListUseCaseImpl
@@ -24,8 +26,10 @@ import com.hitec.domain.usecase.main.GetAsDeviceUseCase
 import com.hitec.domain.usecase.main.GetInstallDbUrlUseCase
 import com.hitec.domain.usecase.main.GetInstallDbUseCase
 import com.hitec.domain.usecase.main.GetInstallDeviceUseCase
+import com.hitec.domain.usecase.main.GetServerInfoUseCase
 import com.hitec.domain.usecase.main.GetSubAreaUseCase
 import com.hitec.domain.usecase.main.as_report.GetAsCodeUseCase
+import com.hitec.domain.usecase.main.as_report.PostUploadAsDeviceUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsEssentialUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
@@ -70,6 +74,12 @@ abstract class HitecModule {
     @Binds
     abstract fun bindPostDownloadDeviceImageUseCase(uc: PostDownloadDeviceImageUseCaseImpl): PostDownloadDeviceImageUseCase
 
+    @Binds
+    abstract fun bindPostUploadAsEssentialUseCase(uc: PostUploadAsEssentialUseCaseImpl): PostUploadAsEssentialUseCase
+
+    @Binds
+    abstract fun bindPostUploadAsDeviceUseCase(uc: PostUploadAsDeviceUseCaseImpl): PostUploadAsDeviceUseCase
+
     //======================================
     //Room module
     //======================================
@@ -96,4 +106,7 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindGetAsCodeUseCase(uc: GetAsCodeUseCaseImpl): GetAsCodeUseCase
+
+    @Binds
+    abstract fun bindGetServerInfoUseCase(uc: GetServerInfoUseCaseImpl): GetServerInfoUseCase
 }

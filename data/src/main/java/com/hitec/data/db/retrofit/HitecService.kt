@@ -6,6 +6,8 @@ import com.hitec.data.model.DownloadImageListResponse
 import com.hitec.data.model.DownloadInstallDbResponse
 import com.hitec.data.model.LocalSiteListResponse
 import com.hitec.data.model.SubAreaListResponse
+import com.hitec.data.model.UploadAsDeviceResponse
+import com.hitec.data.model.UploadAsEssentialResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Field
@@ -39,6 +41,8 @@ interface HitecService {
         const val DELETE_INSTALL_DB = "deleteInstallDB"
         const val DOWNLOAD_IMAGE_LIST = "DownloadImageList"
         const val DOWNLOAD_IMAGE_DATA = "DownloadImageData"
+        const val UPLOAD_AS_ESSENTIAL = "UploadAsEssential"
+        const val UPLOAD_AS_DEVICE = "UploadAsState"
     }
 
     @GET(SMART_SERVER_COMMON)
@@ -118,4 +122,28 @@ interface HitecService {
         @Query(LOCAL_SITE) localSite: String,
         @Field(DATA) data: String,
     ): DownloadImageDataResponse
+
+    @FormUrlEncoded
+    @POST(SMART_SERVER_COMMON)
+    suspend fun postUploadAsEssential(
+        @Query(METHOD) method: String = UPLOAD_AS_ESSENTIAL,
+        @Query(USER_ID) userId: String,
+        @Query(PASSWORD) password: String,
+        @Query(MOBILE_ID) mobileId: String,
+        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
+        @Query(LOCAL_SITE) localSite: String,
+        @Field(DATA) data: String,
+    ): UploadAsEssentialResponse
+
+    @FormUrlEncoded
+    @POST(SMART_SERVER_COMMON)
+    suspend fun postUploadAsDevice(
+        @Query(METHOD) method: String = UPLOAD_AS_DEVICE,
+        @Query(USER_ID) userId: String,
+        @Query(PASSWORD) password: String,
+        @Query(MOBILE_ID) mobileId: String,
+        @Query(BLUETOOTH_ID, encoded = true) bluetoothId: String,
+        @Query(LOCAL_SITE) localSite: String,
+        @Field(DATA) data: String,
+    ): UploadAsDeviceResponse
 }

@@ -6,8 +6,12 @@ import androidx.lifecycle.ViewModel
 import com.hitec.domain.model.AsCode
 import com.hitec.domain.model.AsDevice
 import com.hitec.domain.model.LoginScreenInfo
+import com.hitec.domain.model.ServerInfo
+import com.hitec.domain.model.UploadAsDevice
 import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
+import com.hitec.domain.usecase.main.GetServerInfoUseCase
 import com.hitec.domain.usecase.main.as_report.GetAsCodeUseCase
+import com.hitec.domain.usecase.main.as_report.PostUploadAsDeviceUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsEssentialUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -19,6 +23,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalDate
 import javax.inject.Inject
 
 @OptIn(OrbitExperimental::class)
@@ -27,6 +32,8 @@ class AsReportViewModel @Inject constructor(
     private val getAsCodeUseCase: GetAsCodeUseCase,
     private val loginScreenInfoUseCase: LoginScreenInfoUseCase,
     private val postUploadAsEssentialUseCase: PostUploadAsEssentialUseCase,
+    private val postUploadAsDeviceUseCase: PostUploadAsDeviceUseCase,
+    private val getServerInfoUseCase: GetServerInfoUseCase,
 ) : ViewModel(), ContainerHost<AsReportState, AsReportSideEffect> {
 
     companion object {
@@ -49,6 +56,7 @@ class AsReportViewModel @Inject constructor(
         getLoginScreenInfo()
         getAsCodeContent()
         getAsCodeContentDetail()
+        getServerInfo()
     }
 
     fun asReportViewModelInit(asDevice: AsDevice) = intent {
@@ -69,9 +77,14 @@ class AsReportViewModel @Inject constructor(
 
     private fun getLoginScreenInfo() = blockingIntent {
         val loginScreenInfo = loginScreenInfoUseCase.getLoginScreenInfo().getOrThrow()
-        Log.e(TAG, "getLoginScreenInfo: $loginScreenInfo")
-
         reduce { state.copy(loginScreenInfo = loginScreenInfo) }
+        Log.e(TAG, "getLoginScreenInfo: $loginScreenInfo")
+    }
+
+    private fun getServerInfo() = intent {
+        val serverInfo = getServerInfoUseCase().getOrThrow()
+        reduce { state.copy(serverInfo = serverInfo) }
+        Log.e(TAG, "getServerInfo: $serverInfo")
     }
 
     fun onAsRequestCommentChange(comment: String) = blockingIntent {
@@ -90,8 +103,12 @@ class AsReportViewModel @Inject constructor(
         reduce { state.copy(handlingContentDetail = contentDetail) }
     }
 
-    fun uploadAsEssential() = intent {
-        val uploadAsEssential = postUploadAsEssentialUseCase(
+    fun onUploadResultDialogDismiss() = intent {
+        reduce { state.copy(isUploadResultDialogVisible = false) }
+    }
+
+    private suspend fun uploadAsEssential(state: AsReportState): Int {
+        val uploadAsEssentialResponse = postUploadAsEssentialUseCase(
             userId = state.loginScreenInfo.id,
             password = state.loginScreenInfo.password,
             mobileId = state.loginScreenInfo.id,
@@ -100,13 +117,85 @@ class AsReportViewModel @Inject constructor(
             cdmaNo = state.asDevice.cdmaNo ?: "",
             nwk = state.asDevice.nwk ?: "",
             firmware = state.asDevice.firmware ?: "",
-            serverName = "개발",
-            serverSite = state.loginScreenInfo.localSiteEngWrittenByUser,
+            serverName = state.serverInfo.serverName,
+            serverSite = state.serverInfo.serverSite,
             fieldActionMain = state.asCodeContent.find { it.asCodeName == state.handlingContent }?.asCodeId.toString(),
             fieldActionSub = state.asCodeContentDetail.find { it.asCodeName == state.handlingContentDetail }?.asCodeId.toString(),
             consumeHouseNo = state.asDevice.consumeHouseNo ?: "",
             deviceSn = state.asDevice.deviceSn ?: "",
         ).getOrThrow()
+
+        return uploadAsEssentialResponse.msgCode
+    }
+
+    private suspend fun uploadAsDevice(state: AsReportState): UploadAsDevice {
+        return postUploadAsDeviceUseCase(
+            //url
+            userId = state.loginScreenInfo.id,
+            password = state.loginScreenInfo.password,
+            mobileId = state.loginScreenInfo.id,
+            bluetoothId = state.loginScreenInfo.androidDeviceId,
+            localSite = state.loginScreenInfo.localSite,
+
+            //param
+            modTypeCd = "U",
+            reportNo = state.asDevice.reportNo ?: "",
+            siteId = state.asDevice.siteId ?: "",
+            receiptDt = LocalDate.now().toString(),
+            receiptUserId = state.loginScreenInfo.id,
+            uploadResultCd = state.asDevice.uploadResultCd ?: "",
+            uploadErrorCd = state.asDevice.uploadErrorCd ?: "",
+            receiptType = "1",
+            receiptMemo = state.asRequestComment,
+            consumeHouseNo = state.asDevice.consumeHouseNo ?: "",
+            firstSetDt = state.asDevice.firstSetDt ?: "",
+            meterMethodCd = state.asDevice.meterMethodCd ?: "",
+            deviceSn = state.asDevice.deviceSn ?: "",
+            pan = state.asDevice.pan ?: "",
+            nwk = state.asDevice.nwk ?: "",
+            terminalTypeCd = state.asDevice.terminalTypeCd ?: "",
+            meterTypeCd = state.asDevice.meterTypeCd ?: "",
+            deviceTypeCd = state.asDevice.deviceTypeCd ?: "",
+            communicationTypeCd = state.asDevice.communicationTypeCd ?: "",
+            telecomTypeCd = state.asDevice.telecomTypeCd ?: "",
+            productYear = state.asDevice.productYear ?: "",
+            deviceModelCd = state.asDevice.deviceModelCd ?: "", //device model
+            caliberCd = state.asDevice.caliberCd ?: "",
+            fieldActionMain = state.asCodeContent.find { it.asCodeName == state.handlingContent }?.asCodeId.toString(),
+            fieldActionSub = state.asCodeContentDetail.find { it.asCodeName == state.handlingContentDetail }?.asCodeId.toString(),
+            fieldActionMemo = "${state.handlingContent}/${state.handlingContentDetail}/${state.asHandlingMemo}",
+            analysisType = "",
+            analysisTypeDetail = "",
+            statusSet = "1",
+            perNext = state.asDevice.perNext ?: "",
+            installCompanyNm = "하이텍",
+            firmware = state.asDevice.firmware ?: "",
+        ).getOrThrow()
+    }
+
+    fun uploadAsReport() = intent {
+        if (uploadAsEssential(state) == -1) {
+            return@intent
+        }
+        Log.e(TAG, "uploadAsReport -> uploadAsEssential")
+
+        val uploadAsDeviceResponse = uploadAsDevice(state)
+        Log.e(TAG, "test: $uploadAsDeviceResponse")
+
+        reduce {
+            state.copy(
+                isUploadResultDialogVisible = true,
+                uploadResult = "upload success",
+                asDevice = state.asDevice.copy(
+                    modTypeCd = "U",
+                    reportNo = uploadAsDeviceResponse.serverReportNo,
+                    uploadResultCd = uploadAsDeviceResponse.resultCd,
+                    uploadErrorCd = uploadAsDeviceResponse.errorCd,
+                    perNext = uploadAsDeviceResponse.perNext,
+                    statusSet = uploadAsDeviceResponse.statusSet
+                )
+            )
+        }
     }
 }
 
@@ -126,7 +215,24 @@ data class AsReportState(
         androidDeviceId = "",
         isSwitchOn = false,
         localSiteEngWrittenByUser = ""
-    )
+    ),
+    val serverInfo: ServerInfo = ServerInfo(
+        nbServiceCode = "",
+        dbVersion = 0,
+        meterManPwd = "",
+        serverName = "",
+        serverSite = "",
+        asSiteId = 0,
+        localGoverName = "",
+        serverIP = "",
+        serverPort = 0,
+        serverURL = "",
+        serverConnectionCode = 0,
+        nbServerIp = "",
+        nbServerPort = 0
+    ),
+    val isUploadResultDialogVisible: Boolean = false,
+    val uploadResult: String = "",
 )
 
 sealed interface AsReportSideEffect {

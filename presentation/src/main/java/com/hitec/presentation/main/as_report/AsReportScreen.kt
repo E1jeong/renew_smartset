@@ -96,7 +96,13 @@ fun AsReportScreen(
             onSelectedHandlingContentChange = false
         },
         onSelectedHandlingContentChange = onSelectedHandlingContentChange,
-        onUploadButtonClick = viewModel::uploadAsEssential
+        onUploadButtonClick = viewModel::uploadAsReport
+    )
+
+    UploadResultDialog(
+        visible = state.isUploadResultDialogVisible,
+        result = state.uploadResult,
+        onDismissRequest = viewModel::onUploadResultDialogDismiss
     )
 }
 
@@ -148,7 +154,7 @@ private fun AsReportScreen(
                     contentValue = if (state.asDevice.modTypeCd.toString() == "I") "request" else "complete"
                 )
                 TextRow(contentTitle = "Current date", contentValue = state.asDevice.receiptDt.toString())
-                TextRow(contentTitle = "Handled by", contentValue = "이원정(하드코딩)")
+                TextRow(contentTitle = "Handled by", contentValue = state.loginScreenInfo.id)
                 TextRow(contentTitle = "Serial number", contentValue = state.asDevice.deviceSn.toString())
                 TextRow(contentTitle = "First installation date", contentValue = state.asDevice.firstSetDt.toString())
                 TextRow(contentTitle = "IMEI", contentValue = state.asDevice.nwk.toString())
