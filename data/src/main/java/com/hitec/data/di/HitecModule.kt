@@ -12,6 +12,7 @@ import com.hitec.data.usecase.main.GetSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.as_report.GetAsCodeUseCaseImpl
 import com.hitec.data.usecase.main.as_report.PostUploadAsDeviceUseCaseImpl
 import com.hitec.data.usecase.main.as_report.PostUploadAsEssentialUseCaseImpl
+import com.hitec.data.usecase.main.as_report.UpdateAsDeviceUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadDeviceImageUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadableImageListUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.UpdateInstallDeviceUseCaseImpl
@@ -31,6 +32,7 @@ import com.hitec.domain.usecase.main.GetSubAreaUseCase
 import com.hitec.domain.usecase.main.as_report.GetAsCodeUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsDeviceUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsEssentialUseCase
+import com.hitec.domain.usecase.main.as_report.UpdateAsDeviceUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
@@ -109,4 +111,7 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindGetServerInfoUseCase(uc: GetServerInfoUseCaseImpl): GetServerInfoUseCase
+
+    @Binds
+    abstract fun bindUpdateAsDeviceUseCase(uc: UpdateAsDeviceUseCaseImpl): UpdateAsDeviceUseCase
 }

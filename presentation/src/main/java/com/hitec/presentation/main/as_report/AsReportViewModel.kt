@@ -13,6 +13,7 @@ import com.hitec.domain.usecase.main.GetServerInfoUseCase
 import com.hitec.domain.usecase.main.as_report.GetAsCodeUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsDeviceUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsEssentialUseCase
+import com.hitec.domain.usecase.main.as_report.UpdateAsDeviceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
@@ -34,6 +35,7 @@ class AsReportViewModel @Inject constructor(
     private val postUploadAsEssentialUseCase: PostUploadAsEssentialUseCase,
     private val postUploadAsDeviceUseCase: PostUploadAsDeviceUseCase,
     private val getServerInfoUseCase: GetServerInfoUseCase,
+    private val updateAsDeviceUseCase: UpdateAsDeviceUseCase,
 ) : ViewModel(), ContainerHost<AsReportState, AsReportSideEffect> {
 
     companion object {
@@ -196,6 +198,8 @@ class AsReportViewModel @Inject constructor(
                 )
             )
         }
+
+        updateAsDeviceUseCase(state.asDevice).getOrThrow()
     }
 }
 
