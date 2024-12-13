@@ -21,6 +21,7 @@ import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 class SqliteToRoomImporter @Inject constructor(
@@ -421,5 +422,7 @@ private fun Cursor.getIntOrNull(columnName: String): Int? {
     return getColumnIndex(columnName).takeIf { it >= 0 }?.let { getInt(it) }
 }
 
-private fun makeRandomReportNo(nCount: Int) =
-    "A${LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMddHHmmss"))}-$nCount"
+private fun makeRandomReportNo(nCount: Int): String {
+    val paddedCount = String.format(Locale.getDefault(), "%04d", nCount)
+    return "A${LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMddHHmmss"))}-$paddedCount"
+}
