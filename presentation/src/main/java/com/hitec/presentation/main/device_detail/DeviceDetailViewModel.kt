@@ -6,11 +6,17 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hitec.domain.model.InstallDevice
+import com.hitec.domain.model.ServerInfo
+import com.hitec.domain.model.UploadInstallDevice
 import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
+import com.hitec.domain.usecase.main.GetServerInfoUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
+import com.hitec.domain.usecase.main.device_detail.PostUploadInstallDeviceUseCase
+import com.hitec.domain.usecase.main.device_detail.PostUploadInstallEssentialUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
 import com.hitec.presentation.R
+import com.hitec.presentation.main.as_report.AsReportViewModel
 import com.hitec.presentation.nfc_lib.NfcManager
 import com.hitec.presentation.nfc_lib.NfcRequest
 import com.hitec.presentation.nfc_lib.NfcResponse
@@ -46,6 +52,9 @@ class DeviceDetailViewModel @Inject constructor(
     private val postDownloadableImageListUseCase: PostDownloadableImageListUseCase,
     private val postDownloadDeviceImageUseCase: PostDownloadDeviceImageUseCase,
     private val updateInstallDeviceUseCase: UpdateInstallDeviceUseCase,
+    private val postUploadInstallEssentialUseCase: PostUploadInstallEssentialUseCase,
+    private val postUploadInstallDeviceUseCase: PostUploadInstallDeviceUseCase,
+    private val getServerInfoUseCase: GetServerInfoUseCase,
 ) : ViewModel(), ContainerHost<DeviceDetailState, DeviceDetailSideEffect> {
 
     override val container: Container<DeviceDetailState, DeviceDetailSideEffect> = container(
@@ -63,6 +72,13 @@ class DeviceDetailViewModel @Inject constructor(
     init {
         collectResultFlow()
         collectWriteConfigFlow()
+        getServerInfo()
+    }
+
+    private fun getServerInfo() = intent {
+        val serverInfo = getServerInfoUseCase().getOrThrow()
+        reduce { state.copy(serverInfo = serverInfo) }
+        Log.e(AsReportViewModel.TAG, "getServerInfo: $serverInfo")
     }
 
     private fun collectResultFlow() {
@@ -373,6 +389,174 @@ class DeviceDetailViewModel @Inject constructor(
         reduce { state.copy(endDate = date) }
     }
 
+    private suspend fun postUploadInstallEssential(state: DeviceDetailState): Int {
+        val response = postUploadInstallEssentialUseCase(
+            userId = state.id,
+            password = state.password,
+            mobileId = state.id,
+            bluetoothId = state.androidDeviceId,
+            localSite = state.localSite,
+
+            cdmaNo = state.installDevice.cdmaNo ?: "",
+            nwk = state.installDevice.nwk ?: "",
+            firmware = state.installDevice.firmware ?: "",
+            serverName = state.serverInfo.serverName,
+            serverSite = state.serverInfo.serverSite,
+            consumeHouseNo = state.installDevice.consumeHouseNo ?: "",
+            deviceSn = state.installDevice.meterDeviceSn ?: "",
+        ).getOrThrow()
+
+        return response.msgCode
+    }
+
+    private suspend fun postUploadInstallDevice(state: DeviceDetailState): UploadInstallDevice {
+        return postUploadInstallDeviceUseCase(
+            userId = state.id,
+            password = state.password,
+            mobileId = state.id,
+            bluetoothId = state.androidDeviceId,
+            localSite = state.localSite,
+
+            modTypeCd = state.installDevice.modTypeCd ?: "",
+            meterDeviceId = state.installDevice.meterDeviceId,
+            deviceTypeCd = state.installDevice.deviceTypeCd ?: "",
+            communicationTypeCd = state.installDevice.communicationTypeCd ?: "",
+            telecomTypeCd = state.installDevice.telecomTypeCd ?: "",
+            consumeHouseNo = state.installDevice.consumeHouseNo ?: "",
+            consumeHouseNm = state.installDevice.consumeHouseNm ?: "",
+            meterMethodCd = state.installDevice.meterMethodCd ?: "",
+            deviceModelCd = state.installDevice.deviceModelCd ?: "",
+            meterDeviceNm = state.installDevice.meterDeviceNm ?: "",
+            meterDeviceSn = state.installDevice.meterDeviceSn ?: "",
+            installGroupCd = state.installDevice.installGroupCd ?: "",
+            companyCd = state.installDevice.companyCd ?: "",
+            installCompanyNm = "", //TODO ?
+            nbServiceCode = state.installDevice.nbServiceCode ?: "",
+            nbCseId = state.installDevice.nbCseId ?: "",
+            nbIccId = state.installDevice.nbIccId ?: "",
+            uploadResultCd = state.installDevice.uploadResultCd ?: "",
+            uploadErrorCd = state.installDevice.uploadErrorCd ?: "",
+            barcode = state.installDevice.barcode ?: "",
+            cameraSave = state.installDevice.cameraSave ?: "",
+            setDt = state.installDevice.setDt ?: "",
+            AreaBig = state.installDevice.AreaBig ?: "",
+            AreaBigCd = state.installDevice.AreaBigCd ?: "",
+            AreaMid = state.installDevice.AreaMid ?: "",
+            AreaMidCd = state.installDevice.AreaMidCd ?: "",
+            AreaSmall = state.installDevice.AreaSmall ?: "",
+            AreaSmallCd = state.installDevice.AreaSmallCd ?: "",
+            setAreaAddr = state.installDevice.setAreaAddr ?: "",
+            setPlaceDesc = state.installDevice.setPlaceDesc ?: "",
+            accountCheckNote = state.installDevice.accountCheckNote ?: "",
+            deviceMemo = state.installDevice.deviceMemo ?: "",
+            cdmaNo = state.installDevice.cdmaNo ?: "",
+            serverAddr1 = state.installDevice.serverAddr1 ?: "",
+            serverPort1 = state.installDevice.serverPort1 ?: "",
+            pan = state.installDevice.pan ?: "",
+            panNm = state.installDevice.panNm ?: "",
+            pnwk = state.installDevice.pnwk ?: "",
+            nwk = state.installDevice.nwk ?: "",
+            mac = state.installDevice.mac ?: "",
+            gpsLatitude = state.installDevice.gpsLatitude ?: "",
+            gpsLongitude = state.installDevice.gpsLongitude ?: "",
+            meterBaseTime = state.installDevice.meterBaseTime ?: "",
+            meterIntervalTime = state.installDevice.meterIntervalTime ?: "",
+            reportIntervalTime = state.installDevice.reportIntervalTime ?: "",
+            reportRangeTime = state.installDevice.reportRangeTime ?: "",
+            dataSkipFlag = state.installDevice.dataSkipFlag ?: "",
+            meterStoreMonth = state.installDevice.meterStoreMonth ?: "",
+            meterBaseDay = state.installDevice.meterBaseDay ?: "",
+            meterAlertTime = state.installDevice.meterAlertTime ?: "",
+            meterPeriodTime = state.installDevice.meterPeriodTime ?: "",
+            activeStartDay = state.installDevice.activeStartDay ?: "",
+            activeEndDay = state.installDevice.activeEndDay ?: "",
+            activeStartHour = state.installDevice.activeStartHour ?: "",
+            activeEndHour = state.installDevice.activeEndHour ?: "",
+            terminalType = state.installDevice.terminalType ?: "",
+            firmware = state.installDevice.firmware ?: "",
+            subUpdateInterval = state.installDevice.subUpdateInterval ?: "",
+            subNwkID = state.installDevice.subNwkID ?: "",
+            terminalTypeCd = state.installDevice.terminalTypeCd ?: "",
+            utilityCode = state.installDevice.utilityCode ?: "",
+            waterCompCode = state.installDevice.waterCompCode ?: "",
+            wmuManufacturerCode = state.installDevice.wmuManufacturerCode ?: "",
+            wmuInstallCode = state.installDevice.wmuInstallCode ?: "",
+            cdmaTypeCd = state.installDevice.cdmaTypeCd ?: "",
+            firmwareGateway = state.installDevice.firmwareGateway ?: "",
+            serverConnectionCode = state.installDevice.serverConnectionCode ?: "",
+            concenIP = state.installDevice.concenIP ?: "",
+            concenGwIP = state.installDevice.concenGwIP ?: "",
+            serverURL = state.installDevice.serverURL ?: "",
+            rfChn = state.installDevice.rfChn ?: "",
+            hcuId = state.installDevice.hcuId ?: "",
+            setInitDate = state.installDevice.setInitDate ?: "",
+            masterSn = state.installDevice.masterSn ?: "",
+            subSn1 = state.installDevice.subSn1 ?: "",
+            subSn2 = state.installDevice.subSn2 ?: "",
+            subSn3 = state.installDevice.subSn3 ?: "",
+            subSn4 = state.installDevice.subSn4 ?: "",
+            accountMeterUse1 = state.installDevice.accountMeterUse1 ?: "",
+            accountMeterUse2 = state.installDevice.accountMeterUse2 ?: "",
+            accountMeterUse3 = state.installDevice.accountMeterUse3 ?: "",
+            meterCount = state.installDevice.meterCount ?: "",
+            meterCd1 = state.installDevice.meterCd1 ?: "",
+            meterPort1 = state.installDevice.meterPort1 ?: "",
+            meterTypeCd1 = state.installDevice.meterTypeCd1 ?: "",
+            meterCompany1 = state.installDevice.meterCompany1 ?: "",
+            meterSn1 = state.installDevice.meterSn1 ?: "",
+            meterCurrVal1 = state.installDevice.meterCurrVal1 ?: "",
+            meterCaliber1 = state.installDevice.meterCaliber1 ?: "",
+            metercaliberCd1 = state.installDevice.metercaliberCd1 ?: "",
+            meterDigits1 = state.installDevice.meterDigits1 ?: "",
+            meterCd2 = state.installDevice.meterCd2 ?: "",
+            meterPort2 = state.installDevice.meterPort2 ?: "",
+            meterTypeCd2 = state.installDevice.meterTypeCd2 ?: "",
+            meterCompany2 = state.installDevice.meterCompany2 ?: "",
+            meterSn2 = state.installDevice.meterSn2 ?: "",
+            meterCurrVal2 = state.installDevice.meterCurrVal2 ?: "",
+            meterCaliber2 = state.installDevice.meterCaliber2 ?: "",
+            metercaliberCd2 = state.installDevice.metercaliberCd2 ?: "",
+            meterDigits2 = state.installDevice.meterDigits2 ?: "",
+            meterCd3 = state.installDevice.meterCd3 ?: "",
+            meterPort3 = state.installDevice.meterPort3 ?: "",
+            meterTypeCd3 = state.installDevice.meterTypeCd3 ?: "",
+            meterCompany3 = state.installDevice.meterCompany3 ?: "",
+            meterSn3 = state.installDevice.meterSn3 ?: "",
+            meterCurrVal3 = state.installDevice.meterCurrVal3 ?: "",
+            meterCaliber3 = state.installDevice.meterCaliber3 ?: "",
+            metercaliberCd3 = state.installDevice.metercaliberCd3 ?: "",
+            meterDigits3 = state.installDevice.meterDigits3 ?: "",
+        ).getOrThrow()
+    }
+
+    fun uploadInstallDevice() = intent {
+        if (postUploadInstallEssential(state) == -1) {
+            return@intent
+        }
+        Log.e(TAG, "uploadInstallDevice -> postUploadInstallEssential")
+
+        val response = postUploadInstallDevice(state)
+        Log.e(TAG, "uploadInstallDevice: $response")
+
+        reduce {
+            state.copy(
+                isUploadResultDialogVisible = true,
+                uploadResult = "upload install device success",
+                installDevice = state.installDevice.copy(
+                    modTypeCd = "U",
+                    uploadResultCd = response.resultCd,
+                    uploadErrorCd = response.errorCd,
+                )
+            )
+        }
+
+        updateInstallDeviceUseCase(state.installDevice).getOrThrow()
+    }
+
+    fun onUploadResultDialogDismiss() = intent {
+        reduce { state.copy(isUploadResultDialogVisible = false) }
+    }
+
     companion object {
         private const val TAG = "DeviceDetailViewModel"
 
@@ -401,6 +585,23 @@ data class DeviceDetailState(
     val userInputMinuteInChangeRiHourToMinute: String = "",
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = LocalDate.now(),
+    val serverInfo: ServerInfo = ServerInfo(
+        nbServiceCode = "",
+        dbVersion = 0,
+        meterManPwd = "",
+        serverName = "",
+        serverSite = "",
+        asSiteId = 0,
+        localGoverName = "",
+        serverIP = "",
+        serverPort = 0,
+        serverURL = "",
+        serverConnectionCode = 0,
+        nbServerIp = "",
+        nbServerPort = 0
+    ),
+    val isUploadResultDialogVisible: Boolean = false,
+    val uploadResult: String = "",
 )
 
 sealed interface DeviceDetailSideEffect {

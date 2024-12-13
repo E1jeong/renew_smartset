@@ -15,7 +15,10 @@ import com.hitec.presentation.component.icon.LeadingIcon
 import com.hitec.presentation.theme.Paddings
 
 @Composable
-fun DeviceDetailFooter(modifier: Modifier = Modifier) {
+fun DeviceDetailFooter(
+    onUploadButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -28,7 +31,7 @@ fun DeviceDetailFooter(modifier: Modifier = Modifier) {
                 .padding(Paddings.xsmall),
             text = stringResource(id = R.string.upload),
             leadingIcon = LeadingIcon(Icons.Filled.Upload),
-            onClick = {}
+            onClick = onUploadButtonClick
         )
     }
 }

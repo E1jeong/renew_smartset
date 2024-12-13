@@ -34,17 +34,18 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.gson.Gson
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
+import com.hitec.presentation.main.as_report.UploadResultDialog
 import com.hitec.presentation.main.device_detail.component.MeterInfo
 import com.hitec.presentation.main.device_detail.component.NfcExtendedFab
 import com.hitec.presentation.main.device_detail.component.NfcMenu
 import com.hitec.presentation.main.device_detail.component.TerminalInfo
 import com.hitec.presentation.main.device_detail.component.UserInfo
-import com.hitec.presentation.main.device_detail.dialog.NfcResultDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeRiHourToMinuteDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestChangeSerialDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestReadPeriodDataDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestUpdateFirmwareBslDialog
 import com.hitec.presentation.main.device_detail.dialog.nfc_request.NfcRequestWriteConfigDialog
+import com.hitec.presentation.main.device_detail.dialog.nfc_response.NfcResultDialog
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.theme.Paddings
 import com.hitec.presentation.theme.RenewSmartSetTheme
@@ -140,6 +141,7 @@ fun DeviceDetailScreen(
                     },
                     nfcRequestChangeRiHourToMinute = { nfcRequestChangeRiHourToMinuteDialogVisible = true },
                     nfcRequestReadPeriodData = { nfcRequestReadPeriodDataDialogVisible = true },
+                    onUploadButtonClick = viewModel::uploadInstallDevice
                 )
             }
 
@@ -210,6 +212,12 @@ fun DeviceDetailScreen(
             viewModel.clearNfcResult()
         }
     )
+
+    UploadResultDialog(
+        visible = state.isUploadResultDialogVisible,
+        result = state.uploadResult,
+        onDismissRequest = viewModel::onUploadResultDialogDismiss
+    )
 }
 
 @Composable
@@ -229,6 +237,7 @@ private fun DeviceDetailScreen(
     nfcRequestUpdateFirmwareFota: () -> Unit,
     nfcRequestChangeRiHourToMinute: () -> Unit,
     nfcRequestReadPeriodData: () -> Unit,
+    onUploadButtonClick: () -> Unit,
 ) {
     // control nfcMenu expanded
     var isNfcMenuExpanded by remember { mutableStateOf(false) }
@@ -261,6 +270,7 @@ private fun DeviceDetailScreen(
         }
 
         DeviceDetailFooter(
+            onUploadButtonClick = onUploadButtonClick,
             modifier = Modifier.constrainAs(footer) {
                 bottom.linkTo(parent.bottom)
                 start.linkTo(parent.start)
@@ -325,6 +335,7 @@ fun DeviceDetailScreenPreview() {
                 nfcRequestUpdateFirmwareFota = {},
                 nfcRequestChangeRiHourToMinute = {},
                 nfcRequestReadPeriodData = {},
+                onUploadButtonClick = {},
             )
         }
     }

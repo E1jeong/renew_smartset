@@ -15,6 +15,8 @@ import com.hitec.data.usecase.main.as_report.PostUploadAsEssentialUseCaseImpl
 import com.hitec.data.usecase.main.as_report.UpdateAsDeviceUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadDeviceImageUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadableImageListUseCaseImpl
+import com.hitec.data.usecase.main.device_detail.PostUploadInstallDeviceUseCaseImpl
+import com.hitec.data.usecase.main.device_detail.PostUploadInstallEssentialUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.UpdateInstallDeviceUseCaseImpl
 import com.hitec.data.usecase.main.search.GetAsDeviceListFromImeiAndSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.search.GetAsDeviceListFromSubAreaUseCaseImpl
@@ -35,6 +37,8 @@ import com.hitec.domain.usecase.main.as_report.PostUploadAsEssentialUseCase
 import com.hitec.domain.usecase.main.as_report.UpdateAsDeviceUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
+import com.hitec.domain.usecase.main.device_detail.PostUploadInstallDeviceUseCase
+import com.hitec.domain.usecase.main.device_detail.PostUploadInstallEssentialUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
 import com.hitec.domain.usecase.main.search.GetAsDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetAsDeviceListFromSubAreaUseCase
@@ -81,6 +85,12 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindPostUploadAsDeviceUseCase(uc: PostUploadAsDeviceUseCaseImpl): PostUploadAsDeviceUseCase
+
+    @Binds
+    abstract fun bindPostUploadInstallEssentialUseCase(uc: PostUploadInstallEssentialUseCaseImpl): PostUploadInstallEssentialUseCase
+
+    @Binds
+    abstract fun bindPostUploadInstallDeviceUseCase(uc: PostUploadInstallDeviceUseCaseImpl): PostUploadInstallDeviceUseCase
 
     //======================================
     //Room module
