@@ -1,4 +1,4 @@
-package com.hitec.presentation.main.device_detail.dialog
+package com.hitec.presentation.main.device_detail.dialog.nfc_response
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
