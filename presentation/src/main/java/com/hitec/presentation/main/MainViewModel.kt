@@ -18,6 +18,7 @@ import com.hitec.domain.usecase.main.GetSubAreaUseCase
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.navigation.AsReportNav
 import com.hitec.presentation.navigation.DeviceDetailNav
+import com.hitec.presentation.navigation.MapNav
 import com.hitec.presentation.navigation.NavigationUtils
 import com.hitec.presentation.navigation.RouteName
 import com.hitec.presentation.navigation.SearchNav
@@ -99,6 +100,10 @@ class MainViewModel @Inject constructor(
 
     fun openSearchScreen(navHostController: NavHostController) {
         NavigationUtils.navigate(navHostController, SearchNav.route)
+    }
+
+    fun openMapScreen(navHostController: NavHostController) {
+        NavigationUtils.navigate(navHostController, MapNav.route)
     }
 
     fun openDeviceDetailScreen(navHostController: NavHostController, installDevice: InstallDevice) {

@@ -13,6 +13,7 @@ import com.hitec.presentation.navigation.RouteName.AS_REPORT
 import com.hitec.presentation.navigation.RouteName.CAMERA
 import com.hitec.presentation.navigation.RouteName.DEVICE_DETAIL
 import com.hitec.presentation.navigation.RouteName.INSTALL_DEVICE
+import com.hitec.presentation.navigation.RouteName.MAP
 import com.hitec.presentation.navigation.RouteName.MY_PAGE
 import com.hitec.presentation.navigation.RouteName.SEARCH
 
@@ -52,6 +53,11 @@ object AsReportNav : Destination {
     override val title: String = "AsReport"
 }
 
+object MapNav : Destination {
+    override val route: String = MAP
+    override val title: String = "Map"
+}
+
 interface Destination {
     val route: String
     val title: String
@@ -65,6 +71,7 @@ object RouteName {
     const val SEARCH = "SearchScreen"
     const val DEVICE_DETAIL = "DeviceDetailScreen"
     const val AS_REPORT = "AsReportScreen"
+    const val MAP = "MapScreen"
 }
 
 object ArgumentName {

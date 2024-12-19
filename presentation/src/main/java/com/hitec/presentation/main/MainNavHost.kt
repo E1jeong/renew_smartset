@@ -22,12 +22,14 @@ import com.hitec.presentation.main.asdevice.AsDeviceScreen
 import com.hitec.presentation.main.camera.CameraScreen
 import com.hitec.presentation.main.device_detail.DeviceDetailScreen
 import com.hitec.presentation.main.installdevice.InstallDeviceScreen
+import com.hitec.presentation.main.map.MapScreen
 import com.hitec.presentation.main.mypage.MyPageScreen
 import com.hitec.presentation.main.search.SearchScreen
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.navigation.AsReportNav
 import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.MainNav
+import com.hitec.presentation.navigation.MapNav
 import com.hitec.presentation.navigation.SearchNav
 
 @RequiresApi(Build.VERSION_CODES.R)
@@ -88,6 +90,12 @@ fun MainNavHost(sharedViewModel: MainViewModel) {
                         route = AsReportNav.route,
                     ) {
                         AsReportScreen(navController = navController)
+                    }
+                    composable(route = MapNav.route) {
+                        MapScreen(
+                            navController = navController,
+                            viewModel = sharedViewModel
+                        )
                     }
                 }
             },
