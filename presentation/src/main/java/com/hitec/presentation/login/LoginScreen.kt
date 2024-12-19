@@ -1,7 +1,10 @@
 package com.hitec.presentation.login
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,12 +43,15 @@ import com.hitec.presentation.component.button.PrimaryButton
 import com.hitec.presentation.component.textfield.DefaultTextField
 import com.hitec.presentation.main.MainActivity
 import com.hitec.presentation.theme.RenewSmartSetTheme
+import com.hitec.presentation.util.PermissionState
+import com.hitec.presentation.util.permissionRequest
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
@@ -65,20 +71,36 @@ fun LoginScreen(
         }
     }
 
-    LoginScreen(
-        id = state.id,
-        password = state.password,
-        localSite = state.localSite,
-        isSwitchOn = state.isSwitchOn,
-        onIdChange = viewModel::onIdChange,
-        onPasswordChange = viewModel::onPasswordChange,
-        onLocalSiteChange = viewModel::onLocalSiteChange,
-        onSwitchChange = viewModel::onSwitchChange,
-        onLoginClick = viewModel::onLoginClick,
-        onDownloadLocalSiteClick = viewModel::onDownloadSiteButtonClick,
-        isLocalSiteWarningVisible = state.isLocalSiteWarningVisible,
-        onHeaderClick = { onHeaderClick() }
+    val normalPermissions = listOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.CAMERA
     )
+
+    val normalPermissionState = permissionRequest(
+        permissions = normalPermissions,
+        rationaleTitle = "위치 및 카메라 권한 필요",
+        rationaleText = "이 앱에서는 위치 정보와 카메라 접근이 필요합니다.\n계속 진행하려면 권한을 허용해주세요."
+    )
+
+    if (normalPermissionState == PermissionState.Granted) {
+        LoginScreen(
+            id = state.id,
+            password = state.password,
+            localSite = state.localSite,
+            isSwitchOn = state.isSwitchOn,
+            onIdChange = viewModel::onIdChange,
+            onPasswordChange = viewModel::onPasswordChange,
+            onLocalSiteChange = viewModel::onLocalSiteChange,
+            onSwitchChange = viewModel::onSwitchChange,
+            onLoginClick = viewModel::onLoginClick,
+            onDownloadLocalSiteClick = viewModel::onDownloadSiteButtonClick,
+            isLocalSiteWarningVisible = state.isLocalSiteWarningVisible,
+            onHeaderClick = { onHeaderClick() }
+        )
+    } else {
+        Text(text = "위치 및 카메라 권한을 허용해주세요.")
+    }
 
     AndroidDeviceIdDialog(
         visible = isAndroidDeviceIdDialogVisible,
