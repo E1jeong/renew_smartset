@@ -17,7 +17,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -155,10 +154,10 @@ private fun SearchBox(
             placeholder = { Text(text = stringResource(R.string.search_placeholder_imei)) },
             shape = RoundedCornerShape(size = 8.dp),
             keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Words,
+                autoCorrectEnabled = true,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Search,
-                autoCorrect = true,
-                capitalization = KeyboardCapitalization.Words
             ),
             keyboardActions = KeyboardActions(
                 onSearch = { searchAction() }
@@ -192,7 +191,6 @@ private fun SearchBox(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SubAreaChipGroup(
     subAreaList: List<String>,
@@ -217,6 +215,8 @@ private fun SubAreaChipGroup(
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
                         border = FilterChipDefaults.filterChipBorder(
+                            enabled = true,
+                            selected = true,
                             borderWidth = 1.dp,
                             selectedBorderWidth = 1.dp,
                             selectedBorderColor = MaterialTheme.colorScheme.onSecondaryContainer
