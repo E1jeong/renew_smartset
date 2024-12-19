@@ -23,6 +23,8 @@ orbit = "6.1.0"
 paging = "3.3.0"
 datastore = "1.1.1"
 camera = "1.2.0-beta02"
+googleMap = "6.4.0"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -88,6 +90,10 @@ camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "
 mlkit = { group = "com.google.mlkit", name = "barcode-scanning", version = "17.0.2" }
 
 apache-poi = { group = "org.apache.poi", name = "poi-ooxml", version = "5.2.3" }
+
+google-map-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "googleMap" }
+google-map-compose-utils = { group = "com.google.maps.android", name = "maps-compose-utils", version.ref = "googleMap" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
