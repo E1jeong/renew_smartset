@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.hitec.renewsmartset"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.hitec.renewsmartset"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -77,21 +77,7 @@ dependencies {
     implementation(libs.google.hilt)
     kapt(libs.google.hilt.compiler)
 
-//    implementation(libs.androidx.room.runtime)
-//    implementation(libs.androidx.room.ktx)
-//    kapt(libs.androidx.room.compiler)
-//    implementation(libs.google.gson)
-//
-//    implementation(libs.retrofit)
-//    implementation(libs.retrofit.converter.scalars)
-//    implementation(libs.retrofit.converter.serialization)
     implementation(libs.kotlinx.serialization.json)
-//    implementation(libs.okhttp)
-//
-//    implementation(libs.tikxml.core)
-//    implementation(libs.tikxml.annotation)
-//    implementation(libs.tikxml.retrofit.converter)
-//    kapt(libs.tikxml.processor)
 }
 
 kapt {
