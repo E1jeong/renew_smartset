@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +34,14 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import com.google.maps.android.compose.AdvancedMarker
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 import com.hitec.domain.model.InstallDevice
 import com.hitec.presentation.R
 import com.hitec.presentation.main.as_report.UploadResultDialog
@@ -262,6 +272,8 @@ private fun DeviceDetailScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             DeviceImagePager(imageList)
+            ConsumerHouseMap(installDevice = installDevice)
+            Spacer(modifier = Modifier.height(8.dp))
             UserInfo(installDevice = installDevice)
             Spacer(modifier = Modifier.height(8.dp))
             TerminalInfo(installDevice = installDevice)
@@ -311,6 +323,40 @@ private fun DeviceDetailScreen(
             onChangeRiHourToMinuteClick = nfcRequestChangeRiHourToMinute,
             onReadPeriodDataClick = nfcRequestReadPeriodData,
         )
+    }
+}
+
+@Composable
+private fun ConsumerHouseMap(installDevice: InstallDevice) {
+    val consumerHousePosition = LatLng(
+        installDevice.gpsLatitude?.toDouble() ?: 37.528529,
+        installDevice.gpsLongitude?.toDouble() ?: 127.168089
+    )
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(consumerHousePosition, 15f)
+    }
+
+    val markerState = rememberMarkerState(position = consumerHousePosition)
+
+    LaunchedEffect(consumerHousePosition) {
+        cameraPositionState.animate(
+            CameraUpdateFactory.newLatLngZoom(consumerHousePosition, 15f),
+            500 // 애니메이션 지속 시간(ms)
+        )
+        markerState.position = consumerHousePosition
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(horizontal = Paddings.medium)
+            .clip(RoundedCornerShape(8.dp))
+    ) {
+        GoogleMap(cameraPositionState = cameraPositionState) {
+            AdvancedMarker(state = markerState)
+        }
     }
 }
 
