@@ -93,6 +93,7 @@ apache-poi = { group = "org.apache.poi", name = "poi-ooxml", version = "5.2.3" }
 
 google-map-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "googleMap" }
 google-map-compose-utils = { group = "com.google.maps.android", name = "maps-compose-utils", version.ref = "googleMap" }
+android-maps-utils = { group = "com.google.maps.android", name = "android-maps-utils", version = "3.4.0" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]

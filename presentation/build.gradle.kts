@@ -96,6 +96,7 @@ dependencies {
 
     implementation(libs.google.map.compose)
     implementation(libs.google.map.compose.utils)
+    implementation(libs.android.maps.utils)
 }
 
 kapt {
