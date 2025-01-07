@@ -4,6 +4,7 @@ plugins {
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1"
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -32,12 +33,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
 }
 
@@ -76,8 +71,6 @@ dependencies {
     implementation(libs.google.gson)
     implementation(libs.coil)
     implementation(libs.coil.compose)
-
-    implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.orbit.core)
     implementation(libs.orbit.compose)

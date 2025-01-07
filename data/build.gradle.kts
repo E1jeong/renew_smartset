@@ -65,8 +65,6 @@ dependencies {
     implementation(libs.tikxml.retrofit.converter)
     kapt(libs.tikxml.processor)
 
-    implementation(libs.kotlinx.coroutines.core)
-
     implementation(libs.datastore)
 }
 
