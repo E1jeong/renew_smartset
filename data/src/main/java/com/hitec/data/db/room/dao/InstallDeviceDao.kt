@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.hitec.data.model.entity.InstallDeviceEntity
+import com.hitec.domain.model.InstallDevice
 
 @Dao
 interface InstallDeviceDao {
@@ -17,6 +18,9 @@ interface InstallDeviceDao {
 
     @Query("DELETE FROM T_InstallDevice")
     suspend fun delete()
+
+    @Query("SELECT * FROM T_InstallDevice WHERE nwk = :imei")
+    suspend fun getDeviceWithImei(imei: String): InstallDevice
 
     @Query("SELECT * FROM T_InstallDevice WHERE AreaBig = :subArea")
     suspend fun getDeviceListWithSubArea(subArea: String): List<InstallDeviceEntity>
