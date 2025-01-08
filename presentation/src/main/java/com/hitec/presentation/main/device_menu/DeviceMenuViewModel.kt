@@ -3,12 +3,17 @@ package com.hitec.presentation.main.device_menu
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
+import com.hitec.presentation.navigation.ArgumentName
+import com.hitec.presentation.navigation.DeviceDetailNav
+import com.hitec.presentation.navigation.NavigationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
@@ -30,6 +35,11 @@ class DeviceMenuViewModel @Inject constructor() : ViewModel(), ContainerHost<Dev
 
     }
 
+    fun getDeviceImei(deviceImei: String) = intent {
+        Log.d(TAG, "getDeviceImei: $deviceImei")
+        reduce { state.copy(receivedImei = deviceImei) }
+    }
+
     fun onClickInstallButton() = intent {
         postSideEffect(DeviceMenuSideEffect.Toast("onClickInstallButton"))
     }
@@ -49,7 +59,7 @@ class DeviceMenuViewModel @Inject constructor() : ViewModel(), ContainerHost<Dev
 
 @Immutable
 data class DeviceMenuState(
-    val id: String = "",
+    val receivedImei: String = "",
 )
 
 sealed interface DeviceMenuSideEffect {

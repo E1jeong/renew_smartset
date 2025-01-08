@@ -17,7 +17,7 @@ import com.hitec.domain.usecase.main.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.main.GetSubAreaUseCase
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.navigation.AsReportNav
-import com.hitec.presentation.navigation.DeviceDetailNav
+import com.hitec.presentation.navigation.DeviceMenuNav
 import com.hitec.presentation.navigation.MapNav
 import com.hitec.presentation.navigation.NavigationUtils
 import com.hitec.presentation.navigation.RouteName
@@ -106,17 +106,11 @@ class MainViewModel @Inject constructor(
         NavigationUtils.navigate(navHostController, MapNav.route)
     }
 
-    fun openDeviceDetailScreen(navHostController: NavHostController, installDevice: InstallDevice) {
-        val gson = Gson()
-        val installDeviceJson = gson.toJson(installDevice)
-        val encodedJson = Uri.encode(installDeviceJson)
-        val route =
-            DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", encodedJson)
-
+    fun openDeviceMenuScreen(navHostController: NavHostController, installDevice: InstallDevice) {
+        val route = DeviceMenuNav.route.replace("{${ArgumentName.ARGU_DEVICE_IMEI}}", installDevice.nwk ?: "")
         NavigationUtils.navigate(
             controller = navHostController,
             routeName = route,
-            backStackRouteName = RouteName.INSTALL_DEVICE
         )
     }
 

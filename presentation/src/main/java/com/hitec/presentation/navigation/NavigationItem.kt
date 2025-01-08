@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.filled.SettingsCell
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.hitec.presentation.navigation.ArgumentName.ARGU_AS_DEVICE
+import com.hitec.presentation.navigation.ArgumentName.ARGU_DEVICE_IMEI
 import com.hitec.presentation.navigation.ArgumentName.ARGU_INSTALL_DEVICE
 import com.hitec.presentation.navigation.RouteName.AS_DEVICE
 import com.hitec.presentation.navigation.RouteName.AS_REPORT
@@ -60,7 +61,7 @@ object MapNav : Destination {
 }
 
 object DeviceMenuNav : Destination {
-    override val route: String = DEVICE_MENU
+    override val route: String = "$DEVICE_MENU/{$ARGU_DEVICE_IMEI}"
     override val title: String = "DeviceMenu"
 }
 
@@ -84,4 +85,5 @@ object RouteName {
 object ArgumentName {
     const val ARGU_INSTALL_DEVICE = "installDevice"
     const val ARGU_AS_DEVICE = "asDevice"
+    const val ARGU_DEVICE_IMEI = "deviceImei"
 }

@@ -12,6 +12,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,6 +32,7 @@ fun DeviceMenuScreen(
     viewModel: DeviceMenuViewModel = hiltViewModel()
 ) {
     InitScreen(navController = navController, viewModel = viewModel)
+    val state by viewModel.container.stateFlow.collectAsState()
 
     DeviceMenuScreen(
         onClickInstallButton = viewModel::onClickInstallButton,
@@ -45,13 +48,14 @@ private fun InitScreen(
 ) {
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val asDeviceJson = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_AS_DEVICE)
-//    LaunchedEffect(asDeviceJson) {
-//        if (asDeviceJson != null) {
-//            val asDevice = Gson().fromJson(asDeviceJson, AsDevice::class.java)
-//            viewModel.asReportViewModelInit(asDevice)
-//        }
-//    }
+    val deviceImei = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_DEVICE_IMEI)
+
+
+    LaunchedEffect(deviceImei) {
+        deviceImei?.let {
+            viewModel.getDeviceImei(deviceImei)
+        }
+    }
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -75,15 +79,6 @@ private fun DeviceMenuScreen(
     val buttons = listOf(
         "Install" to onClickInstallButton,
         "As" to onClickAsButton,
-        "Device detail" to onClickDeviceDetailButton,
-        "Device detail" to onClickDeviceDetailButton,
-        "Device detail" to onClickDeviceDetailButton,
-        "Device detail" to onClickDeviceDetailButton,
-        "Device detail" to onClickDeviceDetailButton,
-        "Device detail" to onClickDeviceDetailButton,
-        "Device detail" to onClickDeviceDetailButton,
-        "Device detail" to onClickDeviceDetailButton,
-        "Device detail" to onClickDeviceDetailButton,
         "Device detail" to onClickDeviceDetailButton,
     )
 

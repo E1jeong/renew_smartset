@@ -46,7 +46,7 @@ fun InstallDeviceScreen(
             InstallDeviceScreen(
                 installDeviceList = state.installDeviceList,
                 onItemClick = { installDevice ->
-                    viewModel.openDeviceDetailScreen(navController, installDevice)
+                    viewModel.openDeviceMenuScreen(navController, installDevice)
                 }
             )
         }
