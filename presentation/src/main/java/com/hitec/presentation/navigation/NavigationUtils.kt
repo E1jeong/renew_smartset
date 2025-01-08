@@ -32,6 +32,7 @@ object NavigationUtils {
             route.contains(RouteName.DEVICE_DETAIL) -> DeviceDetailNav
             route.contains(RouteName.AS_REPORT) -> AsReportNav
             route.contains(RouteName.MAP) -> MapNav
+            route.contains(RouteName.DEVICE_MENU) -> DeviceMenuNav
             else -> MainNav.InstallDevice
         }
     }

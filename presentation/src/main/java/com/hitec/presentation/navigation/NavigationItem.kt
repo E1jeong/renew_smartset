@@ -12,6 +12,7 @@ import com.hitec.presentation.navigation.RouteName.AS_DEVICE
 import com.hitec.presentation.navigation.RouteName.AS_REPORT
 import com.hitec.presentation.navigation.RouteName.CAMERA
 import com.hitec.presentation.navigation.RouteName.DEVICE_DETAIL
+import com.hitec.presentation.navigation.RouteName.DEVICE_MENU
 import com.hitec.presentation.navigation.RouteName.INSTALL_DEVICE
 import com.hitec.presentation.navigation.RouteName.MAP
 import com.hitec.presentation.navigation.RouteName.MY_PAGE
@@ -58,6 +59,11 @@ object MapNav : Destination {
     override val title: String = "Map"
 }
 
+object DeviceMenuNav : Destination {
+    override val route: String = DEVICE_MENU
+    override val title: String = "DeviceMenu"
+}
+
 interface Destination {
     val route: String
     val title: String
@@ -72,6 +78,7 @@ object RouteName {
     const val DEVICE_DETAIL = "DeviceDetailScreen"
     const val AS_REPORT = "AsReportScreen"
     const val MAP = "MapScreen"
+    const val DEVICE_MENU = "DeviceMenuScreen"
 }
 
 object ArgumentName {
