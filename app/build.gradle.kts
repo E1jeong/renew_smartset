@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("kapt")
     id("dagger.hilt.android.plugin")
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -69,11 +69,7 @@ dependencies {
     implementation(project(":presentation"))
 
     implementation(libs.google.hilt)
-    kapt(libs.google.hilt.compiler)
+    ksp(libs.google.hilt.compiler)
 
     implementation(libs.kotlinx.serialization.json)
-}
-
-kapt {
-    correctErrorTypes = true
 }

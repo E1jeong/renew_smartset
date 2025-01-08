@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("kapt")
     id("dagger.hilt.android.plugin")
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -46,11 +46,11 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(libs.google.hilt)
-    kapt(libs.google.hilt.compiler)
+    ksp(libs.google.hilt.compiler)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.google.gson)
 
     implementation(libs.retrofit)
@@ -63,11 +63,7 @@ dependencies {
     implementation(libs.tikxml.core)
     implementation(libs.tikxml.annotation)
     implementation(libs.tikxml.retrofit.converter)
-    kapt(libs.tikxml.processor)
+    ksp(libs.tikxml.processor)
 
     implementation(libs.datastore)
-}
-
-kapt {
-    correctErrorTypes = true
 }

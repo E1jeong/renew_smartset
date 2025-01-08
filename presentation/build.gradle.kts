@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1"
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -65,7 +65,7 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(libs.google.hilt)
-    kapt(libs.google.hilt.compiler)
+    ksp(libs.google.hilt.compiler)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.compose.hilt)
     implementation(libs.google.gson)
@@ -90,10 +90,6 @@ dependencies {
     implementation(libs.google.map.compose)
     implementation(libs.google.map.compose.utils)
     implementation(libs.android.maps.utils)
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 secrets {
