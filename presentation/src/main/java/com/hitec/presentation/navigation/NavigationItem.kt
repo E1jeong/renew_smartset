@@ -3,8 +3,8 @@ package com.hitec.presentation.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Recycling
+import androidx.compose.material.icons.filled.Construction
+import androidx.compose.material.icons.filled.SettingsCell
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.hitec.presentation.navigation.ArgumentName.ARGU_AS_DEVICE
 import com.hitec.presentation.navigation.ArgumentName.ARGU_INSTALL_DEVICE
@@ -24,8 +24,8 @@ sealed class MainNav(
 ) : Destination {
 
     data object Camera : MainNav(CAMERA, "Camera", Icons.Filled.CameraAlt)
-    data object InstallDevice : MainNav(INSTALL_DEVICE, "Install Device", Icons.Filled.List)
-    data object AsDevice : MainNav(AS_DEVICE, "AS Device", Icons.Filled.Recycling)
+    data object InstallDevice : MainNav(INSTALL_DEVICE, "Install Device", Icons.Filled.SettingsCell)
+    data object AsDevice : MainNav(AS_DEVICE, "AS Device", Icons.Filled.Construction)
     data object MyPage : MainNav(MY_PAGE, "My page", Icons.Filled.AccountCircle)
 
     companion object {
