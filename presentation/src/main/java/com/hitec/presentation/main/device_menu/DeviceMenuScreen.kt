@@ -37,7 +37,7 @@ fun DeviceMenuScreen(
     DeviceMenuScreen(
         onClickInstallButton = viewModel::onClickInstallButton,
         onClickAsButton = viewModel::onClickAsButton,
-        onClickDeviceDetailButton = viewModel::onClickDeviceDetailButton
+        onClickDeviceDetailButton = { viewModel.openDeviceDetailScreen(navController, state.receivedImei) }
     )
 }
 

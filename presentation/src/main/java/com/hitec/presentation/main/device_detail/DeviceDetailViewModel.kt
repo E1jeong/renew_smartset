@@ -15,6 +15,7 @@ import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseC
 import com.hitec.domain.usecase.main.device_detail.PostUploadInstallDeviceUseCase
 import com.hitec.domain.usecase.main.device_detail.PostUploadInstallEssentialUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
+import com.hitec.domain.usecase.main.search.GetInstallDeviceFromImeiUseCase
 import com.hitec.presentation.R
 import com.hitec.presentation.main.as_report.AsReportViewModel
 import com.hitec.presentation.nfc_lib.NfcManager
@@ -55,6 +56,7 @@ class DeviceDetailViewModel @Inject constructor(
     private val postUploadInstallEssentialUseCase: PostUploadInstallEssentialUseCase,
     private val postUploadInstallDeviceUseCase: PostUploadInstallDeviceUseCase,
     private val getServerInfoUseCase: GetServerInfoUseCase,
+    private val getInstallDeviceFromImeiUseCase: GetInstallDeviceFromImeiUseCase,
 ) : ViewModel(), ContainerHost<DeviceDetailState, DeviceDetailSideEffect> {
 
     override val container: Container<DeviceDetailState, DeviceDetailSideEffect> = container(
@@ -119,8 +121,10 @@ class DeviceDetailViewModel @Inject constructor(
     }
 
     //From DeviceDetailScreen navController, init InstallDevice
-    fun initialize(installDevice: InstallDevice) = intent {
-        reduce { state.copy(installDevice = installDevice) }
+    fun initialize(deviceImei: String) = intent {
+        getInstallDeviceFromImeiUseCase(deviceImei).getOrNull()?.let {
+            reduce { state.copy(installDevice = it) }
+        }
 
         getLoginScreenInfo()
         getDownloadableImageList()
@@ -133,7 +137,7 @@ class DeviceDetailViewModel @Inject constructor(
             }
         }
 
-        selectedDevice = installDevice
+        selectedDevice = state.installDevice
     }
 
     private fun setImageSaveDir(context: Context) = intent {

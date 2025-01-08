@@ -48,8 +48,13 @@ class DeviceMenuViewModel @Inject constructor() : ViewModel(), ContainerHost<Dev
         postSideEffect(DeviceMenuSideEffect.Toast("onClickAsButton"))
     }
 
-    fun onClickDeviceDetailButton() = intent {
-        postSideEffect(DeviceMenuSideEffect.Toast("onClickDeviceDetailButton"))
+    fun openDeviceDetailScreen(navHostController: NavHostController, deviceImei: String) {
+        val route = DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", deviceImei)
+
+        NavigationUtils.navigate(
+            controller = navHostController,
+            routeName = route,
+        )
     }
 
     companion object {

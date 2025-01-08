@@ -37,7 +37,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.gson.Gson
 import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -69,8 +68,9 @@ fun DeviceDetailScreen(
     navController: NavHostController,
     viewModel: DeviceDetailViewModel = hiltViewModel(),
 ) {
+    InitScreen(navController = navController, viewModel = viewModel)
+
     val state by viewModel.container.stateFlow.collectAsState()
-    val context = LocalContext.current
 
     var nfcResultDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeSerialDialogVisible by remember { mutableStateOf(false) }
@@ -78,28 +78,6 @@ fun DeviceDetailScreen(
     var nfcRequestUpdateFirmwareDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestChangeRiHourToMinuteDialogVisible by remember { mutableStateOf(false) }
     var nfcRequestReadPeriodDataDialogVisible by remember { mutableStateOf(false) }
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val installDeviceJson = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_INSTALL_DEVICE)
-
-    LaunchedEffect(installDeviceJson) {
-        if (installDeviceJson != null) {
-            val installDevice = Gson().fromJson(installDeviceJson, InstallDevice::class.java)
-            viewModel.initialize(installDevice)
-        }
-    }
-
-    viewModel.collectSideEffect { sideEffect ->
-        when (sideEffect) {
-            is DeviceDetailSideEffect.Toast -> {
-                Toast.makeText(
-                    context,
-                    sideEffect.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
 
     val requiredPermissions = listOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
     val permissionState = permissionRequest(
@@ -228,6 +206,34 @@ fun DeviceDetailScreen(
         result = state.uploadResult,
         onDismissRequest = viewModel::onUploadResultDialogDismiss
     )
+}
+
+@Composable
+private fun InitScreen(
+    navController: NavHostController,
+    viewModel: DeviceDetailViewModel,
+) {
+    val context = LocalContext.current
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val deviceImei = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_INSTALL_DEVICE)
+
+    LaunchedEffect(deviceImei) {
+        if (deviceImei != null) {
+            viewModel.initialize(deviceImei)
+        }
+    }
+
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is DeviceDetailSideEffect.Toast -> {
+                Toast.makeText(
+                    context,
+                    sideEffect.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
 }
 
 @Composable
