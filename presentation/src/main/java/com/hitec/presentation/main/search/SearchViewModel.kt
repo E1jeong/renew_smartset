@@ -58,16 +58,12 @@ class SearchViewModel @Inject constructor(
     }
 
     fun openDeviceDetailScreen(navHostController: NavHostController, installDevice: InstallDevice) {
-        val gson = Gson()
-        val installDeviceJson = gson.toJson(installDevice)
-        val encodedJson = Uri.encode(installDeviceJson)
         val route =
-            DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", encodedJson)
+            DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", installDevice.nwk ?: "")
 
         NavigationUtils.navigate(
             controller = navHostController,
             routeName = route,
-            backStackRouteName = RouteName.SEARCH
         )
     }
 
