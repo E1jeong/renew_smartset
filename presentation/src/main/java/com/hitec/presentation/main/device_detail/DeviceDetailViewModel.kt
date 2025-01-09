@@ -10,12 +10,12 @@ import com.hitec.domain.model.ServerInfo
 import com.hitec.domain.model.UploadInstallDevice
 import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
 import com.hitec.domain.usecase.main.GetServerInfoUseCase
+import com.hitec.domain.usecase.main.device_detail.GetInstallDeviceFromImeiUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.domain.usecase.main.device_detail.PostUploadInstallDeviceUseCase
 import com.hitec.domain.usecase.main.device_detail.PostUploadInstallEssentialUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
-import com.hitec.domain.usecase.main.search.GetInstallDeviceFromImeiUseCase
 import com.hitec.presentation.R
 import com.hitec.presentation.main.as_report.AsReportViewModel
 import com.hitec.presentation.nfc_lib.NfcManager
