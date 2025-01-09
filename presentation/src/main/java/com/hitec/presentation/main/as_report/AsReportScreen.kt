@@ -112,11 +112,10 @@ private fun InitScreen(
     viewModel: AsReportViewModel
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val asDeviceJson = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_AS_DEVICE)
-    LaunchedEffect(asDeviceJson) {
-        if (asDeviceJson != null) {
-            val asDevice = Gson().fromJson(asDeviceJson, AsDevice::class.java)
-            viewModel.asReportViewModelInit(asDevice)
+    val asDeviceImei = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_AS_DEVICE)
+    LaunchedEffect(asDeviceImei) {
+        if (asDeviceImei != null) {
+            viewModel.asReportViewModelInit(asDeviceImei)
         }
     }
 }

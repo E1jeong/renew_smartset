@@ -1,11 +1,9 @@
 package com.hitec.presentation.main
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
 import com.hitec.domain.model.AsDevice
 import com.hitec.domain.model.InstallDevice
 import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
@@ -115,11 +113,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun openAsReportScreen(navHostController: NavHostController, asDevice: AsDevice) {
-        val gson = Gson()
-        val asDeviceJson = gson.toJson(asDevice)
-        val encodedJson = Uri.encode(asDeviceJson)
+//        val gson = Gson()
+//        val asDeviceJson = gson.toJson(asDevice)
+//        val encodedJson = Uri.encode(asDeviceJson)
         val route =
-            AsReportNav.route.replace("{${ArgumentName.ARGU_AS_DEVICE}}", encodedJson)
+            AsReportNav.route.replace("{${ArgumentName.ARGU_AS_DEVICE}}", asDevice.nwk ?: "")
 
         NavigationUtils.navigate(
             controller = navHostController,

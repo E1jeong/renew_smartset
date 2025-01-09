@@ -11,6 +11,7 @@ import com.hitec.domain.model.UploadAsDevice
 import com.hitec.domain.usecase.login.LoginScreenInfoUseCase
 import com.hitec.domain.usecase.main.GetServerInfoUseCase
 import com.hitec.domain.usecase.main.as_report.GetAsCodeUseCase
+import com.hitec.domain.usecase.main.as_report.GetAsDeviceFromImeiUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsDeviceUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsEssentialUseCase
 import com.hitec.domain.usecase.main.as_report.UpdateAsDeviceUseCase
@@ -36,6 +37,7 @@ class AsReportViewModel @Inject constructor(
     private val postUploadAsDeviceUseCase: PostUploadAsDeviceUseCase,
     private val getServerInfoUseCase: GetServerInfoUseCase,
     private val updateAsDeviceUseCase: UpdateAsDeviceUseCase,
+    private val getAsDeviceFromImeiUseCase: GetAsDeviceFromImeiUseCase,
 ) : ViewModel(), ContainerHost<AsReportState, AsReportSideEffect> {
 
     companion object {
@@ -61,8 +63,10 @@ class AsReportViewModel @Inject constructor(
         getServerInfo()
     }
 
-    fun asReportViewModelInit(asDevice: AsDevice) = intent {
-        reduce { state.copy(asDevice = asDevice) }
+    fun asReportViewModelInit(asDeviceImei: String) = intent {
+        getAsDeviceFromImeiUseCase(asDeviceImei).getOrThrow().let {
+            reduce { state.copy(asDevice = it) }
+        }
     }
 
     private fun getAsCodeContent() = intent {
