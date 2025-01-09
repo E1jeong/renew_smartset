@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.hitec.data.model.entity.AsDeviceEntity
+import com.hitec.domain.model.AsDevice
 
 @Dao
 interface AsDeviceDao {
@@ -26,6 +27,9 @@ interface AsDeviceDao {
 
     @Update
     suspend fun update(entity: AsDeviceEntity)
+
+    @Query("SELECT * FROM T_AsDevice WHERE nwk = :imei")
+    suspend fun getDeviceWithImei(imei: String): AsDevice
 
     @Query("SELECT * FROM T_AsDevice WHERE areaBig = :subArea")
     suspend fun getAsDeviceListWithSubArea(subArea: String): List<AsDeviceEntity>

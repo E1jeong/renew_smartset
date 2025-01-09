@@ -10,9 +10,11 @@ import com.hitec.data.usecase.main.GetInstallDeviceUseCaseImpl
 import com.hitec.data.usecase.main.GetServerInfoUseCaseImpl
 import com.hitec.data.usecase.main.GetSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.as_report.GetAsCodeUseCaseImpl
+import com.hitec.data.usecase.main.as_report.GetAsDeviceFromImeiUseCaseImpl
 import com.hitec.data.usecase.main.as_report.PostUploadAsDeviceUseCaseImpl
 import com.hitec.data.usecase.main.as_report.PostUploadAsEssentialUseCaseImpl
 import com.hitec.data.usecase.main.as_report.UpdateAsDeviceUseCaseImpl
+import com.hitec.data.usecase.main.device_detail.GetInstallDeviceFromImeiUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadDeviceImageUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostDownloadableImageListUseCaseImpl
 import com.hitec.data.usecase.main.device_detail.PostUploadInstallDeviceUseCaseImpl
@@ -20,7 +22,6 @@ import com.hitec.data.usecase.main.device_detail.PostUploadInstallEssentialUseCa
 import com.hitec.data.usecase.main.device_detail.UpdateInstallDeviceUseCaseImpl
 import com.hitec.data.usecase.main.search.GetAsDeviceListFromImeiAndSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.search.GetAsDeviceListFromSubAreaUseCaseImpl
-import com.hitec.data.usecase.main.device_detail.GetInstallDeviceFromImeiUseCaseImpl
 import com.hitec.data.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCaseImpl
 import com.hitec.data.usecase.main.search.GetInstallDeviceListFromSubAreaUseCaseImpl
 import com.hitec.domain.usecase.login.FindLocalSiteNameUseCase
@@ -33,9 +34,11 @@ import com.hitec.domain.usecase.main.GetInstallDeviceUseCase
 import com.hitec.domain.usecase.main.GetServerInfoUseCase
 import com.hitec.domain.usecase.main.GetSubAreaUseCase
 import com.hitec.domain.usecase.main.as_report.GetAsCodeUseCase
+import com.hitec.domain.usecase.main.as_report.GetAsDeviceFromImeiUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsDeviceUseCase
 import com.hitec.domain.usecase.main.as_report.PostUploadAsEssentialUseCase
 import com.hitec.domain.usecase.main.as_report.UpdateAsDeviceUseCase
+import com.hitec.domain.usecase.main.device_detail.GetInstallDeviceFromImeiUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadDeviceImageUseCase
 import com.hitec.domain.usecase.main.device_detail.PostDownloadableImageListUseCase
 import com.hitec.domain.usecase.main.device_detail.PostUploadInstallDeviceUseCase
@@ -43,7 +46,6 @@ import com.hitec.domain.usecase.main.device_detail.PostUploadInstallEssentialUse
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
 import com.hitec.domain.usecase.main.search.GetAsDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetAsDeviceListFromSubAreaUseCase
-import com.hitec.domain.usecase.main.search.GetInstallDeviceFromImeiUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromImeiAndSubAreaUseCase
 import com.hitec.domain.usecase.main.search.GetInstallDeviceListFromSubAreaUseCase
 import dagger.Binds
@@ -129,4 +131,7 @@ abstract class HitecModule {
 
     @Binds
     abstract fun bindGetInstallDeviceFromImeiUseCase(uc: GetInstallDeviceFromImeiUseCaseImpl): GetInstallDeviceFromImeiUseCase
+
+    @Binds
+    abstract fun bindGetAsDeviceFromImeiUseCase(uc: GetAsDeviceFromImeiUseCaseImpl): GetAsDeviceFromImeiUseCase
 }
