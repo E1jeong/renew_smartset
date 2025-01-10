@@ -23,6 +23,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hitec.presentation.navigation.ArgumentName
+import com.hitec.presentation.navigation.AsReportNav
+import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.theme.RenewSmartSetTheme
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -35,9 +37,11 @@ fun DeviceMenuScreen(
     val state by viewModel.container.stateFlow.collectAsState()
 
     DeviceMenuScreen(
+        isExistAsDevice = state.isExistAsDevice,
         onClickInstallButton = viewModel::onClickInstallButton,
         onClickAsButton = viewModel::onClickAsButton,
-        onClickDeviceDetailButton = { viewModel.openDeviceDetailScreen(navController, state.receivedImei) }
+        onClickDeviceDetailButton = viewModel::navigateToDeviceDetail,
+        onClickAsReportButton = viewModel::navigateToAsReport,
     )
 }
 
@@ -50,21 +54,28 @@ private fun InitScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val deviceImei = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_DEVICE_IMEI)
 
-
     LaunchedEffect(deviceImei) {
         deviceImei?.let {
             viewModel.getDeviceImei(deviceImei)
+            viewModel.getAsDeviceFromImei(deviceImei)
         }
     }
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is DeviceMenuSideEffect.Toast -> {
-                Toast.makeText(
-                    context,
-                    sideEffect.message,
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+            }
+
+            is DeviceMenuSideEffect.NavigateToDeviceDetail -> {
+                val route =
+                    DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", sideEffect.deviceImei)
+                navController.navigate(route)
+            }
+
+            is DeviceMenuSideEffect.NavigateToAsReport -> {
+                val route = AsReportNav.route.replace("{${ArgumentName.ARGU_AS_DEVICE}}", sideEffect.deviceImei)
+                navController.navigate(route)
             }
         }
     }
@@ -72,14 +83,17 @@ private fun InitScreen(
 
 @Composable
 private fun DeviceMenuScreen(
+    isExistAsDevice: Boolean,
     onClickInstallButton: () -> Unit,
     onClickAsButton: () -> Unit,
-    onClickDeviceDetailButton: () -> Unit
+    onClickDeviceDetailButton: () -> Unit,
+    onClickAsReportButton: () -> Unit,
 ) {
     val buttons = listOf(
         "Install" to onClickInstallButton,
         "As" to onClickAsButton,
         "Device detail" to onClickDeviceDetailButton,
+        "As report" to onClickAsReportButton,
     )
 
     LazyVerticalGrid(
@@ -94,6 +108,7 @@ private fun DeviceMenuScreen(
             val (buttonName, action) = buttons[index]
             Button(
                 onClick = action,
+                enabled = buttonName != "As report" || isExistAsDevice,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
@@ -110,9 +125,11 @@ fun DeviceDetailScreenPreview() {
     RenewSmartSetTheme {
         Surface {
             DeviceMenuScreen(
+                isExistAsDevice = true,
                 onClickInstallButton = {},
                 onClickAsButton = {},
-                onClickDeviceDetailButton = {}
+                onClickDeviceDetailButton = {},
+                onClickAsReportButton = {},
             )
         }
     }
