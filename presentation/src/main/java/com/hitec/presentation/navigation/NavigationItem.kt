@@ -22,13 +22,14 @@ import com.hitec.presentation.navigation.RouteName.SEARCH
 sealed class MainNav(
     override val route: String,
     override val title: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val label: String?,
 ) : Destination {
 
-    data object Camera : MainNav(CAMERA, "Camera", Icons.Filled.CameraAlt)
-    data object InstallDevice : MainNav(INSTALL_DEVICE, "Install Device", Icons.Filled.SettingsCell)
-    data object AsDevice : MainNav(AS_DEVICE, "AS Device", Icons.Filled.Construction)
-    data object MyPage : MainNav(MY_PAGE, "My page", Icons.Filled.AccountCircle)
+    data object Camera : MainNav(CAMERA, "Camera", Icons.Filled.CameraAlt, "Camera")
+    data object InstallDevice : MainNav(INSTALL_DEVICE, "Install Device", Icons.Filled.SettingsCell, "Device")
+    data object AsDevice : MainNav(AS_DEVICE, "AS Device", Icons.Filled.Construction, "AS")
+    data object MyPage : MainNav(MY_PAGE, "My page", Icons.Filled.AccountCircle, "My Page")
 
     companion object {
         fun isMainRoute(route: String?): Boolean {
