@@ -17,7 +17,6 @@ import com.hitec.domain.usecase.main.device_detail.PostUploadInstallDeviceUseCas
 import com.hitec.domain.usecase.main.device_detail.PostUploadInstallEssentialUseCase
 import com.hitec.domain.usecase.main.device_detail.UpdateInstallDeviceUseCase
 import com.hitec.presentation.R
-import com.hitec.presentation.main.as_report.AsReportViewModel
 import com.hitec.presentation.nfc_lib.NfcManager
 import com.hitec.presentation.nfc_lib.NfcRequest
 import com.hitec.presentation.nfc_lib.NfcResponse
@@ -80,7 +79,7 @@ class DeviceDetailViewModel @Inject constructor(
     private fun getServerInfo() = intent {
         val serverInfo = getServerInfoUseCase().getOrThrow()
         reduce { state.copy(serverInfo = serverInfo) }
-        Log.e(AsReportViewModel.TAG, "getServerInfo: $serverInfo")
+        Log.e(TAG, "getServerInfo: $serverInfo")
     }
 
     private fun collectResultFlow() {
