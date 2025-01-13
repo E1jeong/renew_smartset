@@ -1,6 +1,5 @@
-package com.hitec.presentation.main.device_detail
+package com.hitec.presentation.main.photo_upload
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,7 +28,6 @@ import coil.compose.AsyncImage
 import com.hitec.presentation.R
 import com.hitec.presentation.theme.Paddings
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DeviceImagePager(imageList: List<Pair<Int, Any?>>) {
     val pagerState = rememberPagerState(pageCount = { imageList.size })

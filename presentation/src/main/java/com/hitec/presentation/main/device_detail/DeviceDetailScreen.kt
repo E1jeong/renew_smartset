@@ -91,7 +91,6 @@ fun DeviceDetailScreen(
             PermissionState.Granted -> {
                 DeviceDetailScreen(
                     installDevice = state.installDevice,
-                    imageList = state.deviceImageList.sortedBy { it.first },
                     nfcRequestChangeSerial = { nfcRequestChangeSerialDialogVisible = true },
                     nfcRequestReadConfig = {
                         nfcResultDialogVisible = true
@@ -239,7 +238,6 @@ private fun InitScreen(
 @Composable
 private fun DeviceDetailScreen(
     installDevice: InstallDevice,
-    imageList: List<Pair<Int, Any?>>,
     nfcRequestChangeSerial: () -> Unit,
     nfcRequestReadConfig: () -> Unit,
     nfcRequestWriteConfig: () -> Unit,
@@ -260,7 +258,7 @@ private fun DeviceDetailScreen(
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (
-            deviceImagePager,
+            page,
             footer,
             fab,
             nfcMenu,
@@ -268,7 +266,7 @@ private fun DeviceDetailScreen(
 
         Column(
             modifier = Modifier
-                .constrainAs(deviceImagePager) {
+                .constrainAs(page) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -277,7 +275,6 @@ private fun DeviceDetailScreen(
                 }
                 .verticalScroll(rememberScrollState())
         ) {
-            DeviceImagePager(imageList)
             ConsumerHouseMap(installDevice = installDevice)
             Spacer(modifier = Modifier.height(8.dp))
             UserInfo(installDevice = installDevice)
@@ -357,7 +354,7 @@ private fun ConsumerHouseMap(installDevice: InstallDevice) {
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
-            .padding(horizontal = Paddings.medium)
+            .padding(Paddings.medium, Paddings.medium, Paddings.medium, 0.dp)
             .clip(RoundedCornerShape(8.dp))
     ) {
         GoogleMap(cameraPositionState = cameraPositionState) {
@@ -373,7 +370,6 @@ fun DeviceDetailScreenPreview() {
         Surface {
             DeviceDetailScreen(
                 installDevice = InstallDevice(meterDeviceId = "HT-T-012345"),
-                imageList = emptyList(),
                 nfcRequestChangeSerial = {},
                 nfcRequestReadConfig = {},
                 nfcRequestWriteConfig = {},

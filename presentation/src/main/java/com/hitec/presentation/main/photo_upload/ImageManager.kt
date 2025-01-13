@@ -1,4 +1,4 @@
-package com.hitec.presentation.main.device_detail
+package com.hitec.presentation.main.photo_upload
 
 import android.content.ContentValues
 import android.content.Context

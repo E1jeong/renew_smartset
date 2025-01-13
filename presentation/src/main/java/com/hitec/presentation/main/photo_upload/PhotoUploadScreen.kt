@@ -1,8 +1,9 @@
 package com.hitec.presentation.main.photo_upload
 
 import android.widget.Toast
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,8 +20,9 @@ fun PhotoUploadScreen(
     viewModel: PhotoUploadViewModel = hiltViewModel()
 ) {
     InitScreen(navController = navController, viewModel = viewModel)
+    val state by viewModel.container.stateFlow.collectAsState()
 
-    PhotoUploadScreen()
+    PhotoUploadScreen(imageList = state.deviceImageList.sortedBy { it.first })
 }
 
 @Composable
@@ -32,10 +34,11 @@ private fun InitScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val deviceImei = navBackStackEntry?.arguments?.getString(ArgumentName.ARGU_DEVICE_IMEI)
 
-//    LaunchedEffect(deviceImei) {
-//        deviceImei?.let {
-//        }
-//    }
+    LaunchedEffect(deviceImei) {
+        deviceImei?.let {
+            viewModel.initialize(deviceImei)
+        }
+    }
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -47,14 +50,16 @@ private fun InitScreen(
 }
 
 @Composable
-private fun PhotoUploadScreen() {
-    Text("Photo Upload Screen")
+private fun PhotoUploadScreen(
+    imageList: List<Pair<Int, Any?>>,
+) {
+    DeviceImagePager(imageList)
 }
 
 @Preview
 @Composable
 fun PhotoUploadScreenPreview() {
     RenewSmartSetTheme {
-        PhotoUploadScreen()
+        PhotoUploadScreen(imageList = emptyList())
     }
 }
