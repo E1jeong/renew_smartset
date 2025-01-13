@@ -17,6 +17,7 @@ import com.hitec.presentation.navigation.RouteName.DEVICE_MENU
 import com.hitec.presentation.navigation.RouteName.INSTALL_DEVICE
 import com.hitec.presentation.navigation.RouteName.MAP
 import com.hitec.presentation.navigation.RouteName.MY_PAGE
+import com.hitec.presentation.navigation.RouteName.PHOTO_UPLOAD
 import com.hitec.presentation.navigation.RouteName.SEARCH
 
 sealed class MainNav(
@@ -66,6 +67,11 @@ object DeviceMenuNav : Destination {
     override val title: String = "DeviceMenu"
 }
 
+object PhotoUploadNav : Destination {
+    override val route: String = "$PHOTO_UPLOAD/{$ARGU_DEVICE_IMEI}"
+    override val title: String = "PhotoUpload"
+}
+
 interface Destination {
     val route: String
     val title: String
@@ -81,6 +87,7 @@ object RouteName {
     const val AS_REPORT = "AsReportScreen"
     const val MAP = "MapScreen"
     const val DEVICE_MENU = "DeviceMenuScreen"
+    const val PHOTO_UPLOAD = "PhotoUploadScreen"
 }
 
 object ArgumentName {

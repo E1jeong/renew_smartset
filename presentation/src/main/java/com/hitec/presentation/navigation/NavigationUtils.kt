@@ -33,6 +33,7 @@ object NavigationUtils {
             route.contains(RouteName.AS_REPORT) -> AsReportNav
             route.contains(RouteName.MAP) -> MapNav
             route.contains(RouteName.DEVICE_MENU) -> DeviceMenuNav
+            route.contains(RouteName.PHOTO_UPLOAD) -> PhotoUploadNav
             else -> MainNav.InstallDevice
         }
     }

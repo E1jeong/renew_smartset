@@ -25,6 +25,7 @@ import com.hitec.presentation.main.device_menu.DeviceMenuScreen
 import com.hitec.presentation.main.installdevice.InstallDeviceScreen
 import com.hitec.presentation.main.map.MapScreen
 import com.hitec.presentation.main.mypage.MyPageScreen
+import com.hitec.presentation.main.photo_upload.PhotoUploadScreen
 import com.hitec.presentation.main.search.SearchScreen
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.navigation.AsReportNav
@@ -32,6 +33,7 @@ import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.DeviceMenuNav
 import com.hitec.presentation.navigation.MainNav
 import com.hitec.presentation.navigation.MapNav
+import com.hitec.presentation.navigation.PhotoUploadNav
 import com.hitec.presentation.navigation.SearchNav
 
 @RequiresApi(Build.VERSION_CODES.R)
@@ -101,6 +103,9 @@ fun MainNavHost(sharedViewModel: MainViewModel) {
                     }
                     composable(route = DeviceMenuNav.route) {
                         DeviceMenuScreen(navController = navController)
+                    }
+                    composable(route = PhotoUploadNav.route) {
+                        PhotoUploadScreen(navController = navController)
                     }
                 }
             },

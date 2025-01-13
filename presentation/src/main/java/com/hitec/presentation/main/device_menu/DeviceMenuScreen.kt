@@ -26,6 +26,7 @@ import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.navigation.AsReportNav
 import com.hitec.presentation.navigation.DeviceDetailNav
 import com.hitec.presentation.navigation.NavigationUtils
+import com.hitec.presentation.navigation.PhotoUploadNav
 import com.hitec.presentation.theme.RenewSmartSetTheme
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -43,6 +44,7 @@ fun DeviceMenuScreen(
         onClickAsButton = viewModel::onClickAsButton,
         onClickDeviceDetailButton = viewModel::navigateToDeviceDetail,
         onClickAsReportButton = viewModel::navigateToAsReport,
+        onClickPhotoUploadButton = viewModel::navigateToPhotoUpload,
     )
 }
 
@@ -78,6 +80,11 @@ private fun InitScreen(
                 val route = AsReportNav.route.replace("{${ArgumentName.ARGU_AS_DEVICE}}", sideEffect.deviceImei)
                 NavigationUtils.navigate(navController, route)
             }
+
+            is DeviceMenuSideEffect.NavigateToPhotoUpload -> {
+                val route = PhotoUploadNav.route.replace("{${ArgumentName.ARGU_DEVICE_IMEI}}", sideEffect.deviceImei)
+                NavigationUtils.navigate(navController, route)
+            }
         }
     }
 }
@@ -89,12 +96,14 @@ private fun DeviceMenuScreen(
     onClickAsButton: () -> Unit,
     onClickDeviceDetailButton: () -> Unit,
     onClickAsReportButton: () -> Unit,
+    onClickPhotoUploadButton: () -> Unit,
 ) {
     val buttons = listOf(
         "Install" to onClickInstallButton,
         "As" to onClickAsButton,
         "Device detail" to onClickDeviceDetailButton,
         "As report" to onClickAsReportButton,
+        "Photo upload" to onClickPhotoUploadButton,
     )
 
     LazyVerticalGrid(
@@ -131,6 +140,7 @@ fun DeviceDetailScreenPreview() {
                 onClickAsButton = {},
                 onClickDeviceDetailButton = {},
                 onClickAsReportButton = {},
+                onClickPhotoUploadButton = {},
             )
         }
     }

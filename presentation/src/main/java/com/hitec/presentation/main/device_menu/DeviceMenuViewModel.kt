@@ -59,6 +59,10 @@ class DeviceMenuViewModel @Inject constructor(
         postSideEffect(DeviceMenuSideEffect.NavigateToAsReport(state.receivedImei))
     }
 
+    fun navigateToPhotoUpload() = intent {
+        postSideEffect(DeviceMenuSideEffect.NavigateToPhotoUpload(state.receivedImei))
+    }
+
     companion object {
         const val TAG = "DeviceMenuViewModel"
     }
@@ -74,4 +78,5 @@ sealed interface DeviceMenuSideEffect {
     data class Toast(val message: String) : DeviceMenuSideEffect
     data class NavigateToDeviceDetail(val deviceImei: String) : DeviceMenuSideEffect
     data class NavigateToAsReport(val deviceImei: String) : DeviceMenuSideEffect
+    data class NavigateToPhotoUpload(val deviceImei: String) : DeviceMenuSideEffect
 }
