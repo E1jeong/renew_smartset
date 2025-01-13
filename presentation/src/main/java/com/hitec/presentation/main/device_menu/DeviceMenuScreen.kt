@@ -25,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hitec.presentation.navigation.ArgumentName
 import com.hitec.presentation.navigation.AsReportNav
 import com.hitec.presentation.navigation.DeviceDetailNav
+import com.hitec.presentation.navigation.NavigationUtils
 import com.hitec.presentation.theme.RenewSmartSetTheme
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -70,12 +71,12 @@ private fun InitScreen(
             is DeviceMenuSideEffect.NavigateToDeviceDetail -> {
                 val route =
                     DeviceDetailNav.route.replace("{${ArgumentName.ARGU_INSTALL_DEVICE}}", sideEffect.deviceImei)
-                navController.navigate(route)
+                NavigationUtils.navigate(navController, route)
             }
 
             is DeviceMenuSideEffect.NavigateToAsReport -> {
                 val route = AsReportNav.route.replace("{${ArgumentName.ARGU_AS_DEVICE}}", sideEffect.deviceImei)
-                navController.navigate(route)
+                NavigationUtils.navigate(navController, route)
             }
         }
     }
