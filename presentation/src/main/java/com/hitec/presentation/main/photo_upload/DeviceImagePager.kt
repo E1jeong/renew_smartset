@@ -1,6 +1,7 @@
 package com.hitec.presentation.main.photo_upload
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -29,8 +30,11 @@ import com.hitec.presentation.R
 import com.hitec.presentation.theme.Paddings
 
 @Composable
-fun DeviceImagePager(imageList: List<Pair<Int, Any?>>) {
-    val pagerState = rememberPagerState(pageCount = { imageList.size })
+fun DeviceImagePager(
+    imageList: List<Pair<Int, Any?>>,
+    pagerState: PagerState,
+    onPagerClick: (Int) -> Unit,
+) {
     val imagesType = imageList.map { it.first }
     val images = imageList.map { it.second }
 
@@ -58,7 +62,8 @@ fun DeviceImagePager(imageList: List<Pair<Int, Any?>>) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(16f / 9f)
-                        .clip(shape = RoundedCornerShape(8.dp)),
+                        .clip(shape = RoundedCornerShape(8.dp))
+                        .clickable { onPagerClick(page) },
                     contentScale = ContentScale.Crop
                 )
             }
